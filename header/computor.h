@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/21 19:29:26 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/22 18:55:30 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,26 @@
 
 #include "../../tools/libft/header/libft.h"
 
+typedef union	u_content
+{
+	int			integ;
+	UINT		uint;
+	//t_matrice	*matr;
+	float		*flt;
+}				t_content;
+
+typedef struct		s_expr
+{
+	struct s_expr	*next;
+	t_content		content;
+	char			*name;
+	char			info;
+}					t_expr;
+
 typedef struct		s_var
 {
-	t_simple		*next;
-	void			*value;
+	struct s_var	*next;
+	t_content		content;
 	char			*name;
 	char			info;
 }					t_var;
@@ -55,8 +71,9 @@ typedef struct		s_master
 
 void	store_expr(t_track *track, void *value);
 void	prepare_new_line(t_master *m);
-char	exec_cell_if_prior(t_track *t, char prev, int value);
+char	exec_cell_if_prior(t_master *m, int value);
 int		get_addition_result(t_track *t);
+void	mix_in_value(t_master *m, int value);
 void	handle_line_error(t_master *m, const char *s);
 char	plus_exec(t_buf *b, void *m);
 char	num_store(t_buf *b, void *m);
