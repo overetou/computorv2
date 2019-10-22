@@ -18,7 +18,7 @@ $(objdir)/%.o : %.c header/computor.h
 all: $(NAME)
 
 $(NAME): $(obj)
-	@$(CC) $(CFLAGS) -shared -o $@ ../tools/libft/libft.a $^
+	@$(CC) $(CFLAGS) -o $@ ../tools/libft/libft.a $^
 
 $(obj): | $(objdir)
 
@@ -30,7 +30,6 @@ clean:
 
 fclean: clean
 	rm -f $(NAME)
-	rm -f libft_malloc.so
 
 re: fclean all
 
