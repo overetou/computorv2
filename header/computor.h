@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/22 18:55:30 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/23 19:28:25 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ typedef struct		s_master
 	char			*to_define;
 }					t_master;
 
+void	print_track_values(t_master *m);
 void	store_expr(t_track *track, void *value);
 void	prepare_new_line(t_master *m);
 char	exec_cell_if_prior(t_master *m, int value);

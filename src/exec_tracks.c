@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 17:28:12 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/23 18:00:19 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/23 19:36:39 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void	prepare_new_line(t_master *m)
 {
+	//print_track_values(m);
 	if (m->exec_tracks.first->next)
 		destroy_track_from_to(m->exec_tracks.first->next, m->exec_tracks.last);
 	m->exec_tracks.last = m->exec_tracks.first;

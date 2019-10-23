@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 18:18:55 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/23 18:43:43 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/23 19:40:11 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ char	num_store(t_buf *b, void *m)
 		handle_line_error(m, "Two values were consecutively defined.");//This func must read till endline, call prepare new line and putendl the given string.
 		return (1);
 	}
-	value = (((t_master*)m)->prev == MINUS || int_is_comprised(((t_master*)m)->prev, MINUS_MULT, MINUS_MODULO) ? -1 : 1);
+	value = (((t_master*)m)->prev == MINUS || int_is_comprised(((t_master*)m)->prev, MINUS_PLUS, MINUS_MODULO) ? -1 : 1);
 	//printf("NUMSTORE: starter value = %d\n", value);
 	if (!read_int(b, &value))
 	{
@@ -71,7 +71,11 @@ char	minus_exec(t_buf *b, void *m)
 	if (int_is_comprised(((t_master*)m)->prev, PLUS, MODULO))
 		((t_master*)m)->prev += 5;
 	else if (((t_master*)m)->prev != VALUE)
-		handle_line_error(m, "'-' was preceded itself more than one time or was not preceded by a value.");
+	{
+		print_track_values(m);
+		handle_line_error(m, "'-' followed itself more than one time or was not preceded by a value.");
+		return (1);
+	}
 	else
 		((t_master*)m)->prev = MINUS;
 	read_smart_inc(b);
