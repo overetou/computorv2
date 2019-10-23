@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/22 18:49:15 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/23 17:35:45 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ char	equal_exec(t_buf *b, void *m)
 	else if (((t_master*)m)->prev != NOTHING)//If we have a variable to define, we keep prev to nothing.
 		handle_line_error(m, "'=' was not used to simply define a variable.");
 	((t_master*)m)->prev = EQUAL;//Not sure if this is useful.
-	(void)b;
+	read_smart_inc(b);
 	return (1);
 }
 
@@ -155,7 +155,8 @@ char	endline_exec(t_buf *b, void *m)
 			track_add(&(((t_master*)m)->vars), t_var_init(m));
 	}
 	quick_putnb(get_addition_result(&(((t_master*)m)->exec_tracks)));
+	putchr('\n');
 	prepare_new_line(m);
-	(void)b;
+	read_smart_inc(b);
 	return (1);
 }

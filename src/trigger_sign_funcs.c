@@ -6,11 +6,12 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 18:18:55 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/22 18:59:35 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/23 18:43:43 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "computor.h"
+#include <stdio.h>
 
 char	num_store(t_buf *b, void *m)
 {
@@ -22,11 +23,13 @@ char	num_store(t_buf *b, void *m)
 		return (1);
 	}
 	value = (((t_master*)m)->prev == MINUS || int_is_comprised(((t_master*)m)->prev, MINUS_MULT, MINUS_MODULO) ? -1 : 1);
+	//printf("NUMSTORE: starter value = %d\n", value);
 	if (!read_int(b, &value))
 	{
 		handle_line_error(m, "Integer overflow detected.");
 		return (1);
 	}
+	//printf("NUMSTORE: final value = %d\n", value);
 	if (!exec_cell_if_prior((t_master*)m, value))
 		mix_in_value((t_master*)m, value);
 	((t_master*)m)->prev = VALUE;
@@ -39,7 +42,7 @@ char	star_exec(t_buf *b, void *m)
 	if (b->str[b->pos] == '*')
 		handle_line_error(m, "Forbidden instruction '**'.");
 	if (((t_master*)m)->prev != VALUE)
-		handle_line_error(m, "Expected a value behind a '*'.");
+		handle_line_error(m, "Expected a value before a '*'.");
 	else
 		((t_master*)m)->prev = MULT;
 	return (1);
@@ -50,7 +53,7 @@ char	div_exec(t_buf *b, void *m)
 	if (((t_master*)m)->prev != VALUE)
 		handle_line_error(m, "No value found behind '/'.");
 	((t_master*)m)->prev = DIV;
-	(void)b;
+	read_smart_inc(b);
 	return (1);
 }
 
@@ -59,7 +62,7 @@ char	modulo_exec(t_buf *b, void *m)
 	if (((t_master*)m)->prev != VALUE)
 		handle_line_error(m, "No value found behind '%'.");
 	((t_master*)m)->prev = MODULO;
-	(void)b;
+	read_smart_inc(b);
 	return (1);
 }
 
@@ -71,7 +74,7 @@ char	minus_exec(t_buf *b, void *m)
 		handle_line_error(m, "'-' was preceded itself more than one time or was not preceded by a value.");
 	else
 		((t_master*)m)->prev = MINUS;
-	(void)b;
+	read_smart_inc(b);
 	return (1);
 }
 
@@ -81,6 +84,6 @@ char	plus_exec(t_buf *b, void *m)
 		handle_line_error(m, "'+' was not preceded by a value.");
 	else
 		((t_master*)m)->prev = PLUS;
-	(void)b;
+	read_smart_inc(b);
 	return (1);
 }

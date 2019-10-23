@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 17:28:12 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/22 18:53:34 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/23 18:00:19 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 void	prepare_new_line(t_master *m)
 {
-	destroy_track_from_to(m->exec_tracks.first->next, m->exec_tracks.last);
+	if (m->exec_tracks.first->next)
+		destroy_track_from_to(m->exec_tracks.first->next, m->exec_tracks.last);
 	m->exec_tracks.last = m->exec_tracks.first;
 	m->prev = NOTHING;
 	m->equal_defined = 0;
@@ -22,9 +23,10 @@ void	prepare_new_line(t_master *m)
 
 void	handle_line_error(t_master *m, const char *s)
 {
+	putstr("Error: ");
+	putendl(s);
 	read_go_next_line(&(m->buf));
 	prepare_new_line(m);
-	putendl(s);
 }
 
 //Here we must be guaranteed that the current expression and all the preceding one (if any)
