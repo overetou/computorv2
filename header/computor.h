@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/23 19:28:25 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/24 16:37:40 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@
 //Those defines are used to know what the previous element encountered was.
 //Operations preced by a MINUS_ are operations with the second element being negated.
 #define NOTHING			0
-#define PLUS			1
-#define MINUS			2
+#define MINUS			1
+#define PLUS			2
 #define MULT			3
 #define DIV				4
 #define MODULO			5
-#define MINUS_PLUS		6
-#define MINUS_MINUS		7
+#define MINUS_MINUS		6
+#define MINUS_PLUS		7
 #define MINUS_MULT		8
 #define MINUS_DIV		9
 #define MINUS_MODULO	10
@@ -75,14 +75,17 @@ void	prepare_new_line(t_master *m);
 char	exec_cell_if_prior(t_master *m, int value);
 int		get_addition_result(t_track *t);
 void	mix_in_value(t_master *m, int value);
+void	mix_in_value_init(t_master *m, int value);
 void	handle_line_error(t_master *m, const char *s);
 char	plus_exec(t_buf *b, void *m);
+char	num_store_init(t_buf *b, void *m);
 char	num_store(t_buf *b, void *m);
 char	star_exec(t_buf *b, void *m);
 char	div_exec(t_buf *b, void *m);
 char	modulo_exec(t_buf *b, void *m);
 char	minus_exec(t_buf *b, void *m);
 char	alpha_exec(t_buf *b, void *m);
+char	alpha_exec_init(t_buf *b, void *m);
 char	equal_exec(t_buf *b, void *m);
 char	endline_exec(t_buf *b, void *m);
 #endif

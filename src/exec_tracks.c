@@ -6,17 +6,20 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 17:28:12 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/23 19:36:39 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/24 16:36:04 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "computor.h"
+#include <stdio.h>
 
 void	prepare_new_line(t_master *m)
 {
 	//print_track_values(m);
-	if (m->exec_tracks.first->next)
+	if (m->exec_tracks.first != m->exec_tracks.last)
 		destroy_track_from_to(m->exec_tracks.first->next, m->exec_tracks.last);
+	((t_simple*)get_link_by_index(((t_master*)m)->trigger_funcs.first, 6))->content = num_store_init;
+	((t_simple*)get_link_by_index(((t_master*)m)->trigger_funcs.first, 7))->content = alpha_exec_init;
 	m->exec_tracks.last = m->exec_tracks.first;
 	m->prev = NOTHING;
 	m->equal_defined = 0;
@@ -35,10 +38,7 @@ void	handle_line_error(t_master *m, const char *s)
 char	exec_cell_if_prior(t_master *m, int value)
 {
 	if (int_is_comprised(m->prev, MINUS_MULT, MINUS_MODULO))
-	{
-		value = -value;
 		m->prev -= 5;
-	}
 	if (m->prev == MULT)
 		((t_expr*)(m->exec_tracks.last))->content.integ *= value;
 	else if (m->prev == DIV)
