@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 17:28:12 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/24 16:36:04 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/24 17:45:48 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,6 @@ void	prepare_new_line(t_master *m)
 	//print_track_values(m);
 	if (m->exec_tracks.first != m->exec_tracks.last)
 		destroy_track_from_to(m->exec_tracks.first->next, m->exec_tracks.last);
-	((t_simple*)get_link_by_index(((t_master*)m)->trigger_funcs.first, 6))->content = num_store_init;
-	((t_simple*)get_link_by_index(((t_master*)m)->trigger_funcs.first, 7))->content = alpha_exec_init;
 	m->exec_tracks.last = m->exec_tracks.first;
 	m->prev = NOTHING;
 	m->equal_defined = 0;

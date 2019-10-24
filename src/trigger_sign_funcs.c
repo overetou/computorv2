@@ -6,36 +6,12 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 18:18:55 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/24 16:08:30 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/24 17:42:46 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "computor.h"
 #include <stdio.h>
-
-char	num_store_init(t_buf *b, void *m)
-{
-	int	value;
-	
-	if (((t_master*)m)->prev == VALUE)
-	{
-		handle_line_error(m, "Two values were consecutively defined.");//This func must read till endline, call prepare new line and putendl the given string.
-		return (1);
-	}
-	value = (((t_master*)m)->prev == MINUS || int_is_comprised(((t_master*)m)->prev, MINUS_PLUS, MINUS_MODULO) ? -1 : 1);
-	//printf("NUMSTORE: starter value = %d\n", value);
-	if (!read_int(b, &value))
-	{
-		handle_line_error(m, "Integer overflow detected.");
-		return (1);
-	}
-	//printf("NUMSTORE: final value = %d\n", value);
-	if (!exec_cell_if_prior((t_master*)m, value))
-		mix_in_value_init((t_master*)m, value);
-	((t_master*)m)->prev = VALUE;
-	((t_simple*)get_link_by_index(((t_master*)m)->trigger_funcs.first, 6))->content = num_store;
-	return (1);
-}
 
 char	num_store(t_buf *b, void *m)
 {
