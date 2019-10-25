@@ -6,19 +6,19 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 17:28:12 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/24 17:45:48 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/25 18:56:07 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "computor.h"
 #include <stdio.h>
 
+#define EXEC_LAST ((t_expr*)(((t_link_track*)(m->exec_tracks.last))->last))->content.integ
+
 void	prepare_new_line(t_master *m)
 {
 	//print_track_values(m);
-	if (m->exec_tracks.first != m->exec_tracks.last)
-		destroy_track_from_to(m->exec_tracks.first->next, m->exec_tracks.last);
-	m->exec_tracks.last = m->exec_tracks.first;
+	destroy_link_track_content((t_link_track*)(m->exec_tracks.first));
 	m->prev = NOTHING;
 	m->equal_defined = 0;
 }
@@ -38,18 +38,18 @@ char	exec_cell_if_prior(t_master *m, int value)
 	if (int_is_comprised(m->prev, MINUS_MULT, MINUS_MODULO))
 		m->prev -= 5;
 	if (m->prev == MULT)
-		((t_expr*)(m->exec_tracks.last))->content.integ *= value;
+		EXEC_LAST *= value;
 	else if (m->prev == DIV)
-		((t_expr*)(m->exec_tracks.last))->content.integ /= value;
+		EXEC_LAST /= value;
 	else if (m->prev == MODULO)
-		((t_expr*)(m->exec_tracks.last))->content.integ %= value;
+		EXEC_LAST %= value;
 	else
 		return (0);
 	return (1);
 }
 
 //Ne pas oublier de se proteger des overflows ici aussi.
-int	get_addition_result(t_track *t)
+int	get_addition_result(t_link_track *t)
 {
 	int			result;
 	t_simple	*s;

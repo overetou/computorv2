@@ -6,12 +6,15 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/24 17:59:29 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/25 19:26:44 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "computor.h"
 #include <stdlib.h>
+
+#define EXEC_TRACK_LAST_AS_LINK_TRACK ((t_link_track*)(m->exec_tracks.last))
+#define CONDENSE_LAST_TRACK get_addition_result((t_link_track*)(((t_master*)m)->exec_tracks.last))
 
 void	*t_var_init(t_master *m)
 {
@@ -21,7 +24,7 @@ void	*t_var_init(t_master *m)
 	new->name = m->to_define;
 	m->to_define = NULL;
 	printf("t_var_init: new->name = %s\n", new->name);
-	new->content.integ = get_addition_result(&(((t_master*)m)->exec_tracks));
+	new->content.integ = CONDENSE_LAST_TRACK;
 	return (new);
 }
 
@@ -55,11 +58,14 @@ void	*t_expr_init(const int value)
 	return (new);
 }
 
+//Writes directly on the first time, then add a cell.
 void	mix_in_value(t_master *m, int value)
 {
-	if (m->exec_tracks.last == NULL)
-		track_add(&(m->exec_tracks), (t_link*)t_expr_create());
-	((t_expr*)(m->exec_tracks.last))->content.integ = value;
+	if (EXEC_TRACK_LAST_AS_LINK_TRACK->first == NULL)
+		link_track_init(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)t_expr_create());
+	else
+		link_track_add(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)t_expr_create());
+	((t_expr*)(EXEC_TRACK_LAST_AS_LINK_TRACK->last))->content.integ = value;
 }
 
 void	*get_item(t_master *m, const char *name)
@@ -155,9 +161,8 @@ char	endline_exec(t_buf *b, void *m)
 	if (((t_master*)m)->to_define)//This is a string with the name of the variable to define.
 	{
 		var = get_item(m, ((t_master*)m)->to_define);
-		putendl("hello !");
 		if (var)
-			var->content.integ = get_addition_result(&(((t_master*)m)->exec_tracks));
+			var->content.integ = CONDENSE_LAST_TRACK;
 		else
 		{
 			if (var == NULL)
@@ -166,7 +171,8 @@ char	endline_exec(t_buf *b, void *m)
 				track_add(&(((t_master*)m)->vars), t_var_init(m));
 		}
 	}
-	quick_putnb(get_addition_result(&(((t_master*)m)->exec_tracks)));
+	//print_track_values(m);
+	quick_putnb(CONDENSE_LAST_TRACK);
 	putchr('\n');
 	prepare_new_line(m);
 	read_smart_inc(b);

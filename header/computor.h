@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/24 16:37:40 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/25 18:43:57 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ typedef struct		s_master
 	t_track			funcs;
 	t_track			vars;
 	char			prev;
-	char			equal_defined;
+	char			equal_defined;//0 for not defined, 1 for var assignment on left, 2 for right.
 	char			*to_define;
 }					t_master;
 
@@ -73,7 +73,7 @@ void	print_track_values(t_master *m);
 void	store_expr(t_track *track, void *value);
 void	prepare_new_line(t_master *m);
 char	exec_cell_if_prior(t_master *m, int value);
-int		get_addition_result(t_track *t);
+int		get_addition_result(t_link_track *t);
 void	mix_in_value(t_master *m, int value);
 void	mix_in_value_init(t_master *m, int value);
 void	handle_line_error(t_master *m, const char *s);
@@ -86,6 +86,8 @@ char	modulo_exec(t_buf *b, void *m);
 char	minus_exec(t_buf *b, void *m);
 char	alpha_exec(t_buf *b, void *m);
 char	alpha_exec_init(t_buf *b, void *m);
+char	open_par_exec(t_buf *b, void *m);
+char	close_par_exec(t_buf *b, void *m);
 char	equal_exec(t_buf *b, void *m);
 char	endline_exec(t_buf *b, void *m);
 #endif

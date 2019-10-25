@@ -10,15 +10,15 @@ void	init_master(t_master *m)
 	trigger_add((t_trigger_set*)m, "-", minus_exec);
 	trigger_add((t_trigger_set*)m, "/", div_exec);
 	trigger_add((t_trigger_set*)m, "%", modulo_exec);
-//	trigger_add((t_trigger_set*)m, "(", );
-//	trigger_add((t_trigger_set*)m, ")", );
+	trigger_add((t_trigger_set*)m, "(", open_par_exec);
+	trigger_add((t_trigger_set*)m, ")", close_par_exec);
 //	trigger_add((t_trigger_set*)m, "=", );
 //	trigger_add((t_trigger_set*)m, "?", );
 	trigger_add((t_trigger_set*)m, "\n", endline_exec);
 	trigger_add((t_trigger_set*)m, "1234567890", num_store);
 	trigger_add((t_trigger_set*)m, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", alpha_exec);
-	track_init(&(m->exec_tracks), (t_link*)create_void_simple());
 	m->to_define = NULL;
+	track_init(&(m->exec_tracks), (t_link*)link_track_create(NULL));
 	m->vars.first = NULL;
 	m->funcs.first = NULL;
 	prepare_new_line(m);
