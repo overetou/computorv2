@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/25 18:43:57 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/26 17:54:06 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@
 #define EQUAL			11
 #define INTEROGATION	12
 #define VALUE			13
+
+#define EXEC_TRACK_LAST_AS_LINK_TRACK ((t_link_track*)(m->exec_tracks.last))
+#define CONDENSE_LAST_TRACK get_addition_result((t_link_track*)(((t_master*)m)->exec_tracks.last))
 
 #include "../../tools/libft/header/libft.h"
 
@@ -56,6 +59,14 @@ typedef struct		s_var
 	char			info;
 }					t_var;
 
+typedef struct  s_cust_link_track
+{
+    struct s_link_track *next;
+    t_link      *first;
+    t_link      *last;
+	char		prev;
+}               t_cust_link_track;
+
 typedef struct		s_master
 {
 	t_track			trigger_strings;
@@ -74,6 +85,7 @@ void	store_expr(t_track *track, void *value);
 void	prepare_new_line(t_master *m);
 char	exec_cell_if_prior(t_master *m, int value);
 int		get_addition_result(t_link_track *t);
+void	inject_value(t_master *m, int value);
 void	mix_in_value(t_master *m, int value);
 void	mix_in_value_init(t_master *m, int value);
 void	handle_line_error(t_master *m, const char *s);

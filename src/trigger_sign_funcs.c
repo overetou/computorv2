@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 18:18:55 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/24 17:42:46 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/26 17:12:48 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,7 @@ char	num_store(t_buf *b, void *m)
 		return (1);
 	}
 	//printf("NUMSTORE: final value = %d\n", value);
-	if (!exec_cell_if_prior((t_master*)m, value))
-		mix_in_value((t_master*)m, value);
+	inject_value(m, value);
 	((t_master*)m)->prev = VALUE;
 	return (1);
 }

@@ -6,15 +6,12 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/25 19:26:44 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/26 17:27:14 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "computor.h"
 #include <stdlib.h>
-
-#define EXEC_TRACK_LAST_AS_LINK_TRACK ((t_link_track*)(m->exec_tracks.last))
-#define CONDENSE_LAST_TRACK get_addition_result((t_link_track*)(((t_master*)m)->exec_tracks.last))
 
 void	*t_var_init(t_master *m)
 {
@@ -68,6 +65,12 @@ void	mix_in_value(t_master *m, int value)
 	((t_expr*)(EXEC_TRACK_LAST_AS_LINK_TRACK->last))->content.integ = value;
 }
 
+void	inject_value(t_master *m, int value)
+{
+	if (!exec_cell_if_prior((t_master*)m, value))
+		mix_in_value(m, value);
+}
+
 void	*get_item(t_master *m, const char *name)
 {
 	t_var	*p;
@@ -81,8 +84,8 @@ void	*get_item(t_master *m, const char *name)
 			return ((void*)p);
 		p = p->next;
 	}
-	putendl("get_item: one member left.");
-	printf("get_item: name = %s, content = %s\n", name, p->name);
+	//putendl("get_item: one member left.");
+	//printf("get_item: name = %s, content = %s\n", name, p->name);
 	if (str_perfect_match(name, p->name))
 		return ((void*)p);
 	return (NULL);
@@ -104,9 +107,12 @@ void	mix_in_var_value(t_master *m, char *name)
 	int		value;
 
 	if (get_item_value(&value, m, name))
-		mix_in_value(m, value);
+		inject_value(m, value);
 	else
+	{
+		m->to_define = NULL;
 		handle_line_error(m, "Definition of a variable was not found.");
+	}
 	free(name);
 }
 
@@ -117,18 +123,18 @@ char	alpha_exec(t_buf *b, void *m)
 	char	save;
 
 	s = read_word(b, char_is_valid_var_name_material);
-	printf("alpha_exec_init: word read = %s\n", s);
+	//printf("alpha_exec: word read = %s\n", s);
 	if (((t_master*)m)->equal_defined == 0)
 	{
-		putendl("alpha_exec_init: no equal defined.");
+		//putendl("alpha_exec: no equal defined.");
 		save = b->str[b->pos];
 		read_till_false(b, is_sep);
 		if (b->str[b->pos] == '=') 
 		{
-			putendl("alpha_exec_init: equal detected.");
+			//putendl("alpha_exec: equal detected.");
 			if (read_smart_inc(b))
 			{
-				putendl("alpha_exec_init: equal confirmed.");
+				//putendl("alpha_exec: equal confirmed.");
 				prepare_var_def(m, s);//Dont forget to signal the = in the struct.
 			}
 			else
@@ -160,13 +166,13 @@ char	endline_exec(t_buf *b, void *m)
 
 	if (((t_master*)m)->to_define)//This is a string with the name of the variable to define.
 	{
-		var = get_item(m, ((t_master*)m)->to_define);
-		if (var)
-			var->content.integ = CONDENSE_LAST_TRACK;
+		if (((t_master*)m)->vars.first == NULL)
+			track_init(&(((t_master*)m)->vars), t_var_init(m));
 		else
 		{
-			if (var == NULL)
-				track_init(&(((t_master*)m)->vars), t_var_init(m));
+			var = get_item(m, ((t_master*)m)->to_define);
+			if (var)
+				var->content.integ = CONDENSE_LAST_TRACK;
 			else
 				track_add(&(((t_master*)m)->vars), t_var_init(m));
 		}
