@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 17:28:12 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/25 18:56:07 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/26 18:17:19 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	prepare_new_line(t_master *m)
 {
 	//print_track_values(m);
 	destroy_link_track_content((t_link_track*)(m->exec_tracks.first));
-	m->prev = NOTHING;
+	*(prev_adr(m)) = NOTHING;
 	m->equal_defined = 0;
 }
 
@@ -35,13 +35,13 @@ void	handle_line_error(t_master *m, const char *s)
 //are defined. Returns 1 on success, 0 other wise.
 char	exec_cell_if_prior(t_master *m, int value)
 {
-	if (int_is_comprised(m->prev, MINUS_MULT, MINUS_MODULO))
-		m->prev -= 5;
-	if (m->prev == MULT)
+	if (int_is_comprised(prev(m), MINUS_MULT, MINUS_MODULO))
+		*(prev_adr(m)) -= 5;
+	if (prev(m) == MULT)
 		EXEC_LAST *= value;
-	else if (m->prev == DIV)
+	else if (prev(m) == DIV)
 		EXEC_LAST /= value;
-	else if (m->prev == MODULO)
+	else if (prev(m) == MODULO)
 		EXEC_LAST %= value;
 	else
 		return (0);

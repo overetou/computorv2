@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/26 17:27:14 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/26 18:48:05 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	*t_var_init(t_master *m)
 	new->name = m->to_define;
 	m->to_define = NULL;
 	printf("t_var_init: new->name = %s\n", new->name);
-	new->content.integ = CONDENSE_LAST_TRACK;
+	new->content.integ = condense_last_track(m);
 	return (new);
 }
 
@@ -139,12 +139,12 @@ char	alpha_exec(t_buf *b, void *m)
 			}
 			else
 				handle_line_error(m, "= is followed by nothing.");
-			((t_master*)m)->prev = EQUAL;
+			*(prev_adr(m)) = EQUAL;
 			return (1);
 		}
 	}
 	mix_in_var_value((t_master*)m, s);
-	((t_master*)m)->prev = VALUE;
+	*(prev_adr(m)) = VALUE;
 	return (1);
 }
 
@@ -152,9 +152,9 @@ char	equal_exec(t_buf *b, void *m)
 {
 	if (((t_master*)m)->equal_defined)
 		handle_line_error(m, "At least two '=' are present on the line.");
-	else if (((t_master*)m)->prev != NOTHING)//If we have a variable to define, we keep prev to nothing.
+	else if (prev(m) != NOTHING)//If we have a variable to define, we keep prev to nothing.
 		handle_line_error(m, "'=' was not used to simply define a variable.");
-	((t_master*)m)->prev = EQUAL;
+	*(prev_adr(m)) = EQUAL;
 	read_smart_inc(b);
 	return (1);
 }
@@ -172,13 +172,13 @@ char	endline_exec(t_buf *b, void *m)
 		{
 			var = get_item(m, ((t_master*)m)->to_define);
 			if (var)
-				var->content.integ = CONDENSE_LAST_TRACK;
+				var->content.integ = condense_last_track(m);
 			else
 				track_add(&(((t_master*)m)->vars), t_var_init(m));
 		}
 	}
 	//print_track_values(m);
-	quick_putnb(CONDENSE_LAST_TRACK);
+	quick_putnb(condense_last_track(m));
 	putchr('\n');
 	prepare_new_line(m);
 	read_smart_inc(b);

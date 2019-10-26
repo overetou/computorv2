@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/26 17:54:06 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/26 18:46:23 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@
 #define VALUE			13
 
 #define EXEC_TRACK_LAST_AS_LINK_TRACK ((t_link_track*)(m->exec_tracks.last))
-#define CONDENSE_LAST_TRACK get_addition_result((t_link_track*)(((t_master*)m)->exec_tracks.last))
 
 #include "../../tools/libft/header/libft.h"
 
@@ -75,11 +74,13 @@ typedef struct		s_master
 	t_track			exec_tracks;
 	t_track			funcs;
 	t_track			vars;
-	char			prev;
 	char			equal_defined;//0 for not defined, 1 for var assignment on left, 2 for right.
 	char			*to_define;
 }					t_master;
 
+int		condense_last_track(t_master *m);
+char	prev(t_master *m);
+char	*prev_adr(t_master *m);
 void	print_track_values(t_master *m);
 void	store_expr(t_track *track, void *value);
 void	prepare_new_line(t_master *m);
