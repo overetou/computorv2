@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/26 18:48:05 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/28 16:40:03 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	*t_var_init(t_master *m)
 	new = malloc(sizeof(t_var));
 	new->name = m->to_define;
 	m->to_define = NULL;
-	printf("t_var_init: new->name = %s\n", new->name);
+	//printf("t_var_init: new->name = %s\n", new->name);
 	new->content.integ = condense_last_track(m);
 	return (new);
 }
@@ -69,6 +69,7 @@ void	inject_value(t_master *m, int value)
 {
 	if (!exec_cell_if_prior((t_master*)m, value))
 		mix_in_value(m, value);
+	*(prev_adr(m)) = VALUE;
 }
 
 void	*get_item(t_master *m, const char *name)
@@ -143,8 +144,8 @@ char	alpha_exec(t_buf *b, void *m)
 			return (1);
 		}
 	}
-	mix_in_var_value((t_master*)m, s);
 	*(prev_adr(m)) = VALUE;
+	mix_in_var_value((t_master*)m, s);
 	return (1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 17:05:58 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/26 18:52:45 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/28 14:33:26 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 char	open_par_exec(t_buf *b, void *m)
 {
 	track_add(&(((t_master*)m)->exec_tracks), (t_link*)link_track_create(NULL));
+	//putendl("Added a track.");
+	*prev_adr(m) = NOTHING;
 	read_smart_inc(b);
 	return (1);
 }
@@ -28,6 +30,10 @@ char	close_par_exec(t_buf *b, void *m)
 		handle_line_error(m, "Closing parenthesis without match detected.");
 	value = condense_last_track(m);
 	track_remove_last(&(((t_master*)m)->exec_tracks), destroy_link_track);
+	//printf("prev now = %d\n", prev(m));
+	if (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO))
+		value = -value;
+	//printf("Parenthesis closed. Contained value = %d\n", value);
 	inject_value(m, value);
 	read_smart_inc(b);
 	return (1);
