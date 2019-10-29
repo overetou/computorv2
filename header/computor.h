@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/26 18:46:23 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/29 16:31:34 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,16 +30,30 @@
 #define INTEROGATION	12
 #define VALUE			13
 
+//The different values that info can take are:
+#define RATIONNAL		0
+//content is a simple float.
+#define IRATIONNAL		1
+//content is a float and we consider that it is multiplied by i.
+#define MATRICE			2
+//Content points on the first link matrice.
+#define FUNCTION		3
+//Content points on the first link of an expr list
+#define UNKNOWN
+//content is a float multplied by an unknown (used exclusivaly in functions)
+#define IRA_UNKNOWN
+//content is a float multplied by an unknown and i(used exclusivaly in functions)
+
 #define EXEC_TRACK_LAST_AS_LINK_TRACK ((t_link_track*)(m->exec_tracks.last))
 
 #include "../../tools/libft/header/libft.h"
 
 typedef union	u_content
 {
-	int			integ;
-	UINT		uint;
-	//t_matrice	*matr;
 	float		*flt;
+	//t_complex	*cpl;
+	//t_matrice	*matr;
+	//t_func	*func;
 }				t_content;
 
 typedef struct		s_expr
@@ -85,22 +99,23 @@ void	print_track_values(t_master *m);
 void	store_expr(t_track *track, void *value);
 void	prepare_new_line(t_master *m);
 char	exec_cell_if_prior(t_master *m, int value);
-int		get_addition_result(t_link_track *t);
+BOOL	refine_addition_result(t_link_track *t);
 void	inject_value(t_master *m, int value);
 void	mix_in_value(t_master *m, int value);
-void	mix_in_value_init(t_master *m, int value);
 void	handle_line_error(t_master *m, const char *s);
 char	plus_exec(t_buf *b, void *m);
-char	num_store_init(t_buf *b, void *m);
 char	num_store(t_buf *b, void *m);
 char	star_exec(t_buf *b, void *m);
 char	div_exec(t_buf *b, void *m);
 char	modulo_exec(t_buf *b, void *m);
 char	minus_exec(t_buf *b, void *m);
 char	alpha_exec(t_buf *b, void *m);
-char	alpha_exec_init(t_buf *b, void *m);
 char	open_par_exec(t_buf *b, void *m);
 char	close_par_exec(t_buf *b, void *m);
 char	equal_exec(t_buf *b, void *m);
 char	endline_exec(t_buf *b, void *m);
+void	do_multiplication(t_master *m, t_content* value, char info);
+void	do_division(t_master *m, t_content* value, char info);
+void	do_modulation(t_master *m, t_content* value, char info);
+void	reverse_expr(t_expr *e)
 #endif

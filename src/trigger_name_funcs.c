@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/28 16:40:03 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/29 16:30:52 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ void	*t_var_init(t_master *m)
 	new->name = m->to_define;
 	m->to_define = NULL;
 	//printf("t_var_init: new->name = %s\n", new->name);
-	new->content.integ = condense_last_track(m);
+	new->content = ((t_link_track*)(m->exec_tracks.last))->content;
+	new->info = ((t_link_track*)(m->exec_tracks.last))->info;
 	return (new);
 }
 
@@ -46,12 +47,13 @@ void	*t_expr_create(void)
 	return (malloc(sizeof(t_expr)));
 }
 
-void	*t_expr_init(const int value)
+void	*t_expr_init(t_content content, char info)
 {
 	t_expr	*new;
 
 	new = t_expr_create();
-	new->content.integ = value;
+	new->content = content;
+	new->info = info;
 	return (new);
 }
 

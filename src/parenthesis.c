@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 17:05:58 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/28 14:33:26 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/29 16:16:53 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,34 @@ char	open_par_exec(t_buf *b, void *m)
 	return (1);
 }
 
+t_expr	*extract_refined_expr(t_master *m)
+{
+	t_expr* to_send;
+
+	to_send = ((t_link_track*)(m->exec_tracks.last))->first;
+	if (((t_link_track*)(m->exec_tracks.last))->last == to_send)
+		((t_link_track*)(m->exec_tracks.last))->first = NULL;
+	else
+		((t_link_track*)(m->exec_tracks.last))->first = to_send->next;
+	return (to_send);
+}
+
 char	close_par_exec(t_buf *b, void *m)
 {
-	int	value;
+	t_expr	*value;
 
 	if (((t_master*)m)->exec_tracks.first == ((t_master*)m)->exec_tracks.last)
 		handle_line_error(m, "Closing parenthesis without match detected.");
-	value = condense_last_track(m);
+	if (condense_last_track(m) == 0)
+	{
+		handle_line_error("The final addition of a track's components failed")
+			return (1);
+	}
+	value = extract_refined_expr(m);
 	track_remove_last(&(((t_master*)m)->exec_tracks), destroy_link_track);
 	//printf("prev now = %d\n", prev(m));
 	if (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO))
-		value = -value;
-	//printf("Parenthesis closed. Contained value = %d\n", value);
+		reverse_expr(value);
 	inject_value(m, value);
 	read_smart_inc(b);
 	return (1);
@@ -53,5 +69,5 @@ int		condense_last_track(t_master *m)
 {
 	if (((t_link_track*)(m->exec_tracks.last))->first == NULL)
 		return (0);
-	return (get_addition_result((t_link_track*)(m->exec_tracks.last)));
+	return (refine_addition_result((t_link_track*)(m->exec_tracks.last)));
 }
