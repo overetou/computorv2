@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/29 16:30:52 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/29 18:38:33 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ void	*t_var_init(t_master *m)
 	new->name = m->to_define;
 	m->to_define = NULL;
 	//printf("t_var_init: new->name = %s\n", new->name);
-	new->content = ((t_link_track*)(m->exec_tracks.last))->content;
-	new->info = ((t_link_track*)(m->exec_tracks.last))->info;
+	new->content = (((t_expr*)((t_link_track*)(m->exec_tracks.last))->first))->content;
+	new->info = (((t_expr*)((t_link_track*)(m->exec_tracks.last))->first))->info;
 	return (new);
 }
 
@@ -58,19 +58,18 @@ void	*t_expr_init(t_content content, char info)
 }
 
 //Writes directly on the first time, then add a cell.
-void	mix_in_value(t_master *m, int value)
+void	mix_in_value(t_master *m, t_content content, char info)
 {
 	if (EXEC_TRACK_LAST_AS_LINK_TRACK->first == NULL)
-		link_track_init(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)t_expr_create());
+		link_track_init(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)t_expr_init(content, info));
 	else
-		link_track_add(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)t_expr_create());
-	((t_expr*)(EXEC_TRACK_LAST_AS_LINK_TRACK->last))->content.integ = value;
+		link_track_add(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)t_expr_init(content, info));
 }
 
-void	inject_value(t_master *m, int value)
+void	inject_value(t_master *m, t_content content, char info)
 {
-	if (!exec_cell_if_prior((t_master*)m, value))
-		mix_in_value(m, value);
+	if (!exec_cell_if_prior((t_master*)m, content, info))
+		mix_in_value(m, content, info);
 	*(prev_adr(m)) = VALUE;
 }
 
@@ -94,23 +93,25 @@ void	*get_item(t_master *m, const char *name)
 	return (NULL);
 }
 
-BOOL	get_item_value(int *n, t_master *m, const char *name)
+char	get_item_value(t_content *n, t_master *m, const char *name)
 {
 	t_var	*v;
 
 	v = get_item(m, name);
 	if (v == NULL)
-		return (0);
-	*n = v->content.integ;
-	return (1);
+		return (-1);
+	*n = v->content;
+	return (v->info);
 }
 
-void	mix_in_var_value(t_master *m, char *name)
+void	inject_var_value(t_master *m, char *name)
 {
-	int		value;
+	t_content	value;
+	char		info;
 
-	if (get_item_value(&value, m, name))
-		inject_value(m, value);
+	info = get_item_value(&value, m, name);
+	if (info >= 0)
+		inject_value(m, value, info);
 	else
 	{
 		m->to_define = NULL;
@@ -135,6 +136,11 @@ char	alpha_exec(t_buf *b, void *m)
 		if (b->str[b->pos] == '=') 
 		{
 			//putendl("alpha_exec: equal detected.");
+			if (is_inside_parenthesis(m))
+			{
+				handle_line_error(m, "= was defined inside a parenthesis.");
+				return (1);
+			}
 			if (read_smart_inc(b))
 			{
 				//putendl("alpha_exec: equal confirmed.");
@@ -147,7 +153,7 @@ char	alpha_exec(t_buf *b, void *m)
 		}
 	}
 	*(prev_adr(m)) = VALUE;
-	mix_in_var_value((t_master*)m, s);
+	inject_var_value((t_master*)m, s);
 	return (1);
 }
 
@@ -175,13 +181,24 @@ char	endline_exec(t_buf *b, void *m)
 		{
 			var = get_item(m, ((t_master*)m)->to_define);
 			if (var)
-				var->content.integ = condense_last_track(m);
+			{
+				if (condense_last_track(m))
+				{
+					var->content = ((t_expr*)(((t_link_track*)(((t_master*)m)->exec_tracks.last))->first));
+					var->info = ((t_link_track*)(((t_master*)m)->exec_tracks.last))->info;
+				}
+				else
+				{
+					handle_line_error(m, "An error appened during the addiditon of expressions destined to a variable definition.");
+					return (1);
+				}
+			}
 			else
 				track_add(&(((t_master*)m)->vars), t_var_init(m));
 		}
 	}
 	//print_track_values(m);
-	quick_putnb(condense_last_track(m));
+	display_last_expr(m);
 	putchr('\n');
 	prepare_new_line(m);
 	read_smart_inc(b);

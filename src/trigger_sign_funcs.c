@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 18:18:55 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/28 16:38:42 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/29 18:18:19 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 char	num_store(t_buf *b, void *m)
 {
-	int	value;
+	t_content	value;
 	
 	if (prev(m) == VALUE)
 	{
@@ -24,13 +24,13 @@ char	num_store(t_buf *b, void *m)
 	}
 	value = (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO) ? -1 : 1);
 	//printf("NUMSTORE: starter value = %d\n", value);
-	if (!read_int(b, &value))
+	if (!read_float(b, &(value.flt)))
 	{
-		handle_line_error(m, "Integer overflow detected.");
+		handle_line_error(m, "Overflow detected.");
 		return (1);
 	}
-	//printf("NUMSTORE: final value = %d\n", value);
-	inject_value(m, value);
+	//printf("NUMSTORE: final value = %f\n", value);
+	inject_value(m, value, info);
 	return (1);
 }
 

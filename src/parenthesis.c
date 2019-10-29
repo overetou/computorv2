@@ -6,12 +6,17 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 17:05:58 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/29 16:16:53 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/29 17:11:16 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "computor.h"
 #include <stdio.h>
+
+BOOL	is_inside_parenthesis(t_master *m)
+{
+	return (m->exec_tracks->first != m->exec_tracks->last);
+}
 
 char	open_par_exec(t_buf *b, void *m)
 {

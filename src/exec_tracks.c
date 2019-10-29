@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 17:28:12 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/29 15:31:03 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/29 18:32:20 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	handle_line_error(t_master *m, const char *s)
 
 //Here we must be guaranteed that the current expression and all the preceding one (if any)
 //are defined. Returns 1 on success, 0 other wise.
-char	exec_cell_if_prior(t_master *m, t_content *value, char info)
+char	exec_cell_if_prior(t_master *m, t_content value, char info)
 {
 	if (int_is_comprised(prev(m), MINUS_MULT, MINUS_MODULO))
 		*(prev_adr(m)) -= 5;

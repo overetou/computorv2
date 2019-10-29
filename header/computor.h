@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/29 16:31:34 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/29 18:32:55 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,10 +98,10 @@ char	*prev_adr(t_master *m);
 void	print_track_values(t_master *m);
 void	store_expr(t_track *track, void *value);
 void	prepare_new_line(t_master *m);
-char	exec_cell_if_prior(t_master *m, int value);
+char	exec_cell_if_prior(t_master *m, t_content value, char info);
 BOOL	refine_addition_result(t_link_track *t);
-void	inject_value(t_master *m, int value);
-void	mix_in_value(t_master *m, int value);
+void	inject_value(t_master *m, t_content content, char info);
+void	mix_in_value(t_master *m, t_content content, char info);
 void	handle_line_error(t_master *m, const char *s);
 char	plus_exec(t_buf *b, void *m);
 char	num_store(t_buf *b, void *m);
@@ -114,8 +114,11 @@ char	open_par_exec(t_buf *b, void *m);
 char	close_par_exec(t_buf *b, void *m);
 char	equal_exec(t_buf *b, void *m);
 char	endline_exec(t_buf *b, void *m);
-void	do_multiplication(t_master *m, t_content* value, char info);
-void	do_division(t_master *m, t_content* value, char info);
-void	do_modulation(t_master *m, t_content* value, char info);
-void	reverse_expr(t_expr *e)
+void	do_multiplication(t_master *m, t_content value, char info);
+void	do_division(t_master *m, t_content value, char info);
+void	do_modulation(t_master *m, t_content value, char info);
+char	do_addition(t_expr *m1, t_expr* m2);
+void	reverse_expr(t_expr *e);
+BOOL	is_inside_parenthesis(t_master *m);
+void	display_last_expr(t_master *m);
 #endif

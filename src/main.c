@@ -24,23 +24,6 @@ void	init_master(t_master *m)
 	prepare_new_line(m);
 }
 
-void	print_track_values(t_master *m)
-{
-	t_expr	*e = (t_expr*)(m->exec_tracks.first);
-	t_expr	*last = (t_expr*)(m->exec_tracks.last);
-
-	while (e != last)
-	{
-		putstr("e: ");
-		quick_putnb(e->content.integ);
-		putchr('\n');
-		e = e->next;
-	}
-	putstr("e: ");
-	quick_putnb(e->content.integ);
-	putchr('\n');
-}
-
 int	main(void)
 {
 	t_master	m;
