@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 17:28:12 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/29 18:32:20 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/31 16:25:32 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	prepare_new_line(t_master *m)
 	m->equal_defined = 0;
 }
 
-void	handle_line_error(t_master *m, const char *s)
+BOOL	handle_line_error(t_master *m, const char *s)
 {
 	putstr("Error: ");
 	putendl(s);
@@ -34,6 +34,7 @@ void	handle_line_error(t_master *m, const char *s)
 		read_smart_inc(&(m->buf));
 	else
 		read_go_next_line(&(m->buf));
+	return (1);
 }
 
 //Here we must be guaranteed that the current expression and all the preceding one (if any)

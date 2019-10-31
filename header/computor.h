@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/31 15:32:25 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/31 17:20:35 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,8 @@
 //content is a float multplied by an unknown (used exclusivaly in functions)
 #define IRA_UNKNOWN
 //content is a float multplied by an unknown and i(used exclusivaly in functions)
+#define IRA_PACK
+//content is part of a set of 2 values: a and b in a + bi.
 
 #define EXEC_TRACK_LAST_AS_LINK_TRACK ((t_link_track*)(m->exec_tracks.last))
 
@@ -103,7 +105,7 @@ char	exec_cell_if_prior(t_master *m, t_content value, char info);
 BOOL	refine_addition_result(t_link_track *t);
 void	inject_value(t_master *m, t_content content, char info);
 void	mix_in_value(t_master *m, t_content content, char info);
-void	handle_line_error(t_master *m, const char *s);
+BOOL	handle_line_error(t_master *m, const char *s);
 char	plus_exec(t_buf *b, void *m);
 char	num_store(t_buf *b, void *m);
 char	star_exec(t_buf *b, void *m);

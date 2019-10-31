@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/30 16:46:20 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/31 16:59:21 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,17 @@ void	*t_var_init(t_master *m)
 
 	new = malloc(sizeof(t_var));
 	new->name = m->to_define;
-	m->to_define = NULL;
 	//printf("t_var_init: new->name = %s\n", new->name);
 	new->content = (((t_expr*)((t_link_track*)(m->exec_tracks.last))->first))->content;
 	new->info = (((t_expr*)((t_link_track*)(m->exec_tracks.last))->first))->info;
 	return (new);
+}
+
+void	t_var_update(t_expr *v, t_master *m)
+{
+	v->content = (((t_expr*)((t_link_track*)(m->exec_tracks.last))->first))->content;
+	v->info = (((t_expr*)((t_link_track*)(m->exec_tracks.last))->first))->info;
+	free(m->to_define);
 }
 
 void	prepare_var_def(t_master *m, char *s)
@@ -120,34 +126,57 @@ void	inject_var_value(t_master *m, char *name)
 	free(name);
 }
 
+void	convert_to_irationnal(t_expr *e)
+{
+	if (e->info == RATIONNAL)
+		e->info = IRATIONNAL;
+	if (e->info == IRATIONNAL)
+	{
+		e->content.flt = -(e->content.flt);
+		e->info = RATIONNAL;
+	}
+}
+
+BOOL	apply_i(t_master *m)
+{
+	t_content	c;
+
+	if (prev(m) == VALUE || prev(m) == MULT)
+		convert_to_irationnal(get_last_last_expr(m));
+	else if (prev(m) == PLUS)
+	{
+		c.flt = 1;
+		mix_in_value(m, c, IRATIONNAL);
+	}
+	else if (prev(m) == MINUS)
+	{
+		c.flt = -1;
+		mix_in_value(m, c, IRATIONNAL);
+	}
+	else
+		handle_line_error(m, "'i' was used in a non supported scenario.");
+	return (1);
+}
+
 //We already check at each equal if there is no double.
 char	alpha_exec(t_buf *b, void *m)
 {
 	char	*s;
-	char	save;
 
 	s = read_word(b, char_is_valid_var_name_material);
-	//printf("alpha_exec: word read = %s\n", s);
+	if (str_perfect_match(s, "i"))
+		return (apply_i(m));
 	if (((t_master*)m)->equal_defined == 0)
 	{
-		//putendl("alpha_exec: no equal defined.");
-		save = b->str[b->pos];
 		read_till_false(b, is_sep);
 		if (b->str[b->pos] == '=') 
 		{
-			//putendl("alpha_exec: equal detected.");
 			if (is_inside_parenthesis(m))
-			{
-				handle_line_error(m, "= was defined inside a parenthesis.");
-				return (1);
-			}
+				return (handle_line_error(m, "= was defined inside a parenthesis."));
 			if (read_smart_inc(b))
-			{
-				//putendl("alpha_exec: equal confirmed.");
 				prepare_var_def(m, s);//Dont forget to signal the = in the struct.
-			}
 			else
-				handle_line_error(m, "= is followed by nothing.");
+				return (handle_line_error(m, "= is followed by nothing."));
 			*(prev_adr(m)) = EQUAL;
 			return (1);
 		}
@@ -168,40 +197,29 @@ char	equal_exec(t_buf *b, void *m)
 	return (1);
 }
 
-//When reaching this point, we have the certitude that the line was ok.
-char	endline_exec(t_buf *b, void *m)
+void	define_variable(t_master *m)
 {
 	t_expr	*var;
-	char	condensed;
 
-	condensed = 0;
-	if (((t_master*)m)->to_define)//This is a string with the name of the variable to define.
+	if (((t_master*)m)->vars.first == NULL)
+		track_init(&(((t_master*)m)->vars), t_var_init(m));
+	else
 	{
-		if (((t_master*)m)->vars.first == NULL)
-			track_init(&(((t_master*)m)->vars), t_var_init(m));
+		var = get_item(m, ((t_master*)m)->to_define);
+		if (var)
+			t_var_update(var, m);
 		else
-		{
-			var = get_item(m, ((t_master*)m)->to_define);
-			if (var)
-			{
-				if (condense_last_track(m))
-				{
-					condensed = 1;
-					var->content = ((t_expr*)(((t_link_track*)(((t_master*)m)->exec_tracks.last))->first))->content;
-					var->info = ((t_expr*)(((t_link_track*)(((t_master*)m)->exec_tracks.last))->first))->info;
-				}
-				else
-				{
-					handle_line_error(m, "An error appened during the addiditon of expressions destined to a variable definition.");
-					return (1);
-				}
-			}
-			else
-				track_add(&(((t_master*)m)->vars), t_var_init(m));
-		}
+			track_add(&(((t_master*)m)->vars), t_var_init(m));
 	}
-	if (condensed == 0)
-		condense_last_track(m);
+	m->to_define = NULL;
+}
+
+char	endline_exec(t_buf *b, void *m)
+{
+	if (condense_last_track(m) == 0)
+		handle_line_error(m, "A problem happended while doing additions.");
+	if (((t_master*)m)->to_define)
+		define_variable(m);
 	display_last_expr(m);
 	putchr('\n');
 	prepare_new_line(m);
