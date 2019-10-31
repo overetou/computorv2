@@ -6,30 +6,67 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 18:18:55 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/29 18:18:19 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/31 15:50:30 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "computor.h"
 #include <stdio.h>
 
+BOOL	fetch_power_data(t_buf *b, int *power)
+{
+	read_till_false(b, is_sep);
+	if (is_digit(b->str[b->pos]))
+		return (read_int(b, power));
+	return (0);
+}
+
+BOOL	apply_power(t_content *c, char *info, int power)
+{
+	if (*info == RATIONNAL)
+		return (float_simple_power(&(c->flt), power));
+	return (0);
+}
+
+BOOL	get_power(t_buf *b, t_content *c, char *info)
+{
+	int	power;
+
+	read_till_false(b, is_sep);
+	if (b->str[b->pos] == '^')
+	{
+		read_smart_inc(b);
+		power = 1;
+		if (fetch_power_data(b, &power) == 0)
+			return (0);
+		//printf("get_power: power = %d\n", power);
+		return (apply_power(c, info, power));
+	}
+	return (1);
+}
+
 char	num_store(t_buf *b, void *m)
 {
 	t_content	value;
+	char		info;
 	
 	if (prev(m) == VALUE)
 	{
 		handle_line_error(m, "Two values were consecutively defined.");
 		return (1);
 	}
-	value = (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO) ? -1 : 1);
-	//printf("NUMSTORE: starter value = %d\n", value);
+	info = RATIONNAL;
+	value.flt = (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO) ? -1 : 1);
 	if (!read_float(b, &(value.flt)))
 	{
-		handle_line_error(m, "Overflow detected.");
+		handle_line_error(m, "Problem while parsing a number.");
 		return (1);
 	}
-	//printf("NUMSTORE: final value = %f\n", value);
+	if (get_power(b, &value, &info) == 0)
+	{
+		handle_line_error(m, "Problem while parsing a power detected.");
+		return (1);
+	}
 	inject_value(m, value, info);
 	return (1);
 }
@@ -70,6 +107,13 @@ char	modulo_exec(t_buf *b, void *m)
 	return (1);
 }
 
+char	power_exec(t_buf *b, void *m)
+{
+	(void)b;
+	handle_line_error(m, "A '^' was found in a strange place.");
+	return (1);
+}
+
 char	minus_exec(t_buf *b, void *m)
 {
 	if (int_is_comprised(prev(m), MINUS, MODULO))
@@ -81,7 +125,6 @@ char	minus_exec(t_buf *b, void *m)
 	}
 	else
 	{
-		print_track_values(m);
 		handle_line_error(m, "'-' was not preceded by a compatible element.");
 		return (1);
 	}

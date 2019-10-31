@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/29 18:38:33 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/30 16:46:20 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,7 +172,9 @@ char	equal_exec(t_buf *b, void *m)
 char	endline_exec(t_buf *b, void *m)
 {
 	t_expr	*var;
+	char	condensed;
 
+	condensed = 0;
 	if (((t_master*)m)->to_define)//This is a string with the name of the variable to define.
 	{
 		if (((t_master*)m)->vars.first == NULL)
@@ -184,8 +186,9 @@ char	endline_exec(t_buf *b, void *m)
 			{
 				if (condense_last_track(m))
 				{
-					var->content = ((t_expr*)(((t_link_track*)(((t_master*)m)->exec_tracks.last))->first));
-					var->info = ((t_link_track*)(((t_master*)m)->exec_tracks.last))->info;
+					condensed = 1;
+					var->content = ((t_expr*)(((t_link_track*)(((t_master*)m)->exec_tracks.last))->first))->content;
+					var->info = ((t_expr*)(((t_link_track*)(((t_master*)m)->exec_tracks.last))->first))->info;
 				}
 				else
 				{
@@ -197,7 +200,8 @@ char	endline_exec(t_buf *b, void *m)
 				track_add(&(((t_master*)m)->vars), t_var_init(m));
 		}
 	}
-	//print_track_values(m);
+	if (condensed == 0)
+		condense_last_track(m);
 	display_last_expr(m);
 	putchr('\n');
 	prepare_new_line(m);

@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/29 18:32:55 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/31 15:32:25 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #define EQUAL			11
 #define INTEROGATION	12
 #define VALUE			13
+#define POWER			14
 
 //The different values that info can take are:
 #define RATIONNAL		0
@@ -50,7 +51,7 @@
 
 typedef union	u_content
 {
-	float		*flt;
+	float		flt;
 	//t_complex	*cpl;
 	//t_matrice	*matr;
 	//t_func	*func;
@@ -108,6 +109,7 @@ char	num_store(t_buf *b, void *m);
 char	star_exec(t_buf *b, void *m);
 char	div_exec(t_buf *b, void *m);
 char	modulo_exec(t_buf *b, void *m);
+char	power_exec(t_buf *b, void *m);
 char	minus_exec(t_buf *b, void *m);
 char	alpha_exec(t_buf *b, void *m);
 char	open_par_exec(t_buf *b, void *m);
@@ -121,4 +123,6 @@ char	do_addition(t_expr *m1, t_expr* m2);
 void	reverse_expr(t_expr *e);
 BOOL	is_inside_parenthesis(t_master *m);
 void	display_last_expr(t_master *m);
+t_expr*	get_last_last_expr(t_master *m);
+BOOL	is_sep(const char c);
 #endif

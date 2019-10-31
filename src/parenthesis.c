@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 17:05:58 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/29 17:11:16 by overetou         ###   ########.fr       */
+/*   Updated: 2019/10/30 15:02:20 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 BOOL	is_inside_parenthesis(t_master *m)
 {
-	return (m->exec_tracks->first != m->exec_tracks->last);
+	return (m->exec_tracks.first != m->exec_tracks.last);
 }
 
 char	open_par_exec(t_buf *b, void *m)
@@ -31,11 +31,11 @@ t_expr	*extract_refined_expr(t_master *m)
 {
 	t_expr* to_send;
 
-	to_send = ((t_link_track*)(m->exec_tracks.last))->first;
-	if (((t_link_track*)(m->exec_tracks.last))->last == to_send)
+	to_send = (t_expr*)(((t_link_track*)(m->exec_tracks.last))->first);
+	if (((t_link_track*)(m->exec_tracks.last))->last == (t_link*)to_send)
 		((t_link_track*)(m->exec_tracks.last))->first = NULL;
 	else
-		((t_link_track*)(m->exec_tracks.last))->first = to_send->next;
+		((t_link_track*)(m->exec_tracks.last))->first = (t_link*)to_send->next;
 	return (to_send);
 }
 
@@ -47,15 +47,16 @@ char	close_par_exec(t_buf *b, void *m)
 		handle_line_error(m, "Closing parenthesis without match detected.");
 	if (condense_last_track(m) == 0)
 	{
-		handle_line_error("The final addition of a track's components failed")
-			return (1);
+		handle_line_error(m, "The final addition of a track's components failed");
+		return (1);
 	}
 	value = extract_refined_expr(m);
 	track_remove_last(&(((t_master*)m)->exec_tracks), destroy_link_track);
 	//printf("prev now = %d\n", prev(m));
 	if (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO))
 		reverse_expr(value);
-	inject_value(m, value);
+	inject_value(m, value->content, value->info);
+	free(value);
 	read_smart_inc(b);
 	return (1);
 }
