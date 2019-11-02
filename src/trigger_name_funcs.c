@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/31 16:59:21 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/02 17:53:31 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,20 @@ void	inject_value(t_master *m, t_content content, char info)
 	*(prev_adr(m)) = VALUE;
 }
 
+void	inject_expr(t_master *m, t_expr *e)
+{
+	if (exec_cell_if_prior((t_master*)m, e->content, e->info))
+		free(e);//use a special function here: free_expr that can free packs.
+	else
+	{
+		if (EXEC_TRACK_LAST_AS_LINK_TRACK->first == NULL)
+			link_track_init((t_link_track*)(m->exec_tracks.last), (t_link*)e);
+		else
+			link_track_add((t_link_track*)(m->exec_tracks.last), (t_link*)e);
+	}
+	*(prev_adr(m)) = VALUE;
+}
+
 void	*get_item(t_master *m, const char *name)
 {
 	t_var	*p;
@@ -129,9 +143,12 @@ void	inject_var_value(t_master *m, char *name)
 void	convert_to_irationnal(t_expr *e)
 {
 	if (e->info == RATIONNAL)
-		e->info = IRATIONNAL;
-	if (e->info == IRATIONNAL)
 	{
+		e->info = IRATIONNAL;
+	}
+	else if (e->info == IRATIONNAL)
+	{
+		putendl("Il y a quelqu'un ?");
 		e->content.flt = -(e->content.flt);
 		e->info = RATIONNAL;
 	}
@@ -142,7 +159,9 @@ BOOL	apply_i(t_master *m)
 	t_content	c;
 
 	if (prev(m) == VALUE || prev(m) == MULT)
+	{
 		convert_to_irationnal(get_last_last_expr(m));
+	}
 	else if (prev(m) == PLUS)
 	{
 		c.flt = 1;
@@ -165,7 +184,10 @@ char	alpha_exec(t_buf *b, void *m)
 
 	s = read_word(b, char_is_valid_var_name_material);
 	if (str_perfect_match(s, "i"))
+	{
+		putendl("Entered nirvana.");
 		return (apply_i(m));
+	}
 	if (((t_master*)m)->equal_defined == 0)
 	{
 		read_till_false(b, is_sep);

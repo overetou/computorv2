@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 17:28:12 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/31 16:25:32 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/02 16:27:13 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,41 @@ char	exec_cell_if_prior(t_master *m, t_content value, char info)
 	return (1);
 }
 
-//Ne pas oublier de se proteger des overflows ici aussi. Puts the addition result inside the fist link of the track.
+void	aglomerate_type(t_expr *m1, t_expr* m2, t_expr *last)
+{
+	while (m2 != last)
+	{
+		if (m1->info == m2->info)
+		{
+			addition_same_type(m1, m2);
+			m2->info = PROCESSED;
+		}
+		m2 = m2->next;
+	}
+	if (m1->info == m2->info)
+	{
+		addition_same_type(m1, m2);
+		m2->info = PROCESSED;
+	}
+}
+
+void	pull_up_aglomerated(t_expr *e, t_link_track *t)
+{
+	t_expr	*prec;
+
+	if (e != (t_expr*)t->first)
+	{
+		prec = (t_expr*)(t->first);
+		while (prec->next != e)
+			prec = prec->next;
+		prec->next = e->next;
+		e->next = ((t_expr*)(t->first))->next;
+		t->first = (t_link*)e;
+	}
+
+}
+
+//Ne pas oublier de se proteger des overflows ici aussi. Puts the addition result inside the firsts link of the track.
 BOOL	refine_addition_result(t_link_track *t)
 {
 	t_expr	*current;
@@ -62,15 +96,37 @@ BOOL	refine_addition_result(t_link_track *t)
 
 	if (t->first == t->last)
 		return (1);
+	putendl("Time to refine !");
 	current = (t_expr*)(t->first);
 	next = current->next;
 	while (next != (t_expr*)(t->last))
 	{
-		if (do_addition(current, next) == 0)
-			return (0);
+		if (next->info != PROCESSED)
+		{
+			if (current->info != next->info)
+			{
+				aglomerate_type(current, next, (t_expr*)t->last);
+				pull_up_aglomerated(current, t);
+				current = current->next;
+				while (current->info == PROCESSED)
+					current = current->next;
+			}
+			else if (addition_same_type(current, next) == 0)
+				return (0);
+		}
 		next = next->next;
 	}
-	if (do_addition(current, next) == 0)
-		return (0);
+	if (next->info == PROCESSED)
+		return (1);
+	putendl("TOujours debout");
+	if (current->info == next->info)
+	{
+		if (addition_same_type(current, next) == 0)
+			return (0);
+	}
+	else
+	{
+		putendl("C'est pas pareil");
+	}
 	return (1);
 }

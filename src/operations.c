@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/29 14:30:31 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/31 17:33:43 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/02 19:08:41 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,30 @@
 BOOL	is_simple_value(char info)
 {
 	return (info == RATIONNAL || info == IRATIONNAL);
+}
+
+void	multiply_whole_pack(t_expr *pack, t_content v, char info)
+{
+	pack = pack->content.expr;
+	while (pack)
+	{
+		if (info == RATIONNAL)
+			pack->content.flt *= v.flt;
+		else if (info == IRATIONNAL)
+		{
+			if (pack->info == RATIONNAL)
+			{
+				pack->content.flt *= v.flt;
+				pack->info = IRATIONNAL;
+			}
+			else if (pack->info == IRATIONNAL)
+			{
+				pack->content.flt *= -(v.flt);
+				pack->info = RATIONNAL;
+			}
+		}
+		pack = pack->next;
+	}
 }
 
 //WARNING: complex numbers are not supported yet.
@@ -47,6 +71,8 @@ void	do_multiplication(t_master *m, t_content value, char info)
 		else
 			putendl("unkown operation case");
 	}
+	else if (info == PACK)
+		multiply_whole_pack(get_last_last_expr(m), value, info);
 	else
 		putendl("unkown operation case");
 }
@@ -67,30 +93,11 @@ void	do_modulation(t_master *m, t_content value, char info)
 		putendl("unkown operation case");
 }
 
-char	do_addition(t_expr *m1, t_expr* m2)
+char	addition_same_type(t_expr *m1, t_expr* m2)
 {
-	float	safe;
-
-	printf("Prepare to do some additions !\n");
-	if (m1->info == RATIONNAL)
-	{
-		if (m2->info == RATIONNAL)
-		{
-			safe = m1->content.flt;
-			m1->content.flt += m2->content.flt;
-			if (float_have_different_sign(safe, m1->content.flt))
-				return (0);
-		}
-		else if (m2->info == IRATIONNAL)
-			pack(m1);
-	}
-	else if (m1->info == IRATIONNAL)
-	{
-		if (m2->info == IRATIONNAL)
-			m1->content.flt += m2->content.flt;
-		else if (m2->info == RATIONNAL)
-			pack(m1);
-	}
+	if (m1->info == RATIONNAL || m1->info == IRATIONNAL)
+		m1->content.flt += m2->content.flt;
+	m2->info = PROCESSED;
 	return (1);
 }
 
@@ -102,13 +109,56 @@ void	reverse_expr(t_expr *e)
 
 void	display_last_expr(t_master *m)
 {
-	t_content	c;
-	char		info;
+	t_expr	*e;
+	char	printed;
 
-	c = ((t_expr*)(((t_link_track*)(m->exec_tracks.last))->first))->content;
-	info = ((t_expr*)(((t_link_track*)(m->exec_tracks.last))->first))->info;
-	if (info == RATIONNAL)
-		quick_put_float(c.flt);
+	e = (t_expr*)(((t_link_track*)(m->exec_tracks.first))->first);
+	printed = 0;
+	while (e != (t_expr*)(((t_link_track*)(m->exec_tracks.first))->last))
+	{
+		if (e->info == PROCESSED)
+			return ;
+		if (printed)
+		{
+			putchr(' ');
+			if ((e->info == RATIONNAL || e->info == IRATIONNAL) && e->content.flt < 0)
+			{
+				e->content.flt = -(e->content.flt);
+				putstr("- ");
+			}
+			else
+				putstr("+ ");
+		}
+		if (e->info == RATIONNAL)
+			quick_put_float(e->content.flt);
+		else if (e->info == IRATIONNAL)
+		{
+			if (e->content.flt > 1.00001 || e->content.flt < 0.9999)
+				quick_put_float(e->content.flt);
+			putchr('i');
+		}
+		printed = 1;
+		e = e->next;
+	}
+	if (printed)
+	{
+		putchr(' ');
+		if ((e->info == RATIONNAL || e->info == IRATIONNAL) && e->content.flt < 0)
+		{
+			e->content.flt = -(e->content.flt);
+			putstr("- ");
+		}
+		else
+			putstr("+ ");
+	}
+	if (e->info == RATIONNAL)
+		quick_put_float(e->content.flt);
+	else if (e->info == IRATIONNAL)
+	{
+		if (e->content.flt > 1.00001 || e->content.flt < 0.9999)
+			quick_put_float(e->content.flt);
+		putchr('i');
+	}
 }
 
 t_expr*	get_last_last_expr(t_master *m)

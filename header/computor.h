@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/31 17:20:35 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/02 17:57:57 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 #define VALUE			13
 #define POWER			14
 
+#define PROCESSED		-1
 //The different values that info can take are:
 #define RATIONNAL		0
 //content is a simple float.
@@ -40,11 +41,11 @@
 //Content points on the first link matrice.
 #define FUNCTION		3
 //Content points on the first link of an expr list
-#define UNKNOWN
+#define UNKNOWN			4
 //content is a float multplied by an unknown (used exclusivaly in functions)
-#define IRA_UNKNOWN
+#define IRA_UNKNOWN		5
 //content is a float multplied by an unknown and i(used exclusivaly in functions)
-#define IRA_PACK
+#define PACK			6
 //content is part of a set of 2 values: a and b in a + bi.
 
 #define EXEC_TRACK_LAST_AS_LINK_TRACK ((t_link_track*)(m->exec_tracks.last))
@@ -54,7 +55,7 @@
 typedef union	u_content
 {
 	float		flt;
-	//t_complex	*cpl;
+	void		*expr;
 	//t_matrice	*matr;
 	//t_func	*func;
 }				t_content;
@@ -104,6 +105,7 @@ void	prepare_new_line(t_master *m);
 char	exec_cell_if_prior(t_master *m, t_content value, char info);
 BOOL	refine_addition_result(t_link_track *t);
 void	inject_value(t_master *m, t_content content, char info);
+void	inject_expr(t_master *m, t_expr *e);
 void	mix_in_value(t_master *m, t_content content, char info);
 BOOL	handle_line_error(t_master *m, const char *s);
 char	plus_exec(t_buf *b, void *m);
@@ -121,10 +123,12 @@ char	endline_exec(t_buf *b, void *m);
 void	do_multiplication(t_master *m, t_content value, char info);
 void	do_division(t_master *m, t_content value, char info);
 void	do_modulation(t_master *m, t_content value, char info);
-char	do_addition(t_expr *m1, t_expr* m2);
+char	addition_same_type(t_expr *m1, t_expr* m2);
 void	reverse_expr(t_expr *e);
 BOOL	is_inside_parenthesis(t_master *m);
 void	display_last_expr(t_master *m);
 t_expr*	get_last_last_expr(t_master *m);
 BOOL	is_sep(const char c);
+void	*t_expr_create(void);
+void	*t_expr_init(t_content content, char info);
 #endif
