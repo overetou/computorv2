@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/29 14:30:31 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/02 19:08:41 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/04 19:17:03 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,36 +43,81 @@ void	multiply_whole_pack(t_expr *pack, t_content v, char info)
 	}
 }
 
+//We know that value is a pack.
+void	singl_mult_pack(t_expr *e, t_content value);
+{
+	t_expr *head;
+
+	head = value.expr;
+	while (head != NULL)
+	{
+		simple_mult(head, head, e->content, e->info);
+		head = head->next;
+	}
+	e->content = value;
+	e->info = PACK;
+}
+
+//Mutiply rationnal and ira between themself.
+void	simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info)
+{
+	receiver->content.flt = (op1->content.)flt * op2.flt;
+	if (op1->info == RATIONNAL)
+	{
+		if (op2info == IRATIONNAL)
+			receiver->info = IRATIONNAL;
+		else
+			receiver->info = RATIONNAL;
+	}
+	else if (op1->info == IRATIONNAL)
+	{
+		if (op2info == IRATIONNAL)
+		{
+			receiver->info = RATIONNAL;
+			receiver->content *= -1;
+		}
+		else
+			receiver->info = IRATIONNAL;
+	}
+}
+
+void	pack_by_pack(t_expr *target_pack, t_expr *pack)
+{
+	t_content	replace;
+	t_expr		*head1;
+	t_expr 		*head2;
+
+	head1 = (target_pack->content).expr;
+	head2 = (pack->content).expr;
+	while (head1)
+	{
+
+	}
+}
+
+void	multiply_pack_by(t_expr *pack, t_content c, char info)
+{
+	if (info == IRATIONNAL || info == RATIONNAL)
+		apply_singl_mult(pack, c, info);
+	else if (info == PACK)
+		pack_by_pack(pack, c);
+}
+
 //WARNING: complex numbers are not supported yet.
 void	do_multiplication(t_master *m, t_content value, char info)
 {
 	char	m_info;
 
 	m_info = get_last_last_expr(m)->info;
-	if (info == RATIONNAL)
+	if (m_info == RATIONNAL || m_info == IRATIONNAL)
 	{
-		if (m_info == RATIONNAL || m_info == IRATIONNAL)
-			get_last_last_expr(m)->content.flt *= value.flt;
-		else
-			putendl("unkown operation case");
+		if (info == RATIONNAL || info == IRATIONNAL)
+			simple_mult(get_last_last_expr(m), get_last_last_expr(m), value, info);
+		else if (info == PACK)
+			singl_mult_pack(get_last_last_expr(m), value, info);
 	}
-	else if (info == IRATIONNAL)
-	{
-		if (m_info == RATIONNAL)
-		{
-			get_last_last_expr(m)->content.flt *= value.flt;
-			get_last_last_expr(m)->info = IRATIONNAL;
-		}
-		else if (m_info == IRATIONNAL)
-		{
-			get_last_last_expr(m)->content.flt *= -value.flt;
-			get_last_last_expr(m)->info = RATIONNAL;
-		}
-		else
-			putendl("unkown operation case");
-	}
-	else if (info == PACK)
-		multiply_whole_pack(get_last_last_expr(m), value, info);
+	else if (m_info == PACK)
+		multiply_pack_by(get_last_last_expr(m), value, info);
 	else
 		putendl("unkown operation case");
 }
