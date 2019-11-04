@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 17:28:12 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/02 16:27:13 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/04 23:02:17 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,11 @@ BOOL	refine_addition_result(t_link_track *t)
 	t_expr	*next;
 
 	if (t->first == t->last)
+	{
+		if (((t_expr*)(t->first))->info == PACK)
+			putendl("Need to unpack");
 		return (1);
-	putendl("Time to refine !");
+	}
 	current = (t_expr*)(t->first);
 	next = current->next;
 	while (next != (t_expr*)(t->last))
@@ -118,15 +121,10 @@ BOOL	refine_addition_result(t_link_track *t)
 	}
 	if (next->info == PROCESSED)
 		return (1);
-	putendl("TOujours debout");
 	if (current->info == next->info)
 	{
 		if (addition_same_type(current, next) == 0)
 			return (0);
-	}
-	else
-	{
-		putendl("C'est pas pareil");
 	}
 	return (1);
 }

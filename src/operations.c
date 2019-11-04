@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/29 14:30:31 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/04 19:17:03 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/04 22:50:15 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,32 +19,33 @@ BOOL	is_simple_value(char info)
 	return (info == RATIONNAL || info == IRATIONNAL);
 }
 
-void	multiply_whole_pack(t_expr *pack, t_content v, char info)
+//Mutiply rationnal and ira between themself.
+void	simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info)
 {
-	pack = pack->content.expr;
-	while (pack)
+	printf("simple_mult: %f * %f\n", op1->content.flt, op2.flt);
+	receiver->content.flt = (op1->content.flt) * (op2.flt);
+	if (op1->info == RATIONNAL)
 	{
-		if (info == RATIONNAL)
-			pack->content.flt *= v.flt;
-		else if (info == IRATIONNAL)
-		{
-			if (pack->info == RATIONNAL)
-			{
-				pack->content.flt *= v.flt;
-				pack->info = IRATIONNAL;
-			}
-			else if (pack->info == IRATIONNAL)
-			{
-				pack->content.flt *= -(v.flt);
-				pack->info = RATIONNAL;
-			}
-		}
-		pack = pack->next;
+		if (op2info == IRATIONNAL)
+			receiver->info = IRATIONNAL;
+		else
+			receiver->info = RATIONNAL;
 	}
+	else if (op1->info == IRATIONNAL)
+	{
+		if (op2info == IRATIONNAL)
+		{
+			receiver->info = RATIONNAL;
+			receiver->content.flt *= -1;
+		}
+		else
+			receiver->info = IRATIONNAL;
+	}
+//	printf("result = %f with type: %d\n", receiver->content.flt, receiver->info);
 }
 
 //We know that value is a pack.
-void	singl_mult_pack(t_expr *e, t_content value);
+void	singl_mult_pack(t_expr *e, t_content value)
 {
 	t_expr *head;
 
@@ -58,49 +59,75 @@ void	singl_mult_pack(t_expr *e, t_content value);
 	e->info = PACK;
 }
 
-//Mutiply rationnal and ira between themself.
-void	simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info)
+void	dissolve_expr_in_content(t_content *c, t_expr *e)
 {
-	receiver->content.flt = (op1->content.)flt * op2.flt;
-	if (op1->info == RATIONNAL)
+	t_expr *head;
+
+	if (c->expr == NULL)
 	{
-		if (op2info == IRATIONNAL)
-			receiver->info = IRATIONNAL;
-		else
-			receiver->info = RATIONNAL;
+		putendl("dissolve_expr_in_content: init pack");
+		c->expr = t_expr_init(e->content, e->info);
 	}
-	else if (op1->info == IRATIONNAL)
+	else
 	{
-		if (op2info == IRATIONNAL)
+		head = c->expr;
+		while (head->info != e->info)
 		{
-			receiver->info = RATIONNAL;
-			receiver->content *= -1;
+			if (head->next == NULL)
+			{
+				head->next = t_expr_init(e->content, e->info);
+				head->next->next = NULL;
+				return ;
+			}
+			head = head->next;
 		}
-		else
-			receiver->info = IRATIONNAL;
+		head->content.flt += e->content.flt;
+		printf("dissolve_expr_in_content: augmented a value to %f\n", head->content.flt);
 	}
 }
 
-void	pack_by_pack(t_expr *target_pack, t_expr *pack)
+void	pack_mult_pack(t_expr *target_pack, t_content pack)
 {
 	t_content	replace;
 	t_expr		*head1;
 	t_expr 		*head2;
+	t_expr		temp;
 
+	putendl("pack_mult_pack: entered.");
 	head1 = (target_pack->content).expr;
-	head2 = (pack->content).expr;
+	replace.expr = NULL;
 	while (head1)
 	{
+		head2 = pack.expr;
+		while (head2)
+		{
+			simple_mult(&temp, head1, head2->content, head2->info);
+			dissolve_expr_in_content(&replace, &temp);
+			head2 = head2->next;
+		}
+		head1 = head1->next;
+	}
+//	free_expr(head1);
+//	free_expr(head2);
+	target_pack->content = replace;
+}
 
+void	apply_singl_mult(t_expr *pack, t_content c, char info)
+{
+	while (pack)
+	{
+		simple_mult(pack, pack, c, info);
+		pack = pack->next;
 	}
 }
 
 void	multiply_pack_by(t_expr *pack, t_content c, char info)
 {
+	putendl("multiply_pack_by: entered.");
 	if (info == IRATIONNAL || info == RATIONNAL)
 		apply_singl_mult(pack, c, info);
 	else if (info == PACK)
-		pack_by_pack(pack, c);
+		pack_mult_pack(pack, c);
 }
 
 //WARNING: complex numbers are not supported yet.
@@ -108,13 +135,14 @@ void	do_multiplication(t_master *m, t_content value, char info)
 {
 	char	m_info;
 
+	putendl("\nWelcome in multiplication land !");
 	m_info = get_last_last_expr(m)->info;
 	if (m_info == RATIONNAL || m_info == IRATIONNAL)
 	{
 		if (info == RATIONNAL || info == IRATIONNAL)
 			simple_mult(get_last_last_expr(m), get_last_last_expr(m), value, info);
 		else if (info == PACK)
-			singl_mult_pack(get_last_last_expr(m), value, info);
+			singl_mult_pack(get_last_last_expr(m), value);
 	}
 	else if (m_info == PACK)
 		multiply_pack_by(get_last_last_expr(m), value, info);

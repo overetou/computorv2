@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 18:18:55 by overetou          #+#    #+#             */
-/*   Updated: 2019/10/31 16:04:15 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/04 21:22:27 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ char	num_store(t_buf *b, void *m)
 		handle_line_error(m, "Problem while parsing a power detected.");
 		return (1);
 	}
+	printf("num_store: value read = %f\n", value.flt);
 	inject_value(m, value, info);
 	return (1);
 }

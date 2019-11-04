@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/02 17:53:31 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/04 22:53:39 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,11 @@ void	*t_expr_init(t_content content, char info)
 //Writes directly on the first time, then add a cell.
 void	mix_in_value(t_master *m, t_content content, char info)
 {
+	if (info == PACK)
+	{
+		info = ((t_expr*)(content.expr))->info;
+		content = ((t_expr*)(content.expr))->content;
+	}
 	if (EXEC_TRACK_LAST_AS_LINK_TRACK->first == NULL)
 		link_track_init(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)t_expr_init(content, info));
 	else
@@ -81,8 +86,13 @@ void	inject_value(t_master *m, t_content content, char info)
 
 void	inject_expr(t_master *m, t_expr *e)
 {
-	if (exec_cell_if_prior((t_master*)m, e->content, e->info))
-		free(e);//use a special function here: free_expr that can free packs.
+
+	if (exec_cell_if_prior(m, e->content, e->info))
+	{
+		//putendl("inject_expr:");
+		putendl("A prioritary operation was executed");
+		//free_expr(e);//use a special function here: free_expr that can free packs.
+	}
 	else
 	{
 		if (EXEC_TRACK_LAST_AS_LINK_TRACK->first == NULL)
@@ -161,6 +171,7 @@ BOOL	apply_i(t_master *m)
 	if (prev(m) == VALUE || prev(m) == MULT)
 	{
 		convert_to_irationnal(get_last_last_expr(m));
+		printf("apply_i: Converted %f to i.\n", get_last_last_expr(m)->content.flt);
 	}
 	else if (prev(m) == PLUS)
 	{
@@ -185,7 +196,6 @@ char	alpha_exec(t_buf *b, void *m)
 	s = read_word(b, char_is_valid_var_name_material);
 	if (str_perfect_match(s, "i"))
 	{
-		putendl("Entered nirvana.");
 		return (apply_i(m));
 	}
 	if (((t_master*)m)->equal_defined == 0)
