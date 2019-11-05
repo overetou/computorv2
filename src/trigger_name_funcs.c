@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/04 22:53:39 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/05 20:40:36 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,9 +79,19 @@ void	mix_in_value(t_master *m, t_content content, char info)
 
 void	inject_value(t_master *m, t_content content, char info)
 {
+	if (m->matrice_depht)
+	{
+		if (prev(m) == COMA || prev(m) == SEMILICON || prev(m) == NOTHING)
+			mix_in_value(m, content, info);
+		else
+			handle_line_error(m, "Illegal operation in a matrix.");
+	}
+	else
+	{
 	if (!exec_cell_if_prior((t_master*)m, content, info))
 		mix_in_value(m, content, info);
 	*(prev_adr(m)) = VALUE;
+	}
 }
 
 void	inject_expr(t_master *m, t_expr *e)

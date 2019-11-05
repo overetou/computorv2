@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/29 14:30:31 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/04 22:50:15 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/05 21:15:25 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,10 +166,17 @@ void	do_modulation(t_master *m, t_content value, char info)
 		putendl("unkown operation case");
 }
 
+char	matrix_addition(t_expr *m1, t_expr* m2)
+{
+
+}
+
 char	addition_same_type(t_expr *m1, t_expr* m2)
 {
 	if (m1->info == RATIONNAL || m1->info == IRATIONNAL)
 		m1->content.flt += m2->content.flt;
+	if (m1->info == MATRIX)
+		return (matrix_addition(m1, m2)));
 	m2->info = PROCESSED;
 	return (1);
 }
@@ -232,6 +239,11 @@ void	display_last_expr(t_master *m)
 			quick_put_float(e->content.flt);
 		putchr('i');
 	}
+}
+
+t_expr*	get_last_first_expr(t_master *m)
+{
+	return ((t_expr*)(((t_link_track*)(m->exec_tracks.last))->first));
 }
 
 t_expr*	get_last_last_expr(t_master *m)

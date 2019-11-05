@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/02 17:57:57 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/05 19:21:33 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,9 @@ void	reverse_expr(t_expr *e);
 BOOL	is_inside_parenthesis(t_master *m);
 void	display_last_expr(t_master *m);
 t_expr*	get_last_last_expr(t_master *m);
+t_expr*	get_last_first_expr(t_master *m);
 BOOL	is_sep(const char c);
 void	*t_expr_create(void);
 void	*t_expr_init(t_content content, char info);
+char	close_square_exec(t_buf *b, void *m);
 #endif
