@@ -12,6 +12,8 @@ void	init_master(t_master *m)
 	trigger_add((t_trigger_set*)m, "%", modulo_exec);
 	trigger_add((t_trigger_set*)m, "(", open_par_exec);
 	trigger_add((t_trigger_set*)m, ")", close_par_exec);
+	trigger_add((t_trigger_set*)m, "[", open_square_exec);
+	trigger_add((t_trigger_set*)m, "]", close_square_exec);
 //	trigger_add((t_trigger_set*)m, "=", );
 //	trigger_add((t_trigger_set*)m, "?", );
 	trigger_add((t_trigger_set*)m, "^", power_exec);
