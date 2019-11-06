@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/29 14:30:31 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/05 21:15:25 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/06 21:44:10 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,9 +166,84 @@ void	do_modulation(t_master *m, t_content value, char info)
 		putendl("unkown operation case");
 }
 
-char	matrix_addition(t_expr *m1, t_expr* m2)
+void	matrix_multiplication(t_expr *m1, t_expr* m2, int coord[2])
 {
+	t_expr		*x1;
+	int			mem;
+	int			final_count;
 
+	y1 = m1->content.expr;
+	mem = coord[1];
+	while (mem--)
+		y1 = y1->next;
+	x1 = y1->content.expr;
+	y2 = m2->content.expr;
+	final_count = get_list_len(m1->content.expr->content.expr);
+	value = 0;
+	while (final_count--)
+	{
+		mem = count[0];
+		x2 = y2->content.expr;
+		while (mem--)
+			x2 = x2->next;
+		value += simple_mult(x1, x1, x2);
+		x1 = x1->next;
+	}
+	x1 = y1->content.expr;
+	while (coord[0]--)
+		x1 = x1->next;
+	x1->content.flt = value
+}
+
+char	matrix_multiplication(t_expr *m1, t_expr* m2)
+{
+	t_expr		*x1;
+	t_expr		*y1;
+	t_expr		*x2;
+	t_expr		*y2;
+	int			coord[2];
+	int			count;
+
+	y1 = m1->content.expr;
+	x1= y1->content.expr;
+	y2 = m2->content.expr;
+	x2= y2->content.expr;
+	if (get_list_len(y1) != get_list_len(x2) || get_list_len(x1) != get_list_len(y2))
+		return (0);
+	coord[0] = 0;
+	coord[1] = 0;
+	count = get_list_len(y1) + get_list_len(x1);
+	while (count--)
+	{
+		operate_matrix_point(m1, m2, coord);
+		(coord[1])++;
+	}
+	(coord[0])++;
+	(coord[1])++;
+}
+
+char	matrix_to_elem(t_expr *m1, t_expr* m2, func)
+{
+	t_expr	*x;
+	t_expr	*y;
+	BOOL	switched
+
+		if (m1->info != m2->infoo)
+		{
+			if (m1->info != MATRIX)
+				ptr_switch(&m1, &m2);
+			y = m1->content.expr;
+			while (y)
+			{
+				x = y->content.expr;
+				while (x)
+				{
+					simple_mult(x, x, m2, info);
+					x = x->next;
+				}
+				y = y->next;
+			}
+		}
 }
 
 char	addition_same_type(t_expr *m1, t_expr* m2)
