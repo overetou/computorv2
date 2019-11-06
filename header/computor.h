@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/05 19:21:33 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/06 22:47:19 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@
 #define INTEROGATION	12
 #define VALUE			13
 #define POWER			14
+#define COMA			15
+#define SEMILICON		16
+#define MATRIX			17
 
 #define PROCESSED		-1
 //The different values that info can take are:
@@ -94,6 +97,7 @@ typedef struct		s_master
 	t_track			vars;
 	char			equal_defined;//0 for not defined, 1 for var assignment on left, 2 for right.
 	char			*to_define;
+	int				matrice_depht;
 }					t_master;
 
 int		condense_last_track(t_master *m);
@@ -133,4 +137,7 @@ BOOL	is_sep(const char c);
 void	*t_expr_create(void);
 void	*t_expr_init(t_content content, char info);
 char	close_square_exec(t_buf *b, void *m);
+char	open_square_exec(t_buf *b, void *m);
+char	semilicon_exec(t_buf *b, void *m);
+char	coma_exec(t_buf *b, void *m);
 #endif

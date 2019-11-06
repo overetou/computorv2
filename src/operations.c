@@ -6,12 +6,25 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/29 14:30:31 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/06 21:44:10 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/06 22:51:57 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "computor.h"
 #include <stdio.h>
+
+int	get_list_len(t_link *l)
+{
+	int	count;
+
+	count = 0;
+	while (l)
+	{
+		count++;
+		l = l->next;
+	}
+	return (count);
+}
 
 //A simple value here means not a matrice and not a function.
 BOOL	is_simple_value(char info)
@@ -166,11 +179,16 @@ void	do_modulation(t_master *m, t_content value, char info)
 		putendl("unkown operation case");
 }
 
-void	matrix_multiplication(t_expr *m1, t_expr* m2, int coord[2])
+void	operate_matrix_point(t_expr *m1, t_expr* m2, int coord[2])
 {
 	t_expr		*x1;
+	t_expr		*y1;
+	t_expr		*x2;
+	t_expr		*y2;
 	int			mem;
 	int			final_count;
+	t_expr		charge;
+	float		value;
 
 	y1 = m1->content.expr;
 	mem = coord[1];
@@ -178,21 +196,22 @@ void	matrix_multiplication(t_expr *m1, t_expr* m2, int coord[2])
 		y1 = y1->next;
 	x1 = y1->content.expr;
 	y2 = m2->content.expr;
-	final_count = get_list_len(m1->content.expr->content.expr);
+	final_count = get_list_len(((t_expr*)(m1->content.expr))->content.expr);
 	value = 0;
 	while (final_count--)
 	{
-		mem = count[0];
+		mem = coord[0];
 		x2 = y2->content.expr;
 		while (mem--)
 			x2 = x2->next;
-		value += simple_mult(x1, x1, x2);
+		simple_mult(&charge, x1, x2->content, x2->info);
+		value += charge.content.flt;
 		x1 = x1->next;
 	}
 	x1 = y1->content.expr;
 	while (coord[0]--)
 		x1 = x1->next;
-	x1->content.flt = value
+	x1->content.flt = value;
 }
 
 char	matrix_multiplication(t_expr *m1, t_expr* m2)
@@ -208,11 +227,11 @@ char	matrix_multiplication(t_expr *m1, t_expr* m2)
 	x1= y1->content.expr;
 	y2 = m2->content.expr;
 	x2= y2->content.expr;
-	if (get_list_len(y1) != get_list_len(x2) || get_list_len(x1) != get_list_len(y2))
+	if (get_list_len((t_link*)y1) != get_list_len((t_link*)x2) || get_list_len((t_link*)x1) != get_list_len((t_link*)y2))
 		return (0);
 	coord[0] = 0;
 	coord[1] = 0;
-	count = get_list_len(y1) + get_list_len(x1);
+	count = get_list_len((t_link*)y1) + get_list_len((t_link*)x1);
 	while (count--)
 	{
 		operate_matrix_point(m1, m2, coord);
@@ -220,38 +239,44 @@ char	matrix_multiplication(t_expr *m1, t_expr* m2)
 	}
 	(coord[0])++;
 	(coord[1])++;
+	return (1);
 }
 
-char	matrix_to_elem(t_expr *m1, t_expr* m2, func)
+char	matrix_to_elem(t_expr *m1, t_expr* m2)
 {
 	t_expr	*x;
 	t_expr	*y;
-	BOOL	switched
+	BOOL	switched;
 
-		if (m1->info != m2->infoo)
+	switched = 0;
+	if (m1->info != m2->info)
+	{
+		if (m1->info != MATRIX)
 		{
-			if (m1->info != MATRIX)
-				ptr_switch(&m1, &m2);
-			y = m1->content.expr;
-			while (y)
-			{
-				x = y->content.expr;
-				while (x)
-				{
-					simple_mult(x, x, m2, info);
-					x = x->next;
-				}
-				y = y->next;
-			}
+			swap_pointer((void**)(&m1), (void*)(&m2));
+			switched = 1;
 		}
+		y = m1->content.expr;
+		while (y)
+		{
+			x = y->content.expr;
+			while (x)
+			{
+				simple_mult(x, x, m2->content, m2->info);
+				x = x->next;
+			}
+			y = y->next;
+		}
+	}
+	return (1);
 }
 
 char	addition_same_type(t_expr *m1, t_expr* m2)
 {
 	if (m1->info == RATIONNAL || m1->info == IRATIONNAL)
 		m1->content.flt += m2->content.flt;
-	if (m1->info == MATRIX)
-		return (matrix_addition(m1, m2)));
+//	if (m1->info == MATRIX)
+//		return (matrix_addition(m1, m2)));
 	m2->info = PROCESSED;
 	return (1);
 }
