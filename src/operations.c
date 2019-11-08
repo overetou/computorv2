@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/29 14:30:31 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/06 22:51:57 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/08 21:51:37 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,14 +287,48 @@ void	reverse_expr(t_expr *e)
 		e->content.flt = -(e->content.flt);
 }
 
+void	display_expr(t_expr *e)
+{
+	t_expr *x;
+
+	if (e->info == RATIONNAL)
+		quick_put_float(e->content.flt);
+	else if (e->info == IRATIONNAL)
+	{
+		if (e->content.flt > 1.00001 || e->content.flt < 0.9999)
+			quick_put_float(e->content.flt);
+		putchr('i');
+	}
+	else if (e->info == MATRIX)
+	{
+		e = e->content.expr;
+		while (e)
+		{
+			x = e->content.expr;
+			putchr('[');
+			while (x)
+			{
+				display_expr(x);
+				if (x->next)
+					putstr(", ");
+				x = x->next;
+			}
+			putchr(']');
+			e = e->next;
+			if (e)
+				putchr('\n');
+		}
+	}
+}
+
 void	display_last_expr(t_master *m)
 {
 	t_expr	*e;
 	char	printed;
 
-	e = (t_expr*)(((t_link_track*)(m->exec_tracks.first))->first);
+	e = get_last_first_expr(m);
 	printed = 0;
-	while (e != (t_expr*)(((t_link_track*)(m->exec_tracks.first))->last))
+	while (e != get_last_last_expr(m))
 	{
 		if (e->info == PROCESSED)
 			return ;
@@ -309,14 +343,7 @@ void	display_last_expr(t_master *m)
 			else
 				putstr("+ ");
 		}
-		if (e->info == RATIONNAL)
-			quick_put_float(e->content.flt);
-		else if (e->info == IRATIONNAL)
-		{
-			if (e->content.flt > 1.00001 || e->content.flt < 0.9999)
-				quick_put_float(e->content.flt);
-			putchr('i');
-		}
+		display_expr(e);
 		printed = 1;
 		e = e->next;
 	}
@@ -331,14 +358,7 @@ void	display_last_expr(t_master *m)
 		else
 			putstr("+ ");
 	}
-	if (e->info == RATIONNAL)
-		quick_put_float(e->content.flt);
-	else if (e->info == IRATIONNAL)
-	{
-		if (e->content.flt > 1.00001 || e->content.flt < 0.9999)
-			quick_put_float(e->content.flt);
-		putchr('i');
-	}
+	display_expr(e);
 }
 
 t_expr*	get_last_first_expr(t_master *m)

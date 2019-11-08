@@ -26,6 +26,7 @@ void	init_master(t_master *m)
 	track_init(&(m->exec_tracks), (t_link*)link_track_create(NULL));
 	m->vars.first = NULL;
 	m->funcs.first = NULL;
+	m->matrice_depht = 0;
 	prepare_new_line(m);
 }
 

@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/05 20:40:36 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/08 21:34:01 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,36 +79,34 @@ void	mix_in_value(t_master *m, t_content content, char info)
 
 void	inject_value(t_master *m, t_content content, char info)
 {
-	if (m->matrice_depht)
-	{
-		if (prev(m) == COMA || prev(m) == SEMILICON || prev(m) == NOTHING)
-			mix_in_value(m, content, info);
-		else
-			handle_line_error(m, "Illegal operation in a matrix.");
-	}
-	else
-	{
 	if (!exec_cell_if_prior((t_master*)m, content, info))
 		mix_in_value(m, content, info);
 	*(prev_adr(m)) = VALUE;
-	}
 }
 
 void	inject_expr(t_master *m, t_expr *e)
 {
-
-	if (exec_cell_if_prior(m, e->content, e->info))
+	if (m->matrice_depht)
 	{
-		//putendl("inject_expr:");
-		putendl("A prioritary operation was executed");
-		//free_expr(e);//use a special function here: free_expr that can free packs.
+		mix_in_value(m, e->content, e->info);
+		e = e->content.expr;
 	}
 	else
 	{
-		if (EXEC_TRACK_LAST_AS_LINK_TRACK->first == NULL)
-			link_track_init((t_link_track*)(m->exec_tracks.last), (t_link*)e);
+
+		if (exec_cell_if_prior(m, e->content, e->info))
+		{
+			//putendl("inject_expr:");
+			putendl("A prioritary operation was executed");
+			//free_expr(e);//use a special function here: free_expr that can free packs.
+		}
 		else
-			link_track_add((t_link_track*)(m->exec_tracks.last), (t_link*)e);
+		{
+			if (EXEC_TRACK_LAST_AS_LINK_TRACK->first == NULL)
+				link_track_init((t_link_track*)(m->exec_tracks.last), (t_link*)e);
+			else
+				link_track_add((t_link_track*)(m->exec_tracks.last), (t_link*)e);
+		}
 	}
 	*(prev_adr(m)) = VALUE;
 }
