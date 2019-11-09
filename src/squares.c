@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/05 17:39:48 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/08 21:46:03 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/09 20:06:14 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,7 @@ char	open_square_exec(t_buf *b, void *m)
 	if (((t_master*)m)->matrice_depht == 0)
 	{
 		((t_master*)m)->matrice_depht = 1;
-		track_add(&(((t_master*)m)->exec_tracks), (t_link*)link_track_create(NULL));
-		putendl("Added a track.");
+		add_level(m);
 	}
 	else
 	{
@@ -37,6 +36,7 @@ char	open_square_exec(t_buf *b, void *m)
 		}
 		else
 		{
+			printf("prev = %d\n", prev(m));
 			handle_line_error(m, "Wrong matrix format.");
 			return (1);
 		}

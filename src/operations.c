@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/29 14:30:31 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/08 21:51:37 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/09 21:06:39 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,12 +271,42 @@ char	matrix_to_elem(t_expr *m1, t_expr* m2)
 	return (1);
 }
 
+BOOL	matrix_addition(t_expr *m1, t_expr *m2)
+{
+	t_expr *x1;
+	t_expr *x2;
+
+	m1 = m1->content.expr;
+	m2 = m2->content.expr;
+	while (m1)
+	{
+		if (!m2)
+			return (0);
+		x1 = m1->content.expr;
+		x2 = m2->content.expr;
+		while (x1)
+		{
+			if (!x2)
+				return (0);
+			addition_same_type(x1, x2);
+			x1 = x1->next;
+			x2 = x2->next;
+		}
+		m1 = m1->next;
+		m2 = m2->next;
+	}
+	return (1);
+}
+
 char	addition_same_type(t_expr *m1, t_expr* m2)
 {
 	if (m1->info == RATIONNAL || m1->info == IRATIONNAL)
 		m1->content.flt += m2->content.flt;
-//	if (m1->info == MATRIX)
-//		return (matrix_addition(m1, m2)));
+	if (m1->info == MATRIX)
+	{
+		if (matrix_addition(m1, m2) == 0)
+			return (0);
+	}
 	m2->info = PROCESSED;
 	return (1);
 }
@@ -347,6 +377,8 @@ void	display_last_expr(t_master *m)
 		printed = 1;
 		e = e->next;
 	}
+	if (e->info == PROCESSED)
+		return ;
 	if (printed)
 	{
 		putchr(' ');

@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 17:05:58 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/04 22:56:20 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/09 20:05:45 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,15 @@ BOOL	is_inside_parenthesis(t_master *m)
 	return (m->exec_tracks.first != m->exec_tracks.last);
 }
 
-char	open_par_exec(t_buf *b, void *m)
+void	add_level(t_master *m)
 {
 	track_add(&(((t_master*)m)->exec_tracks), (t_link*)link_track_create(NULL));
-	//putendl("Added a track.");
 	*prev_adr(m) = NOTHING;
+}
+
+char	open_par_exec(t_buf *b, void *m)
+{
+	add_level(m);
 	read_smart_inc(b);
 	return (1);
 }

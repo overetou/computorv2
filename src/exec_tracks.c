@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 17:28:12 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/05 17:21:17 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/09 20:13:55 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 
 void	prepare_new_line(t_master *m)
 {
-	//print_track_values(m);
 	destroy_link_track_content((t_link_track*)(m->exec_tracks.first));
 	*(prev_adr(m)) = NOTHING;
 	m->equal_defined = 0;
