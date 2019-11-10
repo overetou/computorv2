@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/05 17:39:48 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/09 20:06:14 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/10 18:07:32 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ char	open_square_exec(t_buf *b, void *m)
 	{
 		if ((prev(m) == SEMILICON || prev(m) == COMA || prev(m) == NOTHING) && ((t_master*)m)->matrice_depht == 1)
 		{
-			track_add(&(((t_master*)m)->exec_tracks), (t_link*)link_track_create(NULL));
+			add_level(m);
 			((t_master*)m)->matrice_depht++;
 		}
 		else
