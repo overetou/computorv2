@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/09 20:06:31 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/11 21:10:53 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,9 @@
 #define PACK			6
 //content is part of a set of 2 values: a and b in a + bi.
 
+#define DEFINE_VAR 1
+#define DEFINE_FUNC 2
+
 #define EXEC_TRACK_LAST_AS_LINK_TRACK ((t_link_track*)(m->exec_tracks.last))
 
 #include "../../tools/libft/header/libft.h"
@@ -79,6 +82,13 @@ typedef struct		s_var
 	char			info;
 }					t_var;
 
+typedef struct		s_func
+{
+	struct s_func	*next;
+	char			*name;
+	t_track			expr;
+}					t_func;
+
 typedef struct  s_cust_link_track
 {
     struct s_link_track *next;
@@ -94,6 +104,7 @@ typedef struct		s_master
 	t_buf			buf;
 	t_track			exec_tracks;
 	t_track			funcs;
+	char			*func_var_name;
 	t_track			vars;
 	char			equal_defined;//0 for not defined, 1 for var assignment on left, 2 for right.
 	char			*to_define;
@@ -141,4 +152,6 @@ char	open_square_exec(t_buf *b, void *m);
 char	semilicon_exec(t_buf *b, void *m);
 char	coma_exec(t_buf *b, void *m);
 void	add_level(t_master *m);
+char	prepare_func_definition(t_master *m, t_buf *b, char *s);
+BOOL	char_is_valid_var_name_material(const char c);
 #endif

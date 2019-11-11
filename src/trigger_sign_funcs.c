@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 18:18:55 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/04 21:22:27 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/11 21:03:00 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,13 @@ char	num_store(t_buf *b, void *m)
 		return (1);
 	}
 	printf("num_store: value read = %f\n", value.flt);
-	inject_value(m, value, info);
+	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+	{
+		mix_in_value(m, value, info);
+		*(prev_adr(m)) = VALUE;
+	}
+	else
+		inject_value(m, value, info);
 	return (1);
 }
 
@@ -81,6 +87,8 @@ char	star_exec(t_buf *b, void *m)
 		handle_line_error(m, "Expected a value before a '*'.");
 	else
 		*(prev_adr(m)) = MULT;
+	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+		mix_in_value(m, (t_content)NULL, MULT);
 	return (1);
 }
 
@@ -93,6 +101,8 @@ char	div_exec(t_buf *b, void *m)
 	}
 	*(prev_adr(m)) = DIV;
 	read_smart_inc(b);
+	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+		mix_in_value(m, (t_content)NULL, DIV);
 	return (1);
 }
 
@@ -105,6 +115,8 @@ char	modulo_exec(t_buf *b, void *m)
 	}
 	*(prev_adr(m)) = MODULO;
 	read_smart_inc(b);
+	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+		mix_in_value(m, (t_content)NULL, MODULO);
 	return (1);
 }
 
@@ -112,6 +124,8 @@ char	power_exec(t_buf *b, void *m)
 {
 	(void)b;
 	handle_line_error(m, "A '^' was found in a strange place.");
+	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+		mix_in_value(m, (t_content)NULL, POWER);
 	return (1);
 }
 
@@ -130,6 +144,8 @@ char	minus_exec(t_buf *b, void *m)
 		return (1);
 	}
 	read_smart_inc(b);
+	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+		mix_in_value(m, (t_content)NULL, MINUS);
 	return (1);
 }
 
@@ -143,5 +159,7 @@ char	plus_exec(t_buf *b, void *m)
 	else
 		*(prev_adr(m)) = PLUS;
 	read_smart_inc(b);
+	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+		mix_in_value(m, (t_content)NULL, PLUS);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/08 21:34:01 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/11 21:17:19 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	t_var_update(t_expr *v, t_master *m)
 void	prepare_var_def(t_master *m, char *s)
 {
 	m->to_define = s;
-	m->equal_defined = 1;
+	m->equal_defined = DEFINE_VAR;
 }
 
 BOOL	char_is_valid_var_name_material(const char c)
@@ -142,6 +142,22 @@ char	get_item_value(t_content *n, t_master *m, const char *name)
 	return (v->info);
 }
 
+void	mix_var_value(t_master *m, char *name)
+{
+	t_content	value;
+	char		info;
+
+	info = get_item_value(&value, m, name);
+	if (info >= 0)
+		mix_in_value(m, value, info);
+	else
+	{
+		m->to_define = NULL;
+		handle_line_error(m, "Definition of a variable was not found.");
+	}
+	free(name);
+}
+
 void	inject_var_value(t_master *m, char *name)
 {
 	t_content	value;
@@ -203,9 +219,9 @@ char	alpha_exec(t_buf *b, void *m)
 
 	s = read_word(b, char_is_valid_var_name_material);
 	if (str_perfect_match(s, "i"))
-	{
 		return (apply_i(m));
-	}
+	if (b->str[b->pos] == '(')
+		return (handle_func(m, b, s));
 	if (((t_master*)m)->equal_defined == 0)
 	{
 		read_till_false(b, is_sep);
@@ -222,7 +238,10 @@ char	alpha_exec(t_buf *b, void *m)
 		}
 	}
 	*(prev_adr(m)) = VALUE;
-	inject_var_value((t_master*)m, s);
+	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+		mix_var_value(m, s);
+	else
+		inject_var_value(m, s);
 	return (1);
 }
 

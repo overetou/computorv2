@@ -4,7 +4,7 @@ NAME = computor
 
 objdir = obj
 
-obj = $(addprefix $(objdir)/, main.o exec_tracks.o trigger_name_funcs.o trigger_sign_funcs.o parenthesis.o operations.o squares.o)
+obj = $(addprefix $(objdir)/, main.o exec_tracks.o trigger_name_funcs.o trigger_sign_funcs.o parenthesis.o operations.o squares.o functions.o)
 
 VPATH = src
 
