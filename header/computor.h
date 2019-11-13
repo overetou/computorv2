@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/11 21:10:53 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/13 19:14:53 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,4 +154,5 @@ char	coma_exec(t_buf *b, void *m);
 void	add_level(t_master *m);
 char	prepare_func_definition(t_master *m, t_buf *b, char *s);
 BOOL	char_is_valid_var_name_material(const char c);
+char	handle_func(t_master *m, t_buf *b, char *s);
 #endif
