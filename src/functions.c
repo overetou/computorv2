@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/11 18:22:15 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/15 20:51:36 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/15 21:32:13 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ BOOL	is_definition(t_master *m, t_buf *b)
 	if (m->equal_defined == 0)
 	{
 		read_till_false(b, is_sep);
-		printf("current char = %c\n", b->str[b->pos]);
 		if (b->str[b->pos] == '=') 
 			return (1);
 	}
@@ -123,6 +122,31 @@ char	*get_parenthesis_content(t_buf *b)
 	return (str);
 }
 
+t_var	*true_var_init(char *s)
+{
+	t_var	*new;
+
+	new = malloc(sizeof(t_var));
+	new->name = s;
+	return (new);
+}
+void	track_insert(t_track *t, t_link *l)
+{
+	if (t->first == NULL)
+		track_init(t, l);
+	else
+		track_add(t, l);
+}
+
+char	prepare_func_definition(t_master *m, t_buf *b, char *s, char *parent_content)
+{
+	read_till_false(b, is_sep);
+	m->to_define = parent_content;
+	track_insert(&(m->funcs), (t_link*)true_var_init(s));
+	m->equal_defined = DEFINE_FUNC;
+	return (1);
+}
+
 BOOL	handle_func(t_master *m, t_buf *b, char *s)
 {
 	t_expr	*e;
@@ -138,7 +162,7 @@ BOOL	handle_func(t_master *m, t_buf *b, char *s)
 	if (is_definition(m, b))
 	{
 		putendl("handle_func: definition found.");
-		return (prepare_func_definition(m, b, s));
+		return (prepare_func_definition(m, b, s, parenthesis_content));
 	}
 	else
 	{
@@ -151,30 +175,5 @@ BOOL	handle_func(t_master *m, t_buf *b, char *s)
 			return (0);
 		}
 	}
-	return (1);
-}
-
-t_var	*true_var_init(char *s)
-{
-	t_var	*new;
-
-	new = malloc(sizeof(t_var));
-	new->name = s;
-	return (new);
-}
-
-char	prepare_func_definition(t_master *m, t_buf *b, char *s)
-{
-	read_till_false(b, is_sep);
-	if (b->str[b->pos] == ')')
-		m->to_define = NULL;
-	else
-	{
-		if (!char_is_valid_var_name_material(b->str[b->pos]))
-			return (0);
-		m->to_define = read_word(b, char_is_valid_var_name_material);
-	}
-	track_add(&(m->funcs), (t_link*)true_var_init(s));
-	m->equal_defined = DEFINE_FUNC;
 	return (1);
 }
