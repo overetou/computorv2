@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/05 17:39:48 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/10 18:07:32 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/15 18:40:37 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	extract_matrix(t_master *m, t_expr *matrix)
 	matrix->info = MATRIX;
 	matrix->content.expr = get_last_first_expr(m);
 	((t_link_track*)(m->exec_tracks.last))->first = NULL;
-	track_remove_last(&(((t_master*)m)->exec_tracks), destroy_link_track);
+	remove_level(m);
 }
 
 char	close_square_exec(t_buf *b, void *m)

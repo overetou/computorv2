@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/11 21:17:19 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/15 19:37:53 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,31 +111,34 @@ void	inject_expr(t_master *m, t_expr *e)
 	*(prev_adr(m)) = VALUE;
 }
 
-void	*get_item(t_master *m, const char *name)
+void	*get_item(t_track *t, const char *name)
 {
 	t_var	*p;
 
-	p = (t_var*)(m->vars.first);
+	p = (t_var*)(t->first);
 	if (p == NULL)
 		return (NULL);
-	while (p != (t_var*)(m->vars.last))
+	while (p != (t_var*)(t->last))
 	{
 		if (str_perfect_match(name, p->name))
 			return ((void*)p);
 		p = p->next;
 	}
-	//putendl("get_item: one member left.");
-	//printf("get_item: name = %s, content = %s\n", name, p->name);
 	if (str_perfect_match(name, p->name))
 		return ((void*)p);
 	return (NULL);
+}
+
+void	*get_var(t_master *m, const char *name)
+{
+	return (get_item(&(m->vars), name));
 }
 
 char	get_item_value(t_content *n, t_master *m, const char *name)
 {
 	t_var	*v;
 
-	v = get_item(m, name);
+	v = get_var(m, name);
 	if (v == NULL)
 		return (-1);
 	*n = v->content;
@@ -264,7 +267,7 @@ void	define_variable(t_master *m)
 		track_init(&(((t_master*)m)->vars), t_var_init(m));
 	else
 	{
-		var = get_item(m, ((t_master*)m)->to_define);
+		var = get_var(m, ((t_master*)m)->to_define);
 		if (var)
 			t_var_update(var, m);
 		else

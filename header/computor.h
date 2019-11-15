@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/13 19:14:53 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/15 19:39:01 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,6 @@ typedef struct		s_master
 	t_buf			buf;
 	t_track			exec_tracks;
 	t_track			funcs;
-	char			*func_var_name;
 	t_track			vars;
 	char			equal_defined;//0 for not defined, 1 for var assignment on left, 2 for right.
 	char			*to_define;
@@ -155,4 +154,6 @@ void	add_level(t_master *m);
 char	prepare_func_definition(t_master *m, t_buf *b, char *s);
 BOOL	char_is_valid_var_name_material(const char c);
 char	handle_func(t_master *m, t_buf *b, char *s);
+void	remove_level(t_master *m);
+void	*get_item(t_track *t, const char *name);
 #endif
