@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/11 18:22:15 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/15 21:32:13 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/16 20:30:54 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,13 +138,12 @@ void	track_insert(t_track *t, t_link *l)
 		track_add(t, l);
 }
 
-char	prepare_func_definition(t_master *m, t_buf *b, char *s, char *parent_content)
+void	prepare_func_definition(t_master *m, t_buf *b, char *s, char *parent_content)
 {
 	read_till_false(b, is_sep);
 	m->to_define = parent_content;
 	track_insert(&(m->funcs), (t_link*)true_var_init(s));
 	m->equal_defined = DEFINE_FUNC;
-	return (1);
 }
 
 BOOL	handle_func(t_master *m, t_buf *b, char *s)
@@ -162,7 +161,7 @@ BOOL	handle_func(t_master *m, t_buf *b, char *s)
 	if (is_definition(m, b))
 	{
 		putendl("handle_func: definition found.");
-		return (prepare_func_definition(m, b, s, parenthesis_content));
+		prepare_func_definition(m, b, s, parenthesis_content);
 	}
 	else
 	{
@@ -170,10 +169,7 @@ BOOL	handle_func(t_master *m, t_buf *b, char *s)
 		if (e)
 			inject_expr(m, e);
 		else
-		{
 			handle_line_error(m, "Problem detected while computing a function.");
-			return (0);
-		}
 	}
 	return (1);
 }

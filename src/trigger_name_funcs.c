@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/15 19:37:53 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/16 21:39:00 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,10 @@ void	mix_in_value(t_master *m, t_content content, char info)
 		link_track_init(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)t_expr_init(content, info));
 	else
 		link_track_add(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)t_expr_init(content, info));
+	printf("added an expr of type :%d\n", info);
+	if (m->exec_tracks.first == m->exec_tracks.last)
+		putendl("mix_in_value: added on main track.");
+	printf("e = %p\n", get_last_first_expr(m));
 }
 
 void	inject_value(t_master *m, t_content content, char info)
@@ -240,6 +244,13 @@ char	alpha_exec(t_buf *b, void *m)
 			return (1);
 		}
 	}
+	else if (((t_master*)m)->equal_defined == DEFINE_FUNC && str_perfect_match(s, ((t_master*)m)->to_define))
+	{
+		putendl("added an unknown.");
+		mix_in_value(m, (t_content)NULL, UNKNOWN);
+		*(prev_adr(m)) = VALUE;
+		return (1);
+	}
 	*(prev_adr(m)) = VALUE;
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 		mix_var_value(m, s);
@@ -276,13 +287,54 @@ void	define_variable(t_master *m)
 	m->to_define = NULL;
 }
 
+void	display_sign(t_expr *e)
+{
+	if (e->info == MULT)
+		putstr(" * ");
+	else if (e->info == MINUS)
+		putstr(" - ");
+	else if (e->info == PLUS)
+		putstr(" + ");
+	else if (e->info == DIV)
+		putstr(" / ");
+	else if (e->info == MODULO)
+		putstr(" % ");
+}
+
+void	display_func(t_master *m)
+{
+	t_expr *e;
+
+	e = get_last_first_expr(m);
+	printf("display: e = %p\n", (void*)e);
+	while (e)
+	{
+		printf("display_func: expr identifier = %d\n", e->info);
+		display_expr(e);
+		if (e->next == NULL)
+			return ;
+		e = e->next;
+		display_sign(e);
+		e = e->next;
+	}
+}
+
 char	endline_exec(t_buf *b, void *m)
 {
 	if (condense_last_track(m) == 0)
 		handle_line_error(m, "A problem happended while doing additions.");
-	if (((t_master*)m)->to_define)
+	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+	{
+		display_func(m);
+		get_last_last_expr(m)->next = NULL;
+	}
+	else if (((t_master*)m)->to_define)
+	{
 		define_variable(m);
-	display_last_expr(m);
+		display_last_expr(m);
+	}
+	else
+		display_last_expr(m);
 	putchr('\n');
 	prepare_new_line(m);
 	read_smart_inc(b);

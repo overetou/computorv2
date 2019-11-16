@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 18:18:55 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/11 21:03:00 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/16 19:10:26 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,9 +86,14 @@ char	star_exec(t_buf *b, void *m)
 	if (prev(m) != VALUE)
 		handle_line_error(m, "Expected a value before a '*'.");
 	else
+	{
 		*(prev_adr(m)) = MULT;
-	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
-		mix_in_value(m, (t_content)NULL, MULT);
+		if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+		{
+			putendl("mult added in the function definition.");
+			mix_in_value(m, (t_content)NULL, MULT);
+		}
+	}
 	return (1);
 }
 
