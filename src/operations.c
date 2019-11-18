@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/29 14:30:31 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/09 21:06:39 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/18 19:16:58 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,7 +317,7 @@ void	reverse_expr(t_expr *e)
 		e->content.flt = -(e->content.flt);
 }
 
-void	display_expr(t_expr *e)
+void	display_expr(t_expr *e, t_master *m)
 {
 	t_expr *x;
 
@@ -338,7 +338,7 @@ void	display_expr(t_expr *e)
 			putchr('[');
 			while (x)
 			{
-				display_expr(x);
+				display_expr(x, m);
 				if (x->next)
 					putstr(", ");
 				x = x->next;
@@ -349,6 +349,8 @@ void	display_expr(t_expr *e)
 				putchr('\n');
 		}
 	}
+	else if (e->info == UNKNOWN)
+		putstr(m->to_define);
 }
 
 void	display_last_expr(t_master *m)
@@ -373,7 +375,7 @@ void	display_last_expr(t_master *m)
 			else
 				putstr("+ ");
 		}
-		display_expr(e);
+		display_expr(e, m);
 		printed = 1;
 		e = e->next;
 	}
@@ -390,7 +392,7 @@ void	display_last_expr(t_master *m)
 		else
 			putstr("+ ");
 	}
-	display_expr(e);
+	display_expr(e, m);
 }
 
 t_expr*	get_last_first_expr(t_master *m)

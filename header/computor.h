@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/16 15:18:32 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/16 20:11:28 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/18 19:17:15 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,5 +155,5 @@ BOOL	char_is_valid_var_name_material(const char c);
 char	handle_func(t_master *m, t_buf *b, char *s);
 void	remove_level(t_master *m);
 void	*get_item(t_track *t, const char *name);
-void	display_expr(t_expr *e);
+void	display_expr(t_expr *e, t_master *m);
 #endif

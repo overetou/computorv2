@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/11 18:22:15 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/16 20:30:54 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/18 18:59:57 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ t_expr	*compute_func(t_master *m, t_expr *argument, char *func_name)
 	t_expr	*cur;
 	t_expr	*next;
 
+	putendl("ENTERED compute_func");
 	cur = get_func(m, func_name);
 	cur = cur->content.expr;
 	add_level(m);
@@ -133,9 +134,15 @@ t_var	*true_var_init(char *s)
 void	track_insert(t_track *t, t_link *l)
 {
 	if (t->first == NULL)
+	{
+		putendl("track_insert: init");
 		track_init(t, l);
+	}
 	else
+	{
+		putendl("track_insert: add");
 		track_add(t, l);
+	}
 }
 
 void	prepare_func_definition(t_master *m, t_buf *b, char *s, char *parent_content)
@@ -157,7 +164,7 @@ BOOL	handle_func(t_master *m, t_buf *b, char *s)
 		handle_line_error(m, "Problem with a function parenthesis.");
 		return (1);
 	}
-	putendl("handle_line_error: succesfully read parenthesis content.");
+	putendl("handle_func: succesfully read parenthesis content.");
 	if (is_definition(m, b))
 	{
 		putendl("handle_func: definition found.");

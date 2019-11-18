@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 18:18:55 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/16 19:10:26 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/18 18:27:44 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ char	num_store(t_buf *b, void *m)
 	printf("num_store: value read = %f\n", value.flt);
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 	{
+		putendl("////////////\nDirectly adding.\n///////////");
 		mix_in_value(m, value, info);
 		*(prev_adr(m)) = VALUE;
 	}

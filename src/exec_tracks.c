@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 17:28:12 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/15 20:06:53 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/18 19:04:38 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ BOOL	refine_addition_result(t_link_track *t)
 	t_expr	*current;
 	t_expr	*next;
 
+	putendl(">>>>>>>>>>>>>>>>>>\nREFINE\n>>>>>>>>>>>>>>>>>>>>>>>>>");
 	if (t->first == t->last)
 	{
 		if (((t_expr*)(t->first))->info == PACK)

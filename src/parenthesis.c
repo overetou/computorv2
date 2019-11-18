@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/26 17:05:58 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/09 20:05:45 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/18 19:07:13 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ char	close_par_exec(t_buf *b, void *m)
 {
 	t_expr	*value;
 
+	putendl("!!!!!!!!!!!!!!!!!!!!!!Close par");
 	if (((t_master*)m)->exec_tracks.first == ((t_master*)m)->exec_tracks.last)
 		handle_line_error(m, "Closing parenthesis without match detected.");
 	if (condense_last_track(m) == 0)

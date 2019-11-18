@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/16 21:39:00 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/18 19:17:33 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,13 +72,20 @@ void	mix_in_value(t_master *m, t_content content, char info)
 		content = ((t_expr*)(content.expr))->content;
 	}
 	if (EXEC_TRACK_LAST_AS_LINK_TRACK->first == NULL)
+	{
+		putendl("mix_in_value: INIT");
 		link_track_init(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)t_expr_init(content, info));
+	}
 	else
+	{
+		putendl("mix_in_value: ADD");
 		link_track_add(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)t_expr_init(content, info));
+	}
 	printf("added an expr of type :%d\n", info);
 	if (m->exec_tracks.first == m->exec_tracks.last)
 		putendl("mix_in_value: added on main track.");
-	printf("e = %p\n", get_last_first_expr(m));
+	if (info == UNKNOWN)
+		printf("UNKNOWN : adr = %p. Info = %d\n", get_last_last_expr(m), get_last_last_expr(m)->info);
 }
 
 void	inject_value(t_master *m, t_content content, char info)
@@ -90,8 +97,10 @@ void	inject_value(t_master *m, t_content content, char info)
 
 void	inject_expr(t_master *m, t_expr *e)
 {
+	putendl("$$$$$$\n INJECT_EXPR\n$$$$$$");
 	if (m->matrice_depht)
 	{
+		putendl("XXXXXX\nmatrice depht detected.\nXXXXXX");
 		mix_in_value(m, e->content, e->info);
 		e = e->content.expr;
 	}
@@ -160,7 +169,7 @@ void	mix_var_value(t_master *m, char *name)
 	else
 	{
 		m->to_define = NULL;
-		handle_line_error(m, "Definition of a variable was not found.");
+		handle_line_error(m, "The definition of a variable was not found.");
 	}
 	free(name);
 }
@@ -224,6 +233,7 @@ char	alpha_exec(t_buf *b, void *m)
 {
 	char	*s;
 
+	putendl("ALPHA_EXEC");
 	s = read_word(b, char_is_valid_var_name_material);
 	if (str_perfect_match(s, "i"))
 		return (apply_i(m));
@@ -274,6 +284,7 @@ void	define_variable(t_master *m)
 {
 	t_expr	*var;
 
+	putendl("/////////////\n DEFINE_VARIABLE\n////////////");
 	if (((t_master*)m)->vars.first == NULL)
 		track_init(&(((t_master*)m)->vars), t_var_init(m));
 	else
@@ -306,11 +317,10 @@ void	display_func(t_master *m)
 	t_expr *e;
 
 	e = get_last_first_expr(m);
-	printf("display: e = %p\n", (void*)e);
+	printf("display_func: last expr info = %d\n", get_last_last_expr(m)->info);
 	while (e)
 	{
-		printf("display_func: expr identifier = %d\n", e->info);
-		display_expr(e);
+		display_expr(e, m);
 		if (e->next == NULL)
 			return ;
 		e = e->next;
@@ -321,20 +331,24 @@ void	display_func(t_master *m)
 
 char	endline_exec(t_buf *b, void *m)
 {
-	if (condense_last_track(m) == 0)
-		handle_line_error(m, "A problem happended while doing additions.");
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 	{
+		printf("endline_exec: first = %p, info = %d\n", get_last_first_expr(m), get_last_first_expr(m)->info);
 		display_func(m);
 		get_last_last_expr(m)->next = NULL;
 	}
-	else if (((t_master*)m)->to_define)
-	{
-		define_variable(m);
-		display_last_expr(m);
-	}
 	else
-		display_last_expr(m);
+	{
+		if (condense_last_track(m) == 0)
+			handle_line_error(m, "A problem happended while doing additions.");
+		else if (((t_master*)m)->to_define)
+		{
+			define_variable(m);
+			display_last_expr(m);
+		}
+		else
+			display_last_expr(m);
+	}
 	putchr('\n');
 	prepare_new_line(m);
 	read_smart_inc(b);
