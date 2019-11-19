@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/19 16:14:02 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/18 19:17:33 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/19 21:16:59 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -329,13 +329,21 @@ void	display_func(t_master *m)
 	}
 }
 
+void	affect_func(t_master *m)
+{
+	((t_expr*)(m->funcs.last))->content.expr = get_last_first_expr(m);
+	((t_link_track*)(m->exec_tracks.first))->first = NULL;
+}
+
 char	endline_exec(t_buf *b, void *m)
 {
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 	{
 		printf("endline_exec: first = %p, info = %d\n", get_last_first_expr(m), get_last_first_expr(m)->info);
-		display_func(m);
 		get_last_last_expr(m)->next = NULL;
+		display_func(m);
+		affect_func(m);
+		((t_master*)m)->to_define = NULL;
 	}
 	else
 	{

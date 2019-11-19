@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 18:18:55 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/18 18:27:44 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/18 21:20:20 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ char	num_store(t_buf *b, void *m)
 	}
 	info = RATIONNAL;
 	value.flt = (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO) ? -1 : 1);
+	putendl("Before read float");
 	if (!read_float(b, &(value.flt)))
 	{
 		handle_line_error(m, "Problem while parsing a number.");

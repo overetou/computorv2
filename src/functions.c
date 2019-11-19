@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/11 18:22:15 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/18 18:59:57 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/19 21:12:00 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,6 @@ t_expr	*extract_last_track_expr(t_master *m)
 	return (e);
 }
 
-t_expr	*get_argument(t_master *m, t_buf *b)
-{
-	t_expr	*e;
-
-	read_till_false(b, is_sep);
-	add_level(m);
-	e = extract_last_track_expr(m);
-	if (b->str[b->pos] == ')')
-		return (e);
-	return (NULL);
-}
-
 t_expr	*extract_func_result(t_master *m)
 {
 	if (refine_addition_result((t_link_track*)(m->exec_tracks.last)) == 0)
@@ -70,7 +58,10 @@ t_expr	*compute_func(t_master *m, t_expr *argument, char *func_name)
 
 	putendl("ENTERED compute_func");
 	cur = get_func(m, func_name);
+	if (cur == NULL || argument == NULL)
+		return (NULL);
 	cur = cur->content.expr;
+	printf("compute_func: found a function corresponding to the name. First value info = %d\n", cur->info);
 	add_level(m);
 	while (cur)
 	{
@@ -97,10 +88,6 @@ char	*get_parenthesis_content(t_buf *b)
 	char	*str;
 
 	size = 1;
-	if (b->str[b->pos] != '(')
-		return (NULL);
-	if (read_smart_inc(b) == 0)
-		return (NULL);
 	if (b->str[b->pos] == ')')
 		return (NULL);
 	str = malloc(sizeof(char));
@@ -118,7 +105,9 @@ char	*get_parenthesis_content(t_buf *b)
 			return (NULL);
 		}
 	}
-	putstr("Content of parenthesis: ");dry_putstr(str, size);putchr('\n');
+	str = realloc(str, (size + 1) * sizeof(char));
+	str[size] = '\0';
+	putstr("Content of parenthesis: ");putendl(str);
 	read_smart_inc(b);
 	return (str);
 }
@@ -131,6 +120,7 @@ t_var	*true_var_init(char *s)
 	new->name = s;
 	return (new);
 }
+
 void	track_insert(t_track *t, t_link *l)
 {
 	if (t->first == NULL)
@@ -153,30 +143,51 @@ void	prepare_func_definition(t_master *m, t_buf *b, char *s, char *parent_conten
 	m->equal_defined = DEFINE_FUNC;
 }
 
+BOOL	process_parent_and_handle_if_def_requested(t_master *m, t_buf *b, t_expr **e, char **parent_content)
+{
+	*e = NULL;
+
+	if (read_smart_inc(b) == 0)
+		return (0);
+	if (is_alpha(b->str[b->pos]))
+	{
+		*parent_content = get_parenthesis_content(b);
+		if (*parent_content == NULL)
+			return (0);
+		if (is_definition(m, b))
+			return (1);
+		*e = get_var(m, *parent_content);
+		return (0);
+	}
+	add_level(m);
+	if (is_digit(b->str[b->pos]))
+		num_store(b, m);
+	else
+		return (0);
+	*e = extract_last_track_expr(m);
+	return (0);
+}
+
 BOOL	handle_func(t_master *m, t_buf *b, char *s)
 {
 	t_expr	*e;
-	char	*parenthesis_content;
+	char	*parent_content;
 
-	parenthesis_content = get_parenthesis_content(b);
-	if (parenthesis_content == NULL && b->length == 0)
-	{
-		handle_line_error(m, "Problem with a function parenthesis.");
-		return (1);
-	}
-	putendl("handle_func: succesfully read parenthesis content.");
-	if (is_definition(m, b))
+	if (process_parent_and_handle_if_def_requested(m, b, &e, &parent_content))
 	{
 		putendl("handle_func: definition found.");
-		prepare_func_definition(m, b, s, parenthesis_content);
+		prepare_func_definition(m, b, s, parent_content);
 	}
+	else if (e == NULL)
+		return (0);
 	else
 	{
-		e = compute_func(m, get_argument(m, b), s);
+		e = compute_func(m, e, s);
 		if (e)
 			inject_expr(m, e);
 		else
 			handle_line_error(m, "Problem detected while computing a function.");
+		read_smart_inc(b);
 	}
 	return (1);
 }
