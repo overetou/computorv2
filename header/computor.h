@@ -72,6 +72,7 @@ typedef struct		s_expr
 	t_content		content;
 	char			*name;
 	char			info;
+	size_t			unknown_degree;
 }					t_expr;
 
 typedef struct		s_var

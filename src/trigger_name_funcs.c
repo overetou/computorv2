@@ -115,10 +115,7 @@ void	inject_expr(t_master *m, t_expr *e)
 		}
 		else
 		{
-			if (EXEC_TRACK_LAST_AS_LINK_TRACK->first == NULL)
-				link_track_init((t_link_track*)(m->exec_tracks.last), (t_link*)e);
-			else
-				link_track_add((t_link_track*)(m->exec_tracks.last), (t_link*)e);
+			mix_in_value(m,e->content,e->info);
 		}
 	}
 	*(prev_adr(m)) = VALUE;

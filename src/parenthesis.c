@@ -31,14 +31,6 @@ char	open_par_exec(t_buf *b, void *m)
 	return (1);
 }
 
-//t_expr	*p;
-//p = get_last_last_expr(m);p = p->content.expr;
-//while (p)
-//{
-//	printf("v: %f, t: %d\n", p->content.flt, p->info);
-//	p = p->next;
-//}
-
 void	extract_refined_expr(t_master *m, t_expr **value)
 {
 	t_expr		*traveler;

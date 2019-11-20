@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/11 18:22:15 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/19 21:12:00 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/20 16:07:19 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ t_expr	*extract_last_track_expr(t_master *m)
 {
 	t_expr	*e;
 
+	putendl("??????????????EXTRACT");
 	e = get_last_first_expr(m);
 	((t_link_track*)(m->exec_tracks.last))->first = NULL;
 	remove_level(m);
