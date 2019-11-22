@@ -16,8 +16,8 @@ void	init_master(t_master *m)
 	trigger_add((t_trigger_set*)m, "]", close_square_exec);
 	trigger_add((t_trigger_set*)m, ";", semilicon_exec);
 	trigger_add((t_trigger_set*)m, ",", coma_exec);
-//	trigger_add((t_trigger_set*)m, "=", );
-//	trigger_add((t_trigger_set*)m, "?", );
+	trigger_add((t_trigger_set*)m, "=", equal_exec);
+	trigger_add((t_trigger_set*)m, "?", interogation_exec);
 	trigger_add((t_trigger_set*)m, "^", power_exec);
 	trigger_add((t_trigger_set*)m, "\n", endline_exec);
 	trigger_add((t_trigger_set*)m, "1234567890", num_store);

@@ -60,6 +60,7 @@ void	*t_expr_init(t_content content, char info)
 	new = t_expr_create();
 	new->content = content;
 	new->info = info;
+	new->unknown_degree = 0;
 	return (new);
 }
 
@@ -263,17 +264,6 @@ char	alpha_exec(t_buf *b, void *m)
 		mix_var_value(m, s);
 	else
 		inject_var_value(m, s);
-	return (1);
-}
-
-char	equal_exec(t_buf *b, void *m)
-{
-	if (((t_master*)m)->equal_defined)
-		handle_line_error(m, "At least two '=' are present on the line.");
-	else if (prev(m) != NOTHING)//If we have a variable to define, we keep prev to nothing.
-		handle_line_error(m, "'=' was not used to simply define a variable.");
-	*(prev_adr(m)) = EQUAL;
-	read_smart_inc(b);
 	return (1);
 }
 

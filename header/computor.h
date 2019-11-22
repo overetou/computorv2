@@ -53,6 +53,7 @@
 
 #define DEFINE_VAR 1
 #define DEFINE_FUNC 2
+#define SIMPLE_EQUAL 3
 
 #define EXEC_TRACK_LAST_AS_LINK_TRACK ((t_link_track*)(m->exec_tracks.last))
 
@@ -139,7 +140,7 @@ void	do_multiplication(t_master *m, t_content value, char info);
 void	do_division(t_master *m, t_content value, char info);
 void	do_modulation(t_master *m, t_content value, char info);
 char	addition_same_type(t_expr *m1, t_expr* m2);
-void	reverse_expr(t_expr *e);
+t_expr*	reverse_expr(t_expr *e);
 BOOL	is_inside_parenthesis(t_master *m);
 void	display_last_expr(t_master *m);
 t_expr*	get_last_last_expr(t_master *m);
@@ -158,4 +159,5 @@ void	remove_level(t_master *m);
 void	*get_item(t_track *t, const char *name);
 void	display_expr(t_expr *e, t_master *m);
 void	*get_var(t_master *m, const char *name);
+char	interogation_exec(t_buf *b, void *m);
 #endif

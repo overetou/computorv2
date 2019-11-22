@@ -311,7 +311,7 @@ char	addition_same_type(t_expr *m1, t_expr* m2)
 	return (1);
 }
 
-void	reverse_expr(t_expr *e)
+t_expr	*reverse_expr(t_expr *e)
 {
 	if (e->info == RATIONNAL || e->info == IRATIONNAL)
 		e->content.flt = -(e->content.flt);
