@@ -144,7 +144,7 @@ void multiply_pack_by(t_expr *pack, t_content c, char info)
 }
 
 //WARNING: complex numbers are not supported yet.
-void do_multiplication(t_master *m, t_content value, char info)
+void do_multiplication(t_master *m, t_expr *e)
 {
 	char m_info;
 
@@ -152,15 +152,20 @@ void do_multiplication(t_master *m, t_content value, char info)
 	m_info = get_last_last_expr(m)->info;
 	if (m_info == RATIONNAL || m_info == IRATIONNAL)
 	{
-		if (info == RATIONNAL || info == IRATIONNAL)
-			simple_mult(get_last_last_expr(m), get_last_last_expr(m), value, info);
-		else if (info == PACK)
-			singl_mult_pack(get_last_last_expr(m), value);
+		multiply_unknowns(get_last_last_expr(m), e);
+		if (e->info == RATIONNAL || e->info == IRATIONNAL)
+			simple_mult(get_last_last_expr(m), get_last_last_expr(m), e->content, e->info);
+		else if (e->info == PACK)
+			singl_mult_pack(get_last_last_expr(m), e->content);
 	}
 	else if (m_info == PACK)
-		multiply_pack_by(get_last_last_expr(m), value, info);
+		multiply_pack_by(get_last_last_expr(m), e->content, e->info);
 	else
+	{
 		putendl("unkown operation case");
+		return;
+	}
+	free(e);
 }
 
 void do_division(t_master *m, t_content value, char info)

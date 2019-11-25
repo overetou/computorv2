@@ -91,7 +91,7 @@ void	mix_in_value(t_master *m, t_content content, char info)
 
 void	inject_value(t_master *m, t_content content, char info)
 {
-	if (!exec_cell_if_prior((t_master*)m, content, info))
+	if (!exec_cell_if_prior((t_master*)m, t_expr_init(content, info)))
 		mix_in_value(m, content, info);
 	*(prev_adr(m)) = VALUE;
 }
@@ -107,7 +107,7 @@ void	inject_expr(t_master *m, t_expr *e)
 	else
 	{
 
-		if (exec_cell_if_prior(m, e->content, e->info))
+		if (exec_cell_if_prior(m, e))
 		{
 			//putendl("inject_expr:");
 			putendl("A prioritary operation was executed");

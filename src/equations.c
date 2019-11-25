@@ -3,6 +3,7 @@
 BOOL try_var_as_unknown(t_master *m, char *name)
 {
 	t_content content;
+	t_expr		*e;
 
 	if (m->to_define)
 	{
@@ -14,7 +15,10 @@ BOOL try_var_as_unknown(t_master *m, char *name)
 	}
 	m->to_define = name;
 	content.flt = 1;
-	inject_value(m, content, UNKNOWN);
+	e = t_expr_init(content, UNKNOWN);
+	e->unknown_degree = 1;
+	//TODO: add power handlement.
+	inject_expr(m, e);
 	printf("Injected: %s as an unkown candidate.\n", name);
 	return (1);
 }
@@ -22,7 +26,7 @@ BOOL try_var_as_unknown(t_master *m, char *name)
 void multiply_unknowns(t_expr *e1, t_expr *e2)
 {
 	e1->unknown_degree += e2->unknown_degree;
-	e2->unknown_degree = 0;
+	printf("multiply_unknowns: %f * x^%zu\n", e1->content.flt, e1->unknown_degree);
 }
 
 char equal_exec(t_buf *b, void *m)
@@ -66,17 +70,25 @@ void	display_equation_solution(t_master *m)
 {
 	//resolve: We now have a group of expression of different degree. we classify them into a float tab.
 	float	candidates[3];
+	float	solutions[2];
 	t_expr	*e;
+	size_t degree;
 
 	e = get_last_first_expr(m);
+	degree = 0;
 	while (e != get_last_last_expr(m) && e->next->info != PROCESSED)
 	{
+		printf("display_equation_solution: %f * x^%zu\n", e->content.flt, e->unknown_degree);
 		candidates[e->unknown_degree] = e->content.flt;
+		update_if_superior(&degree, e->unknown_degree);
 		e = e->next;
 	}
+	printf("display_equation_solution: %f * x^%zu\n", e->content.flt, e->unknown_degree);
 	candidates[e->unknown_degree] = e->content.flt;	
+	update_if_superior(&degree, e->unknown_degree);
 	//display
-	
+	if (do_resolution(candidates, degree, solutions) == 1)
+		printf("Solution = %f\n", solutions[0]);
 }
 
 char interogation_exec(t_buf *b, void *m)
