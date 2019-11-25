@@ -6,12 +6,17 @@ BOOL try_var_as_unknown(t_master *m, char *name)
 
 	if (m->to_define)
 	{
-		handle_line_error(m, "Too many unknown variables.");
-		return (0);
+		if (str_perfect_match(m->to_define, name) == 0)
+		{
+			handle_line_error(m, "Too many unknown variables.");
+			return (0);
+		}
 	}
 	m->to_define = name;
 	content.flt = 1;
 	inject_value(m, content, UNKNOWN);
+	printf("Injected: %s as an unkown candidate.\n", name);
+	return (1);
 }
 
 void multiply_unknowns(t_expr *e1, t_expr *e2)
@@ -37,7 +42,7 @@ BOOL pass_right_to_left(t_master *m)
 	t_expr *next;
 	t_expr *last;
 
-	e = get_last_first_expr(e);
+	e = get_last_first_expr(m);
 	next = e->next;
 	last = get_last_last_expr(m);
 	((t_link_track *)(m->exec_tracks.last))->first = NULL;
@@ -54,6 +59,7 @@ BOOL pass_right_to_left(t_master *m)
 		next = next->next;
 	}
 	inject_expr(m, reverse_expr(e)); //Does this function free e? If not free it there.
+	return (1);
 }
 
 void	display_equation_solution(t_master *m)
@@ -63,7 +69,7 @@ void	display_equation_solution(t_master *m)
 	t_expr	*e;
 
 	e = get_last_first_expr(m);
-	while (e != get_last_last_expr(e) && e->next->info != PROCESSED)
+	while (e != get_last_last_expr(m) && e->next->info != PROCESSED)
 	{
 		candidates[e->unknown_degree] = e->content.flt;
 		e = e->next;

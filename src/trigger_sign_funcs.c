@@ -57,7 +57,6 @@ char	num_store(t_buf *b, void *m)
 	}
 	info = RATIONNAL;
 	value.flt = (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO) ? -1 : 1);
-	putendl("Before read float");
 	if (!read_float(b, &(value.flt)))
 	{
 		handle_line_error(m, "Problem while parsing a number.");

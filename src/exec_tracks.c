@@ -17,9 +17,7 @@
 
 void	prepare_new_line(t_master *m)
 {
-	putendl("before segfault");
 	destroy_link_track_content((t_link_track*)(m->exec_tracks.first));
-	putendl("after segfault");
 	*(prev_adr(m)) = NOTHING;
 	m->equal_defined = 0;
 }
@@ -42,10 +40,14 @@ BOOL	handle_line_error(t_master *m, const char *s)
 //are defined. Returns 1 on success, 0 other wise.
 char	exec_cell_if_prior(t_master *m, t_content value, char info)
 {
+	printf("exec_cell_if_prior: prev = %d\n", prev(m));
 	if (int_is_comprised(prev(m), MINUS_MULT, MINUS_MODULO))
 		*(prev_adr(m)) -= 5;
 	if (prev(m) == MULT)
+	{
+		putendl("/!\\ mult detected");
 		do_multiplication(m, value, info);
+	}
 	else if (prev(m) == DIV)
 		do_division(m, value, info);
 	else if (prev(m) == MODULO)

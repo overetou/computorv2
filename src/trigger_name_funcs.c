@@ -29,7 +29,7 @@ void	t_var_update(t_expr *v, t_master *m)
 {
 	v->content = (((t_expr*)((t_link_track*)(m->exec_tracks.last))->first))->content;
 	v->info = (((t_expr*)((t_link_track*)(m->exec_tracks.last))->first))->info;
-	free(m->to_define);
+	m->to_define = NULL;
 }
 
 void	prepare_var_def(t_master *m, char *s)
@@ -86,7 +86,7 @@ void	mix_in_value(t_master *m, t_content content, char info)
 	if (m->exec_tracks.first == m->exec_tracks.last)
 		putendl("mix_in_value: added on main track.");
 	if (info == UNKNOWN)
-		printf("UNKNOWN : adr = %p. Info = %d\n", get_last_last_expr(m), get_last_last_expr(m)->info);
+		printf("mix_in_value: UNKNOWN : adr = %p. Info = %d\n", get_last_last_expr(m), get_last_last_expr(m)->info);
 }
 
 void	inject_value(t_master *m, t_content content, char info)
@@ -98,7 +98,6 @@ void	inject_value(t_master *m, t_content content, char info)
 
 void	inject_expr(t_master *m, t_expr *e)
 {
-	putendl("$$$$$$\n INJECT_EXPR\n$$$$$$");
 	if (m->matrice_depht)
 	{
 		putendl("XXXXXX\nmatrice depht detected.\nXXXXXX");
@@ -166,6 +165,7 @@ void	mix_var_value(t_master *m, char *name)
 		mix_in_value(m, value, info);
 	else
 	{
+		free(m->to_define);
 		m->to_define = NULL;
 		handle_line_error(m, "The definition of a variable was not found.");
 	}
@@ -182,8 +182,8 @@ void	inject_var_value(t_master *m, char *name)
 		inject_value(m, value, info);
 	else
 	{
-		m->to_define = NULL;
-		handle_line_error(m, "Definition of a variable was not found.");
+		putendl("inject_var_value: trying to add a var as an unknown.");
+		try_var_as_unknown(m, name);//as a result, if we reach endline before a ?, we check if there are unknown and if there are, error.
 	}
 	free(name);
 }
@@ -231,7 +231,7 @@ char	alpha_exec(t_buf *b, void *m)
 {
 	char	*s;
 
-	putendl("ALPHA_EXEC");
+	printf("alpha_exec: to_define = %p\n", ((t_master*)m)->to_define);
 	s = read_word(b, char_is_valid_var_name_material);
 	if (str_perfect_match(s, "i"))
 		return (apply_i(m));
@@ -239,6 +239,7 @@ char	alpha_exec(t_buf *b, void *m)
 		return (handle_func(m, b, s));
 	if (((t_master*)m)->equal_defined == 0)
 	{
+		putendl("alpha_exec: '=' is not yet defined.");
 		read_till_false(b, is_sep);
 		if (b->str[b->pos] == '=') 
 		{
@@ -254,16 +255,17 @@ char	alpha_exec(t_buf *b, void *m)
 	}
 	else if (((t_master*)m)->equal_defined == DEFINE_FUNC && str_perfect_match(s, ((t_master*)m)->to_define))
 	{
-		putendl("added an unknown.");
+		putendl("added an unknown in function definition.");
 		mix_in_value(m, (t_content)NULL, UNKNOWN);
 		*(prev_adr(m)) = VALUE;
 		return (1);
 	}
-	*(prev_adr(m)) = VALUE;
+	printf("alpha_exec: Preparing to inject a var val. equal_defined = %d\n", ((t_master*)m)->equal_defined);
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 		mix_var_value(m, s);
 	else
 		inject_var_value(m, s);
+	*(prev_adr(m)) = VALUE;
 	return (1);
 }
 
@@ -339,10 +341,8 @@ char	endline_exec(t_buf *b, void *m)
 		else if (((t_master*)m)->to_define)
 		{
 			define_variable(m);
-			display_last_expr(m);
 		}
-		else
-			display_last_expr(m);
+		display_last_expr(m);
 	}
 	putchr('\n');
 	prepare_new_line(m);

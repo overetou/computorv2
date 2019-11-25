@@ -160,4 +160,5 @@ void	*get_item(t_track *t, const char *name);
 void	display_expr(t_expr *e, t_master *m);
 void	*get_var(t_master *m, const char *name);
 char	interogation_exec(t_buf *b, void *m);
+BOOL try_var_as_unknown(t_master *m, char *name);
 #endif

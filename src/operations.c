@@ -13,9 +13,9 @@
 #include "computor.h"
 #include <stdio.h>
 
-int	get_list_len(t_link *l)
+int get_list_len(t_link *l)
 {
-	int	count;
+	int count;
 
 	count = 0;
 	while (l)
@@ -27,13 +27,13 @@ int	get_list_len(t_link *l)
 }
 
 //A simple value here means not a matrice and not a function.
-BOOL	is_simple_value(char info)
+BOOL is_simple_value(char info)
 {
 	return (info == RATIONNAL || info == IRATIONNAL);
 }
 
 //Mutiply rationnal and ira between themself.
-void	simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info)
+void simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info)
 {
 	printf("simple_mult: %f * %f\n", op1->content.flt, op2.flt);
 	receiver->content.flt = (op1->content.flt) * (op2.flt);
@@ -54,11 +54,11 @@ void	simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info)
 		else
 			receiver->info = IRATIONNAL;
 	}
-//	printf("result = %f with type: %d\n", receiver->content.flt, receiver->info);
+	//	printf("result = %f with type: %d\n", receiver->content.flt, receiver->info);
 }
 
 //We know that value is a pack.
-void	singl_mult_pack(t_expr *e, t_content value)
+void singl_mult_pack(t_expr *e, t_content value)
 {
 	t_expr *head;
 
@@ -72,7 +72,7 @@ void	singl_mult_pack(t_expr *e, t_content value)
 	e->info = PACK;
 }
 
-void	dissolve_expr_in_content(t_content *c, t_expr *e)
+void dissolve_expr_in_content(t_content *c, t_expr *e)
 {
 	t_expr *head;
 
@@ -90,7 +90,7 @@ void	dissolve_expr_in_content(t_content *c, t_expr *e)
 			{
 				head->next = t_expr_init(e->content, e->info);
 				head->next->next = NULL;
-				return ;
+				return;
 			}
 			head = head->next;
 		}
@@ -99,12 +99,12 @@ void	dissolve_expr_in_content(t_content *c, t_expr *e)
 	}
 }
 
-void	pack_mult_pack(t_expr *target_pack, t_content pack)
+void pack_mult_pack(t_expr *target_pack, t_content pack)
 {
-	t_content	replace;
-	t_expr		*head1;
-	t_expr 		*head2;
-	t_expr		temp;
+	t_content replace;
+	t_expr *head1;
+	t_expr *head2;
+	t_expr temp;
 
 	putendl("pack_mult_pack: entered.");
 	head1 = (target_pack->content).expr;
@@ -120,12 +120,12 @@ void	pack_mult_pack(t_expr *target_pack, t_content pack)
 		}
 		head1 = head1->next;
 	}
-//	free_expr(head1);
-//	free_expr(head2);
+	//	free_expr(head1);
+	//	free_expr(head2);
 	target_pack->content = replace;
 }
 
-void	apply_singl_mult(t_expr *pack, t_content c, char info)
+void apply_singl_mult(t_expr *pack, t_content c, char info)
 {
 	while (pack)
 	{
@@ -134,7 +134,7 @@ void	apply_singl_mult(t_expr *pack, t_content c, char info)
 	}
 }
 
-void	multiply_pack_by(t_expr *pack, t_content c, char info)
+void multiply_pack_by(t_expr *pack, t_content c, char info)
 {
 	putendl("multiply_pack_by: entered.");
 	if (info == IRATIONNAL || info == RATIONNAL)
@@ -144,9 +144,9 @@ void	multiply_pack_by(t_expr *pack, t_content c, char info)
 }
 
 //WARNING: complex numbers are not supported yet.
-void	do_multiplication(t_master *m, t_content value, char info)
+void do_multiplication(t_master *m, t_content value, char info)
 {
-	char	m_info;
+	char m_info;
 
 	putendl("\nWelcome in multiplication land !");
 	m_info = get_last_last_expr(m)->info;
@@ -163,7 +163,7 @@ void	do_multiplication(t_master *m, t_content value, char info)
 		putendl("unkown operation case");
 }
 
-void	do_division(t_master *m, t_content value, char info)
+void do_division(t_master *m, t_content value, char info)
 {
 	if (info == RATIONNAL)
 		get_last_last_expr(m)->content.flt /= value.flt;
@@ -171,7 +171,7 @@ void	do_division(t_master *m, t_content value, char info)
 		putendl("unkown operation case");
 }
 
-void	do_modulation(t_master *m, t_content value, char info)
+void do_modulation(t_master *m, t_content value, char info)
 {
 	if (info == RATIONNAL)
 		get_last_last_expr(m)->content.flt = (float)(((int)(get_last_last_expr(m)->content.flt)) % ((int)(value.flt))) + get_float_tail(get_last_last_expr(m)->content.flt);
@@ -179,16 +179,16 @@ void	do_modulation(t_master *m, t_content value, char info)
 		putendl("unkown operation case");
 }
 
-void	operate_matrix_point(t_expr *m1, t_expr* m2, int coord[2])
+void operate_matrix_point(t_expr *m1, t_expr *m2, int coord[2])
 {
-	t_expr		*x1;
-	t_expr		*y1;
-	t_expr		*x2;
-	t_expr		*y2;
-	int			mem;
-	int			final_count;
-	t_expr		charge;
-	float		value;
+	t_expr *x1;
+	t_expr *y1;
+	t_expr *x2;
+	t_expr *y2;
+	int mem;
+	int final_count;
+	t_expr charge;
+	float value;
 
 	y1 = m1->content.expr;
 	mem = coord[1];
@@ -196,7 +196,7 @@ void	operate_matrix_point(t_expr *m1, t_expr* m2, int coord[2])
 		y1 = y1->next;
 	x1 = y1->content.expr;
 	y2 = m2->content.expr;
-	final_count = get_list_len(((t_expr*)(m1->content.expr))->content.expr);
+	final_count = get_list_len(((t_expr *)(m1->content.expr))->content.expr);
 	value = 0;
 	while (final_count--)
 	{
@@ -214,24 +214,24 @@ void	operate_matrix_point(t_expr *m1, t_expr* m2, int coord[2])
 	x1->content.flt = value;
 }
 
-char	matrix_multiplication(t_expr *m1, t_expr* m2)
+char matrix_multiplication(t_expr *m1, t_expr *m2)
 {
-	t_expr		*x1;
-	t_expr		*y1;
-	t_expr		*x2;
-	t_expr		*y2;
-	int			coord[2];
-	int			count;
+	t_expr *x1;
+	t_expr *y1;
+	t_expr *x2;
+	t_expr *y2;
+	int coord[2];
+	int count;
 
 	y1 = m1->content.expr;
-	x1= y1->content.expr;
+	x1 = y1->content.expr;
 	y2 = m2->content.expr;
-	x2= y2->content.expr;
-	if (get_list_len((t_link*)y1) != get_list_len((t_link*)x2) || get_list_len((t_link*)x1) != get_list_len((t_link*)y2))
+	x2 = y2->content.expr;
+	if (get_list_len((t_link *)y1) != get_list_len((t_link *)x2) || get_list_len((t_link *)x1) != get_list_len((t_link *)y2))
 		return (0);
 	coord[0] = 0;
 	coord[1] = 0;
-	count = get_list_len((t_link*)y1) + get_list_len((t_link*)x1);
+	count = get_list_len((t_link *)y1) + get_list_len((t_link *)x1);
 	while (count--)
 	{
 		operate_matrix_point(m1, m2, coord);
@@ -242,18 +242,18 @@ char	matrix_multiplication(t_expr *m1, t_expr* m2)
 	return (1);
 }
 
-char	matrix_to_elem(t_expr *m1, t_expr* m2)
+char matrix_to_elem(t_expr *m1, t_expr *m2)
 {
-	t_expr	*x;
-	t_expr	*y;
-	BOOL	switched;
+	t_expr *x;
+	t_expr *y;
+	BOOL switched;
 
 	switched = 0;
 	if (m1->info != m2->info)
 	{
 		if (m1->info != MATRIX)
 		{
-			swap_pointer((void**)(&m1), (void*)(&m2));
+			swap_pointer((void **)(&m1), (void *)(&m2));
 			switched = 1;
 		}
 		y = m1->content.expr;
@@ -271,7 +271,7 @@ char	matrix_to_elem(t_expr *m1, t_expr* m2)
 	return (1);
 }
 
-BOOL	matrix_addition(t_expr *m1, t_expr *m2)
+BOOL matrix_addition(t_expr *m1, t_expr *m2)
 {
 	t_expr *x1;
 	t_expr *x2;
@@ -298,7 +298,7 @@ BOOL	matrix_addition(t_expr *m1, t_expr *m2)
 	return (1);
 }
 
-char	addition_same_type(t_expr *m1, t_expr* m2)
+char addition_same_type(t_expr *m1, t_expr *m2)
 {
 	if (m1->info == RATIONNAL || m1->info == IRATIONNAL)
 		m1->content.flt += m2->content.flt;
@@ -311,13 +311,14 @@ char	addition_same_type(t_expr *m1, t_expr* m2)
 	return (1);
 }
 
-t_expr	*reverse_expr(t_expr *e)
+t_expr *reverse_expr(t_expr *e)
 {
 	if (e->info == RATIONNAL || e->info == IRATIONNAL)
 		e->content.flt = -(e->content.flt);
+	return (e);
 }
 
-void	display_expr(t_expr *e, t_master *m)
+void display_expr(t_expr *e, t_master *m)
 {
 	t_expr *x;
 
@@ -353,17 +354,17 @@ void	display_expr(t_expr *e, t_master *m)
 		putstr(m->to_define);
 }
 
-void	display_last_expr(t_master *m)
+void display_last_expr(t_master *m)
 {
-	t_expr	*e;
-	char	printed;
+	t_expr *e;
+	char printed;
 
 	e = get_last_first_expr(m);
 	printed = 0;
 	while (e != get_last_last_expr(m))
 	{
 		if (e->info == PROCESSED)
-			return ;
+			return;
 		if (printed)
 		{
 			putchr(' ');
@@ -380,7 +381,7 @@ void	display_last_expr(t_master *m)
 		e = e->next;
 	}
 	if (e->info == PROCESSED)
-		return ;
+		return;
 	if (printed)
 	{
 		putchr(' ');
@@ -395,12 +396,12 @@ void	display_last_expr(t_master *m)
 	display_expr(e, m);
 }
 
-t_expr*	get_last_first_expr(t_master *m)
+t_expr *get_last_first_expr(t_master *m)
 {
-	return ((t_expr*)(((t_link_track*)(m->exec_tracks.last))->first));
+	return ((t_expr *)(((t_link_track *)(m->exec_tracks.last))->first));
 }
 
-t_expr*	get_last_last_expr(t_master *m)
+t_expr *get_last_last_expr(t_master *m)
 {
-	return ((t_expr*)(((t_link_track*)(m->exec_tracks.last))->last));
+	return ((t_expr *)(((t_link_track *)(m->exec_tracks.last))->last));
 }

@@ -4,7 +4,7 @@ NAME = computor
 
 objdir = obj
 
-obj = $(addprefix $(objdir)/, main.o exec_tracks.o trigger_name_funcs.o trigger_sign_funcs.o parenthesis.o operations.o squares.o functions.o)
+obj = $(addprefix $(objdir)/, main.o exec_tracks.o trigger_name_funcs.o trigger_sign_funcs.o parenthesis.o operations.o squares.o functions.o equations.o)
 
 VPATH = src
 
@@ -15,7 +15,7 @@ CFLAGS = -Wextra -Werror -Wall -I header/
 $(objdir)/%.o : %.c header/computor.h
 	@$(COMPILE.c) $(OUTPUT_OPTION) $<
 
-all: $(NAME)
+all: libft $(NAME)
 
 $(NAME): $(obj)
 	@$(CC) $(CFLAGS) -o $@ ../tools/libft/libft.a $^
@@ -24,6 +24,9 @@ $(obj): | $(objdir)
 
 $(objdir):
 	mkdir $(objdir)
+
+libft:
+	$(MAKE) -C ../tools/libft
 
 clean:
 	rm -f $(obj)
