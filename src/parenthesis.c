@@ -101,5 +101,6 @@ int		condense_last_track(t_master *m)
 {
 	if (((t_link_track*)(m->exec_tracks.last))->first == NULL)
 		return (0);
+	putendl("condense_last_track: refine_addition_result");
 	return (refine_addition_result((t_link_track*)(m->exec_tracks.last)));
 }

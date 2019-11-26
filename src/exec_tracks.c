@@ -6,7 +6,7 @@
 /*   By: overetou <overetou@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 17:28:12 by overetou          #+#    #+#             */
-/*   Updated: 2019/11/20 16:17:38 by overetou         ###   ########.fr       */
+/*   Updated: 2019/11/26 17:18:43 by overetou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,38 +57,28 @@ char	exec_cell_if_prior(t_master *m, t_expr *e)
 	return (1);
 }
 
-void	aglomerate_type(t_expr *m1, t_expr* m2, t_expr *last)
+void	aglomerate_type(t_expr *e1, t_expr* e2, t_expr *last)
 {
-	while (m2 != last)
+	while (1)
 	{
-		if (m1->info == m2->info)
+		if (e1->info == e2->info && e1->unknown_degree == e2->unknown_degree)
 		{
-			addition_same_type(m1, m2);
-			m2->info = PROCESSED;
+			addition_same_type(e1, e2);
+			e2->info = PROCESSED;
 		}
-		m2 = m2->next;
-	}
-	if (m1->info == m2->info)
-	{
-		addition_same_type(m1, m2);
-		m2->info = PROCESSED;
+		if (e2 != last)
+			break;
+		e2 = e2->next;
 	}
 }
 
-void	pull_up_aglomerated(t_expr *e, t_link_track *t)
+t_expr	*unzip_pack(t_link_track *t, t_expr *curr)
 {
-	t_expr	*prec;
+	t_expr *new_cur;
 
-	if (e != (t_expr*)t->first)
-	{
-		prec = (t_expr*)(t->first);
-		while (prec->next != e)
-			prec = prec->next;
-		prec->next = e->next;
-		e->next = ((t_expr*)(t->first))->next;
-		t->first = (t_link*)e;
-	}
-
+	new_cur = curr->content.expr;
+	track_replace_link_with_list((t_track*)t, (t_link*)curr, (t_link*)new_cur);
+	return (new_cur);
 }
 
 //Ne pas oublier de se proteger des overflows ici aussi. Puts the addition result inside the firsts link of the track.
@@ -97,45 +87,27 @@ BOOL	refine_addition_result(t_link_track *t)
 	t_expr	*current;
 	t_expr	*next;
 
-	putendl(">>>>>>>>>>>>>>>>>>\nREFINE\n>>>>>>>>>>>>>>>>>>>>>>>>>");
 	if (t->first == t->last)
 	{
-		if (((t_expr*)(t->first))->info == PACK)
-		{
-			current = (t_expr*)(t->first);
-			t->first = (t_link*)(((t_expr*)(t->first))->content.expr);
-			next = (t_expr*)(t->first);
-			while (next->next)
-				next = next->next;
-			t->last = (t_link*)next;
-		}
+		unzip_pack(t, (t_expr*)t->first);
 		return (1);
 	}
 	current = (t_expr*)(t->first);
-	next = current->next;
-	while (next != (t_expr*)(t->last))
+	while (current != (t_expr*)(t->last))
 	{
-		if (next->info != PROCESSED)
-		{
-			if (current->info != next->info)
-			{
-				aglomerate_type(current, next, (t_expr*)t->last);
-				pull_up_aglomerated(current, t);
-				current = current->next;
-				while (current->info == PROCESSED)
-					current = current->next;
-			}
-			else if (addition_same_type(current, next) == 0)
-				return (0);
-		}
-		next = next->next;
-	}
-	if (next->info == PROCESSED)
-		return (1);
-	if (current->info == next->info)
-	{
-		if (addition_same_type(current, next) == 0)
-			return (0);
+		if (current->info == PACK)
+			current = unzip_pack(t, current);
+		next = current->next;
+		if (next->info == PROCESSED)
+			return (1);
+		aglomerate_type(current, next, (t_expr*)t->last);
+		printf("aglo result: %f * x^%zu\n", current->content.flt, current->unknown_degree);
+		track_push_internal_link((t_link*)current, (t_track*)t);
+		putendl("PUSH DONE");
+		current = current->next;
+		while (current->info == PROCESSED && current != (t_expr*)(t->last))
+			current = current->next;
+		putendl("refine_addition_result: one spin.");
 	}
 	return (1);
 }

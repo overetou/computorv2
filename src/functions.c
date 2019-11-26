@@ -47,6 +47,7 @@ t_expr	*extract_last_track_expr(t_master *m)
 
 t_expr	*extract_func_result(t_master *m)
 {
+	putendl("extract_func_result: refine_addition_result");
 	if (refine_addition_result((t_link_track*)(m->exec_tracks.last)) == 0)
 		return (NULL);
 	return (extract_last_track_expr(m));

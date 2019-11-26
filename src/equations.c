@@ -62,7 +62,7 @@ BOOL pass_right_to_left(t_master *m)
 		e = next;
 		next = next->next;
 	}
-	inject_expr(m, reverse_expr(e)); //Does this function free e? If not free it there.
+	mix_in_expr(m, reverse_expr(e)); //Does this function free e? If not free it there.
 	return (1);
 }
 
@@ -76,6 +76,7 @@ void	display_equation_solution(t_master *m)
 
 	e = get_last_first_expr(m);
 	degree = 0;
+	putendl("????????????Salut!");
 	while (e != get_last_last_expr(m) && e->next->info != PROCESSED)
 	{
 		printf("display_equation_solution: %f * x^%zu\n", e->content.flt, e->unknown_degree);
@@ -94,6 +95,7 @@ void	display_equation_solution(t_master *m)
 char interogation_exec(t_buf *b, void *m)
 {
 	//this symbol must end a line.
+	putendl("Interrogation exec!");
 	if (read_smart_inc(b) == 0 || b->str[b->pos] == '\n')
 	{
 		if (((t_master *)m)->equal_defined == SIMPLE_EQUAL)
@@ -103,6 +105,7 @@ char interogation_exec(t_buf *b, void *m)
 			if (pass_right_to_left(m) == 0)
 				return (1);
 			//We condense the total expression.
+			putendl("interogation_exec: refine_addition_result");
 			refine_addition_result((t_link_track *)(((t_master *)m)->exec_tracks.first));
 			//Now the expression is simplified. We send the data to the equation resolving module trough a wrapper that will also display the solution / error.
 			display_equation_solution(m);
