@@ -31,6 +31,7 @@ BOOL	is_definition(t_master *m, t_buf *b)
 
 void	remove_level(t_master *m)
 {
+	putendl("Removed a level.");
 	track_remove_last(&(((t_master*)m)->exec_tracks), destroy_link_track);
 }
 

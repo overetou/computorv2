@@ -71,7 +71,7 @@ char	num_store(t_buf *b, void *m)
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 	{
 		putendl("////////////\nDirectly adding.\n///////////");
-		mix_in_value(m, value, info);
+		mix_in_expr(m, t_expr_init(value, info));
 		*(prev_adr(m)) = VALUE;
 	}
 	else
@@ -92,7 +92,7 @@ char	star_exec(t_buf *b, void *m)
 		if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 		{
 			putendl("mult added in the function definition.");
-			mix_in_value(m, (t_content)NULL, MULT);
+			mix_in_expr(m, t_expr_init((t_content)NULL, MULT));
 		}
 	}
 	return (1);
@@ -108,7 +108,7 @@ char	div_exec(t_buf *b, void *m)
 	*(prev_adr(m)) = DIV;
 	read_smart_inc(b);
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
-		mix_in_value(m, (t_content)NULL, DIV);
+		mix_in_expr(m, t_expr_init((t_content)NULL, DIV));
 	return (1);
 }
 
@@ -122,7 +122,7 @@ char	modulo_exec(t_buf *b, void *m)
 	*(prev_adr(m)) = MODULO;
 	read_smart_inc(b);
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
-		mix_in_value(m, (t_content)NULL, MODULO);
+		mix_in_expr(m, t_expr_init((t_content)NULL, MODULO));
 	return (1);
 }
 
@@ -131,7 +131,7 @@ char	power_exec(t_buf *b, void *m)
 	(void)b;
 	handle_line_error(m, "A '^' was found in a strange place.");
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
-		mix_in_value(m, (t_content)NULL, POWER);
+		mix_in_expr(m, t_expr_init((t_content)NULL, POWER));
 	return (1);
 }
 
@@ -151,7 +151,7 @@ char	minus_exec(t_buf *b, void *m)
 	}
 	read_smart_inc(b);
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
-		mix_in_value(m, (t_content)NULL, MINUS);
+		mix_in_expr(m, t_expr_init((t_content)NULL, MINUS));
 	return (1);
 }
 
@@ -166,6 +166,6 @@ char	plus_exec(t_buf *b, void *m)
 		*(prev_adr(m)) = PLUS;
 	read_smart_inc(b);
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
-		mix_in_value(m, (t_content)NULL, PLUS);
+		mix_in_expr(m, t_expr_init((t_content)NULL, PLUS));
 	return (1);
 }

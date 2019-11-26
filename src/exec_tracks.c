@@ -61,12 +61,13 @@ void	aglomerate_type(t_expr *e1, t_expr* e2, t_expr *last)
 {
 	while (1)
 	{
+		printf("aglomerate_type: try\n\tval:%f info:%d x degree:%zu\n\tval:%f info:%d x degree:%zu\n", e1->content.flt, e1->info, e1->unknown_degree, e2->content.flt, e2->info, e2->unknown_degree);
 		if (e1->info == e2->info && e1->unknown_degree == e2->unknown_degree)
 		{
 			addition_same_type(e1, e2);
 			e2->info = PROCESSED;
 		}
-		if (e2 != last)
+		if (e2 == last)
 			break;
 		e2 = e2->next;
 	}
@@ -102,6 +103,8 @@ BOOL	refine_addition_result(t_link_track *t)
 			return (1);
 		aglomerate_type(current, next, (t_expr*)t->last);
 		printf("aglo result: %f * x^%zu\n", current->content.flt, current->unknown_degree);
+		if (current == (void*)t->first)
+			putendl("current == (void*)t->first");
 		track_push_internal_link((t_link*)current, (t_track*)t);
 		putendl("PUSH DONE");
 		current = current->next;

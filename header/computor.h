@@ -122,7 +122,7 @@ char	exec_cell_if_prior(t_master *m, t_expr *e);
 BOOL	refine_addition_result(t_link_track *t);
 void	inject_value(t_master *m, t_content content, char info);
 void	inject_expr(t_master *m, t_expr *e);
-void	mix_in_value(t_master *m, t_expr *e);
+void	mix_in_expr(t_master *m, t_expr *e);
 BOOL	handle_line_error(t_master *m, const char *s);
 char	plus_exec(t_buf *b, void *m);
 char	num_store(t_buf *b, void *m);

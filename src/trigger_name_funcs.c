@@ -65,7 +65,7 @@ void	*t_expr_init(t_content content, char info)
 }
 
 //Writes directly on the first time, then add a cell.
-void	mix_in_value(t_master *m, t_expr *e)
+void	mix_in_expr(t_master *m, t_expr *e)
 {
 	if (e->info == PACK)
 	{
@@ -74,25 +74,24 @@ void	mix_in_value(t_master *m, t_expr *e)
 	}
 	if (EXEC_TRACK_LAST_AS_LINK_TRACK->first == NULL)
 	{
-		putendl("mix_in_value: INIT");
-		link_track_init(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)t_expr_init(e->content, e->info));
+		putendl("mix_in_expr: INIT");
+		link_track_init(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)e);
 	}
 	else
 	{
-		putendl("mix_in_value: ADD");
-		link_track_add(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)t_expr_init(e->content, e->info));
+		putendl("mix_in_expr: ADD");
+		link_track_add(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)e);
 	}
 	printf("added an expr of type :%d\n", e->info);
 	if (m->exec_tracks.first == m->exec_tracks.last)
-		putendl("mix_in_value: added on main track.");
-	if (e->info == UNKNOWN)
-		printf("mix_in_value: UNKNOWN : adr = %p. Info = %d\n", get_last_last_expr(m), get_last_last_expr(m)->info);
+		putendl("mix_in_expr: added on main track.");
+	printf("Mixed: %f * x^%zu\n", e->content.flt, e->unknown_degree);
 }
 
 void	inject_value(t_master *m, t_content content, char info)
 {
 	if (!exec_cell_if_prior((t_master*)m, t_expr_init(content, info)))
-		mix_in_value(m, t_expr_init(content, info));
+		mix_in_expr(m, t_expr_init(content, info));
 	*(prev_adr(m)) = VALUE;
 }
 
@@ -101,7 +100,7 @@ void	inject_expr(t_master *m, t_expr *e)
 	if (m->matrice_depht)
 	{
 		putendl("XXXXXX\nmatrice depht detected.\nXXXXXX");
-		mix_in_value(m, e);
+		mix_in_expr(m, e);
 		e = e->content.expr;
 	}
 	else
@@ -115,7 +114,7 @@ void	inject_expr(t_master *m, t_expr *e)
 		}
 		else
 		{
-			mix_in_value(m,e);
+			mix_in_expr(m,e);
 		}
 	}
 	*(prev_adr(m)) = VALUE;
@@ -162,7 +161,7 @@ void	mix_var_value(t_master *m, char *name)
 
 	info = get_item_value(&value, m, name);
 	if (info >= 0)
-		mix_in_value(m, t_expr_init(value, info));
+		mix_in_expr(m, t_expr_init(value, info));
 	else
 	{
 		free(m->to_define);
@@ -214,12 +213,12 @@ BOOL	apply_i(t_master *m)
 	else if (prev(m) == PLUS)
 	{
 		c.flt = 1;
-		mix_in_value(m, t_expr_init(c, IRATIONNAL));
+		mix_in_expr(m, t_expr_init(c, IRATIONNAL));
 	}
 	else if (prev(m) == MINUS)
 	{
 		c.flt = -1;
-		mix_in_value(m, t_expr_init(c, IRATIONNAL));
+		mix_in_expr(m, t_expr_init(c, IRATIONNAL));
 	}
 	else
 		handle_line_error(m, "'i' was used in a non supported scenario.");
@@ -256,7 +255,7 @@ char	alpha_exec(t_buf *b, void *m)
 	else if (((t_master*)m)->equal_defined == DEFINE_FUNC && str_perfect_match(s, ((t_master*)m)->to_define))
 	{
 		putendl("added an unknown in function definition.");
-		mix_in_value(m, t_expr_init((t_content)NULL, UNKNOWN));
+		mix_in_expr(m, t_expr_init((t_content)NULL, UNKNOWN));
 		*(prev_adr(m)) = VALUE;
 		return (1);
 	}

@@ -58,7 +58,7 @@ BOOL pass_right_to_left(t_master *m)
 			//TODO: free the rest of the line.
 			return (0);
 		}
-		inject_expr(m, reverse_expr(e)); //Does this function free e? If not free it there.
+		mix_in_expr(m, reverse_expr(e)); //Does this function free e? If not free it there.
 		e = next;
 		next = next->next;
 	}
@@ -95,7 +95,7 @@ void	display_equation_solution(t_master *m)
 char interogation_exec(t_buf *b, void *m)
 {
 	//this symbol must end a line.
-	putendl("Interrogation exec!");
+	putendl("\nInterrogation exec!");
 	if (read_smart_inc(b) == 0 || b->str[b->pos] == '\n')
 	{
 		if (((t_master *)m)->equal_defined == SIMPLE_EQUAL)
