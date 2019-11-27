@@ -359,48 +359,6 @@ void display_expr(t_expr *e, t_master *m)
 		putstr(m->to_define);
 }
 
-void display_last_expr(t_master *m)
-{
-	t_expr *e;
-	char printed;
-
-	e = get_last_first_expr(m);
-	printed = 0;
-	while (e != get_last_last_expr(m))
-	{
-		if (e->info == PROCESSED)
-			return;
-		if (printed)
-		{
-			putchr(' ');
-			if ((e->info == RATIONNAL || e->info == IRATIONNAL) && e->content.flt < 0)
-			{
-				e->content.flt = -(e->content.flt);
-				putstr("- ");
-			}
-			else
-				putstr("+ ");
-		}
-		display_expr(e, m);
-		printed = 1;
-		e = e->next;
-	}
-	if (e->info == PROCESSED)
-		return;
-	if (printed)
-	{
-		putchr(' ');
-		if ((e->info == RATIONNAL || e->info == IRATIONNAL) && e->content.flt < 0)
-		{
-			e->content.flt = -(e->content.flt);
-			putstr("- ");
-		}
-		else
-			putstr("+ ");
-	}
-	display_expr(e, m);
-}
-
 t_expr *get_last_first_expr(t_master *m)
 {
 	return ((t_expr *)(((t_link_track *)(m->exec_tracks.last))->first));

@@ -139,7 +139,7 @@ char	minus_exec(t_buf *b, void *m)
 {
 	if (int_is_comprised(prev(m), MINUS, MODULO))
 		*(prev_adr(m)) += 5;
-	else if (prev(m) == NOTHING || prev(m) == VALUE)
+	else if (prev(m) == NOTHING || prev(m) == VALUE || prev(m) == EQUAL)
 	{
 		//putendl("prev = minus.");
 		*(prev_adr(m)) = MINUS;

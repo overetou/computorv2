@@ -13,8 +13,6 @@
 #include "computor.h"
 #include <stdio.h>
 
-#define EXEC_LAST ((t_expr*)(((t_link_track*)(m->exec_tracks.last))->last))->content.integ
-
 void	prepare_new_line(t_master *m)
 {
 	destroy_link_track_content((t_link_track*)(m->exec_tracks.first));
@@ -90,7 +88,8 @@ BOOL	refine_addition_result(t_link_track *t)
 
 	if (t->first == t->last)
 	{
-		unzip_pack(t, (t_expr*)t->first);
+		if (((t_expr*)t->first)->info == PACK)
+			unzip_pack(t, (t_expr*)t->first);
 		return (1);
 	}
 	current = (t_expr*)(t->first);

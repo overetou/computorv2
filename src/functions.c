@@ -115,7 +115,7 @@ char	*get_parenthesis_content(t_buf *b)
 	return (str);
 }
 
-t_var	*true_var_init(char *s)
+t_var	*t_var_simple_init(char *s)
 {
 	t_var	*new;
 
@@ -142,7 +142,7 @@ void	prepare_func_definition(t_master *m, t_buf *b, char *s, char *parent_conten
 {
 	read_till_false(b, is_sep);
 	m->to_define = parent_content;
-	track_insert(&(m->funcs), (t_link*)true_var_init(s));
+	track_insert(&(m->funcs), (t_link*)t_var_simple_init(s));
 	m->equal_defined = DEFINE_FUNC;
 }
 

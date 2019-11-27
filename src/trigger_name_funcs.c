@@ -13,15 +13,15 @@
 #include "computor.h"
 #include <stdlib.h>
 
-void	*t_var_init(t_master *m)
+void	*t_var_init(char *name, t_content content, char info)
 {
 	t_var	*new;
 
 	new = malloc(sizeof(t_var));
-	new->name = m->to_define;
+	new->name = name;
 	//printf("t_var_init: new->name = %s\n", new->name);
-	new->content = (((t_expr*)((t_link_track*)(m->exec_tracks.last))->first))->content;
-	new->info = (((t_expr*)((t_link_track*)(m->exec_tracks.last))->first))->info;
+	new->content = content;
+	new->info = info;
 	return (new);
 }
 
@@ -221,7 +221,11 @@ BOOL	apply_i(t_master *m)
 		mix_in_expr(m, t_expr_init(c, IRATIONNAL));
 	}
 	else
+	{
 		handle_line_error(m, "'i' was used in a non supported scenario.");
+		return (1);
+	}
+	*(prev_adr(m)) = VALUE;
 	return (1);
 }
 
@@ -230,7 +234,7 @@ char	alpha_exec(t_buf *b, void *m)
 {
 	char	*s;
 
-	printf("alpha_exec: to_define = %p\n", ((t_master*)m)->to_define);
+	printf("alpha_exec: to_define = %s\n", ((t_master*)m)->to_define == NULL ? "NULL":((t_master*)m)->to_define);
 	s = read_word(b, char_is_valid_var_name_material);
 	if (str_perfect_match(s, "i"))
 		return (apply_i(m));
@@ -268,22 +272,23 @@ char	alpha_exec(t_buf *b, void *m)
 	return (1);
 }
 
-void	define_variable(t_master *m)
+void	define_variable(t_expr *e, t_master *m)
 {
 	t_expr	*var;
 
 	putendl("/////////////\n DEFINE_VARIABLE\n////////////");
 	if (((t_master*)m)->vars.first == NULL)
-		track_init(&(((t_master*)m)->vars), t_var_init(m));
+		track_init(&(((t_master*)m)->vars), t_var_init(m->to_define, e->content, e->info));
 	else
 	{
 		var = get_var(m, ((t_master*)m)->to_define);
 		if (var)
 			t_var_update(var, m);
 		else
-			track_add(&(((t_master*)m)->vars), t_var_init(m));
+			track_add(&(((t_master*)m)->vars), t_var_init(m->to_define, e->content, e->info));
 	}
 	m->to_define = NULL;
+	free(e);
 }
 
 void	display_sign(t_expr *e)
@@ -336,12 +341,15 @@ char	endline_exec(t_buf *b, void *m)
 	else
 	{
 		if (condense_last_track(m) == 0)
-			handle_line_error(m, "A problem happended while doing additions.");
-		else if (((t_master*)m)->to_define)
 		{
-			define_variable(m);
+			handle_line_error(m, "A problem happened while doing additions.");
+			return (1);
 		}
 		display_last_expr(m);
+		if (((t_master*)m)->to_define)
+		{
+			define_variable(pack_if_needed(m), m);
+		}
 	}
 	putchr('\n');
 	prepare_new_line(m);

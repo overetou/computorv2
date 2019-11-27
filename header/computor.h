@@ -71,7 +71,6 @@ typedef struct		s_expr
 {
 	struct s_expr	*next;
 	t_content		content;
-	char			*name;
 	char			info;
 	size_t			unknown_degree;
 }					t_expr;
@@ -162,4 +161,5 @@ void	*get_var(t_master *m, const char *name);
 char	interogation_exec(t_buf *b, void *m);
 BOOL try_var_as_unknown(t_master *m, char *name);
 void multiply_unknowns(t_expr *e1, t_expr *e2);
+t_expr *pack_if_needed(t_master *m);
 #endif

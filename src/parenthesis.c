@@ -32,34 +32,35 @@ char	open_par_exec(t_buf *b, void *m)
 	return (1);
 }
 
-void	extract_refined_expr(t_master *m, t_expr **value)
+t_expr *pack_init(t_expr *e)
 {
-	t_expr		*traveler;
-	t_content	c;
+	return (t_expr_init((t_content)((void*)e), PACK));
+}
 
-	*value = (t_expr*)(((t_link_track*)(m->exec_tracks.last))->first);
-	if (((t_link_track*)(m->exec_tracks.last))->last == (t_link*)value)
-		((t_link_track*)(m->exec_tracks.last))->first = NULL;
-	else
+t_expr *pack_if_needed(t_master *m)
+{
+	t_expr *curr;
+	t_expr *first;
+	first = get_last_first_expr(m);
+	if (first == get_last_first_expr(m))
+		return (first);
+	curr = first->next;
+	while (1)
 	{
-		printf("extract_refined_expr: future pack detected.\n");
-		traveler = ((t_expr*)((t_link_track*)(m->exec_tracks.last))->first);
-		if (traveler->info != PROCESSED)
+		if (curr == get_last_last_expr(m))
 		{
-			c.expr = *value;
-			*value = t_expr_init(c, PACK);
-			while (traveler->next != get_last_last_expr(m) &&
-					traveler->next->info == PROCESSED)
-			{
-				traveler = traveler->next;
-			}
-			traveler = traveler->next;
-			((t_link_track*)(m->exec_tracks.last))->first = (t_link*)traveler->next;
-			traveler->next = NULL;
+			((t_link_track*)(m->exec_tracks.last))->first = NULL;
+			break;
 		}
-		else
-			((t_link_track*)(m->exec_tracks.last))->first = (t_link*)traveler;
+		else if (curr->next->info == PROCESSED)
+		{
+			((t_link_track*)(m->exec_tracks.last))->first = (void*)(curr->next);
+			break;
+		}
+		curr = curr->next;
 	}
+	curr->next = NULL;
+	return (pack_init(first));
 }
 
 char	close_par_exec(t_buf *b, void *m)
@@ -75,7 +76,7 @@ char	close_par_exec(t_buf *b, void *m)
 		return (1);
 	}
 	printf("close_par_exec: condensing succeded\n");
-	extract_refined_expr(m, &value);
+	value = pack_if_needed(m);
 	printf("close_par_exec: refinement succeded\n");
 	track_remove_last(&(((t_master*)m)->exec_tracks), destroy_link_track);
 	printf("close_par_exec: Lowered by a level. Previous is now: %d\n", prev(m));
