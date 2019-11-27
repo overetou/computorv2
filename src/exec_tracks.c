@@ -94,23 +94,21 @@ BOOL	refine_addition_result(t_link_track *t)
 		return (1);
 	}
 	current = (t_expr*)(t->first);
-	while (current != (t_expr*)(t->last))
+	while (1)
 	{
 		if (current->info == PACK)
 			current = unzip_pack(t, current);
 		next = current->next;
-		if (next->info == PROCESSED)
-			return (1);
 		aglomerate_type(current, next, (t_expr*)t->last);
 		printf("aglo result: %f * x^%zu\n", current->content.flt, current->unknown_degree);
-		if (current == (void*)t->first)
-			putendl("current == (void*)t->first");
-		track_push_internal_link((t_link*)current, (t_track*)t);
+		link_track_push_internal_link((t_link*)current, t);
 		putendl("PUSH DONE");
-		current = current->next;
+		current = next;
+		printf("new curr: %f * x^%zu, info = %d\n", current->content.flt, current->unknown_degree, current->info);
 		while (current->info == PROCESSED && current != (t_expr*)(t->last))
 			current = current->next;
+		if (current == (t_expr*)(t->last))
+			return (1);
 		putendl("refine_addition_result: one spin.");
 	}
-	return (1);
 }

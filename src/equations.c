@@ -71,25 +71,24 @@ void	display_equation_solution(t_master *m)
 	//resolve: We now have a group of expression of different degree. we classify them into a float tab.
 	float	candidates[3];
 	float	solutions[2];
+	int		sol_nb;
 	t_expr	*e;
-	size_t degree;
+	size_t	degree;
 
 	e = get_last_first_expr(m);
 	degree = 0;
-	putendl("????????????Salut!");
-	while (e != get_last_last_expr(m) && e->next->info != PROCESSED)
+	while (1)
 	{
 		printf("display_equation_solution: %f * x^%zu\n", e->content.flt, e->unknown_degree);
 		candidates[e->unknown_degree] = e->content.flt;
 		update_if_superior(&degree, e->unknown_degree);
+		if (e == get_last_last_expr(m) || e->next->info == PROCESSED)
+			break;
 		e = e->next;
 	}
-	printf("display_equation_solution: %f * x^%zu\n", e->content.flt, e->unknown_degree);
-	candidates[e->unknown_degree] = e->content.flt;	
-	update_if_superior(&degree, e->unknown_degree);
 	//display
-	if (do_resolution(candidates, degree, solutions) == 1)
-		printf("Solution = %f\n", solutions[0]);
+	sol_nb = do_resolution(candidates, degree + 1, solutions);
+	display_solutions(solutions, sol_nb);
 }
 
 char interogation_exec(t_buf *b, void *m)
