@@ -41,25 +41,29 @@ t_expr *pack_if_needed(t_master *m)
 {
 	t_expr *curr;
 	t_expr *first;
+
+	putendl("PACK IF NEEDED");
 	first = get_last_first_expr(m);
-	if (first == get_last_first_expr(m))
+	if (first == get_last_last_expr(m))
 		return (first);
-	curr = first->next;
+	curr = first;
 	while (1)
 	{
-		if (curr == get_last_last_expr(m))
+		if (curr->next->info == PROCESSED)
+		{
+			((t_link_track*)(m->exec_tracks.last))->first = (t_link*)curr->next;
+			break;
+		}
+		curr = curr->next;
+		//here we know that curr is not Processed.
+		if (curr == get_last_last_expr(m)) //This condition makes sure that we never go past last.
 		{
 			((t_link_track*)(m->exec_tracks.last))->first = NULL;
 			break;
 		}
-		else if (curr->next->info == PROCESSED)
-		{
-			((t_link_track*)(m->exec_tracks.last))->first = (void*)(curr->next);
-			break;
-		}
-		curr = curr->next;
 	}
 	curr->next = NULL;
+	printf("new pack content = %f ; %f\n", first->content.flt, first->next->content.flt);
 	return (pack_init(first));
 }
 

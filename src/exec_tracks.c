@@ -76,7 +76,9 @@ t_expr	*unzip_pack(t_link_track *t, t_expr *curr)
 	t_expr *new_cur;
 
 	new_cur = curr->content.expr;
-	track_replace_link_with_list((t_track*)t, (t_link*)curr, (t_link*)new_cur);
+	printf("unzip_pack: %f ; %f\n", new_cur->content.flt, new_cur->next->content.flt);
+	link_track_replace_link_with_list(t, (t_link*)curr, (t_link*)new_cur);
+	putendl("If I appear then the previous is infinite loop free.");
 	return (new_cur);
 }
 

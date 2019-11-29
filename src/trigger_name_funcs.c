@@ -67,11 +67,6 @@ void	*t_expr_init(t_content content, char info)
 //Writes directly on the first time, then add a cell.
 void	mix_in_expr(t_master *m, t_expr *e)
 {
-	if (e->info == PACK)
-	{
-		e->info = ((t_expr*)(e->content.expr))->info;
-		e->content = ((t_expr*)(e->content.expr))->content;
-	}
 	if (EXEC_TRACK_LAST_AS_LINK_TRACK->first == NULL)
 	{
 		putendl("mix_in_expr: INIT");
@@ -160,7 +155,7 @@ void	mix_var_value(t_master *m, char *name)
 	char		info;
 
 	info = get_item_value(&value, m, name);
-	if (info >= 0)
+	if (info > -1)
 		mix_in_expr(m, t_expr_init(value, info));
 	else
 	{
@@ -177,8 +172,10 @@ void	inject_var_value(t_master *m, char *name)
 	char		info;
 
 	info = get_item_value(&value, m, name);
-	if (info >= 0)
+	if (info > -1)
+	{
 		inject_value(m, value, info);
+	}
 	else
 	{
 		putendl("inject_var_value: trying to add a var as an unknown.");
@@ -267,7 +264,10 @@ char	alpha_exec(t_buf *b, void *m)
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 		mix_var_value(m, s);
 	else
+	{
 		inject_var_value(m, s);
+		putendl("alpha_exec: still alive after inject var val.");
+	}
 	*(prev_adr(m)) = VALUE;
 	return (1);
 }
@@ -275,8 +275,10 @@ char	alpha_exec(t_buf *b, void *m)
 void	define_variable(t_expr *e, t_master *m)
 {
 	t_expr	*var;
+	t_expr *debug = e->content.expr;
 
 	putendl("/////////////\n DEFINE_VARIABLE\n////////////");
+	printf("define_variable: futur var info = %d. Inside we have: %f ; %f\n", e->info, debug->content.flt, debug->next->content.flt);
 	if (((t_master*)m)->vars.first == NULL)
 		track_init(&(((t_master*)m)->vars), t_var_init(m->to_define, e->content, e->info));
 	else
@@ -288,7 +290,6 @@ void	define_variable(t_expr *e, t_master *m)
 			track_add(&(((t_master*)m)->vars), t_var_init(m->to_define, e->content, e->info));
 	}
 	m->to_define = NULL;
-	free(e);
 }
 
 void	display_sign(t_expr *e)
