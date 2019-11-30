@@ -63,7 +63,7 @@ t_expr *pack_if_needed(t_master *m)
 		}
 	}
 	curr->next = NULL;
-	printf("new pack content = %f ; %f\n", first->content.flt, first->next->content.flt);
+	//printf("new pack content = %f ; %f\n", first->content.flt, first->next->content.flt);
 	return (pack_init(first));
 }
 
@@ -79,14 +79,14 @@ char	close_par_exec(t_buf *b, void *m)
 		handle_line_error(m, "The final addition of a track's components failed");
 		return (1);
 	}
-	printf("close_par_exec: condensing succeded\n");
+	//printf("close_par_exec: condensing succeded\n");
 	value = pack_if_needed(m);
-	printf("close_par_exec: refinement succeded\n");
+	//printf("close_par_exec: refinement succeded\n");
 	track_remove_last(&(((t_master*)m)->exec_tracks), destroy_link_track);
-	printf("close_par_exec: Lowered by a level. Previous is now: %d\n", prev(m));
+	//printf("close_par_exec: Lowered by a level. Previous is now: %d\n", prev(m));
 	if (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO))
 		reverse_expr(value);
-	printf("close_par_exec: trying to inject an expr of type: %d\n", value->info);
+	//printf("close_par_exec: trying to inject an expr of type: %d\n", value->info);
 	inject_expr(m, value);
 	read_smart_inc(b);
 	return (1);

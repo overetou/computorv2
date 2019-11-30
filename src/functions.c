@@ -64,7 +64,7 @@ t_expr	*compute_func(t_master *m, t_expr *argument, char *func_name)
 	if (cur == NULL || argument == NULL)
 		return (NULL);
 	cur = cur->content.expr;
-	printf("compute_func: found a function corresponding to the name. First value info = %d\n", cur->info);
+	//printf("compute_func: found a function corresponding to the name. First value info = %d\n", cur->info);
 	add_level(m);
 	while (cur)
 	{
@@ -159,7 +159,7 @@ BOOL	process_parent_and_handle_if_def_requested(t_master *m, t_buf *b, t_expr **
 			return (0);
 		if (is_definition(m, b))
 			return (1);
-		*e = get_var(m, *parent_content);
+		*e = (t_expr*)get_var(m, *parent_content);//TODO: understand what is going on here. This instruction seems to never be useful.
 		return (0);
 	}
 	add_level(m);

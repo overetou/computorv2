@@ -32,6 +32,7 @@ BOOL	get_power(t_buf *b, t_content *c, char *info)
 {
 	int	power;
 
+	putendl("get_power: Entered.");
 	read_till_false(b, is_sep);
 	if (b->str[b->pos] == '^')
 	{
@@ -67,7 +68,7 @@ char	num_store(t_buf *b, void *m)
 		handle_line_error(m, "Problem while parsing a power detected.");
 		return (1);
 	}
-	printf("num_store: value read = %f\n", value.flt);
+	printf("num_store: read number = %f\n", value.flt);
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 	{
 		putendl("////////////\nDirectly adding.\n///////////");

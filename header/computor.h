@@ -79,8 +79,8 @@ typedef struct		s_var
 {
 	struct s_var	*next;
 	t_content		content;
-	char			*name;
 	char			info;
+	char			*name;
 }					t_var;
 
 typedef struct		s_func
@@ -157,7 +157,7 @@ char	handle_func(t_master *m, t_buf *b, char *s);
 void	remove_level(t_master *m);
 void	*get_item(t_track *t, const char *name);
 void	display_expr(t_expr *e, t_master *m);
-void	*get_var(t_master *m, const char *name);
+t_var	*get_var(t_master *m, const char *name);
 char	interogation_exec(t_buf *b, void *m);
 BOOL try_var_as_unknown(t_master *m, char *name);
 void multiply_unknowns(t_expr *e1, t_expr *e2);

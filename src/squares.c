@@ -36,7 +36,7 @@ char	open_square_exec(t_buf *b, void *m)
 		}
 		else
 		{
-			printf("prev = %d\n", prev(m));
+			//printf("prev = %d\n", prev(m));
 			handle_line_error(m, "Wrong matrix format.");
 			return (1);
 		}

@@ -35,7 +35,7 @@ BOOL is_simple_value(char info)
 //Mutiply rationnal and ira between themself.
 void simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info)
 {
-	printf("simple_mult: %f * %f\n", op1->content.flt, op2.flt);
+	//printf("simple_mult: %f * %f\n", op1->content.flt, op2.flt);
 	receiver->content.flt = (op1->content.flt) * (op2.flt);
 	if (op1->info == RATIONNAL)
 	{
@@ -54,7 +54,7 @@ void simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info)
 		else
 			receiver->info = IRATIONNAL;
 	}
-	//	printf("result = %f with type: %d\n", receiver->content.flt, receiver->info);
+		//printf("result = %f with type: %d\n", receiver->content.flt, receiver->info);
 }
 
 //We know that value is a pack.
@@ -95,7 +95,7 @@ void dissolve_expr_in_content(t_content *c, t_expr *e)
 			head = head->next;
 		}
 		head->content.flt += e->content.flt;
-		printf("dissolve_expr_in_content: augmented a value to %f\n", head->content.flt);
+		//printf("dissolve_expr_in_content: augmented a value to %f\n", head->content.flt);
 	}
 }
 

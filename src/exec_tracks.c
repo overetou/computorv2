@@ -38,7 +38,7 @@ BOOL	handle_line_error(t_master *m, const char *s)
 //are defined. Returns 1 on success, 0 other wise.
 char	exec_cell_if_prior(t_master *m, t_expr *e)
 {
-	printf("exec_cell_if_prior: prev = %d\n", prev(m));
+	//printf("exec_cell_if_prior: prev = %d\n", prev(m));
 	if (int_is_comprised(prev(m), MINUS_MULT, MINUS_MODULO))
 		*(prev_adr(m)) -= 5;
 	if (prev(m) == MULT)
@@ -76,9 +76,8 @@ t_expr	*unzip_pack(t_link_track *t, t_expr *curr)
 	t_expr *new_cur;
 
 	new_cur = curr->content.expr;
-	printf("unzip_pack: %f ; %f\n", new_cur->content.flt, new_cur->next->content.flt);
+	//printf("unzip_pack: %f ; %f\n", new_cur->content.flt, new_cur->next->content.flt);
 	link_track_replace_link_with_list(t, (t_link*)curr, (t_link*)new_cur);
-	putendl("If I appear then the previous is infinite loop free.");
 	return (new_cur);
 }
 
@@ -98,14 +97,17 @@ BOOL	refine_addition_result(t_link_track *t)
 	while (1)
 	{
 		if (current->info == PACK)
+		{
 			current = unzip_pack(t, current);
+			putendl("refine_addition_result: still alive after unzip");
+		}
 		next = current->next;
 		aglomerate_type(current, next, (t_expr*)t->last);
-		printf("aglo result: %f * x^%zu\n", current->content.flt, current->unknown_degree);
+		//printf("aglo result: %f * x^%zu\n", current->content.flt, current->unknown_degree);
 		link_track_push_internal_link((t_link*)current, t);
 		putendl("PUSH DONE");
 		current = next;
-		printf("new curr: %f * x^%zu, info = %d\n", current->content.flt, current->unknown_degree, current->info);
+		//printf("new curr: %f * x^%zu, info = %d\n", current->content.flt, current->unknown_degree, current->info);
 		while (current->info == PROCESSED && current != (t_expr*)(t->last))
 			current = current->next;
 		if (current == (t_expr*)(t->last))
