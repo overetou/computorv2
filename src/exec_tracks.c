@@ -71,13 +71,18 @@ void	aglomerate_type(t_expr *e1, t_expr* e2, t_expr *last)
 	}
 }
 
+t_link *copy_expr(t_link *l)
+{
+	return	((t_link*)t_expr_init(((t_expr*)l)->content, ((t_expr*)l)->info));
+}
+
 t_expr	*unzip_pack(t_link_track *t, t_expr *curr)
 {
 	t_expr *new_cur;
 
 	new_cur = curr->content.expr;
 	//printf("unzip_pack: %f ; %f\n", new_cur->content.flt, new_cur->next->content.flt);
-	link_track_replace_link_with_list(t, (t_link*)curr, (t_link*)new_cur);
+	link_track_replace_link_with_list_copy(t, (t_link*)curr, (t_link*)new_cur, copy_expr);
 	return (new_cur);
 }
 
@@ -86,7 +91,7 @@ BOOL	refine_addition_result(t_link_track *t)
 {
 	t_expr	*current;
 	t_expr	*next;
-
+	
 	if (t->first == t->last)
 	{
 		if (((t_expr*)t->first)->info == PACK)
@@ -98,11 +103,14 @@ BOOL	refine_addition_result(t_link_track *t)
 	{
 		if (current->info == PACK)
 		{
+		putendl("tatbefore infinite loop.");
 			current = unzip_pack(t, current);
 			putendl("refine_addition_result: still alive after unzip");
 		}
+		putendl("du tac au tac");
 		next = current->next;
 		aglomerate_type(current, next, (t_expr*)t->last);
+		putendl("after infinite loop");
 		//printf("aglo result: %f * x^%zu\n", current->content.flt, current->unknown_degree);
 		link_track_push_internal_link((t_link*)current, t);
 		putendl("PUSH DONE");

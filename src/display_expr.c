@@ -34,7 +34,6 @@ void display_last_expr(t_master *m)
 		{
 			display_expr(e, m);
 		}
-		
         if (e == get_last_last_expr(m))
         {
             putendl("\ndisplay_last_expr: last element was the last of the track.");

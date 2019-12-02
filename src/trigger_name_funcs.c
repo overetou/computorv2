@@ -351,6 +351,7 @@ char	endline_exec(t_buf *b, void *m)
 		display_last_expr(m);
 		if (((t_master*)m)->to_define)
 		{
+			putendl("to define detected. Have to define.");
 			define_variable(pack_if_needed(m), m);
 		}
 	}
