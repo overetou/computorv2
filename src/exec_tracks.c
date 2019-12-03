@@ -73,17 +73,14 @@ void	aglomerate_type(t_expr *e1, t_expr* e2, t_expr *last)
 
 t_link *copy_expr(t_link *l)
 {
+	printf("copying an expression. Content = %f, info = %d\n", ((t_expr*)l)->content.flt, ((t_expr*)l)->info);
 	return	((t_link*)t_expr_init(((t_expr*)l)->content, ((t_expr*)l)->info));
 }
 
 t_expr	*unzip_pack(t_link_track *t, t_expr *curr)
 {
-	t_expr *new_cur;
-
-	new_cur = curr->content.expr;
 	//printf("unzip_pack: %f ; %f\n", new_cur->content.flt, new_cur->next->content.flt);
-	link_track_replace_link_with_list_copy(t, (t_link*)curr, (t_link*)new_cur, copy_expr);
-	return (new_cur);
+	return ((t_expr*)link_track_replace_link_with_list_copy(t, (t_link*)curr, (t_link*)(curr->content.expr), copy_expr));
 }
 
 //Ne pas oublier de se proteger des overflows ici aussi. Puts the addition result inside the firsts link of the track.
@@ -106,8 +103,8 @@ BOOL	refine_addition_result(t_link_track *t)
 		putendl("tatbefore infinite loop.");
 			current = unzip_pack(t, current);
 			putendl("refine_addition_result: still alive after unzip");
+			printf("args = %f, %f, %f\n", current->content.flt, current->next->content.flt, current->next->next->content.flt);
 		}
-		putendl("du tac au tac");
 		next = current->next;
 		aglomerate_type(current, next, (t_expr*)t->last);
 		putendl("after infinite loop");
