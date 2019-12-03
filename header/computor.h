@@ -32,7 +32,6 @@
 #define POWER			14
 #define COMA			15
 #define SEMILICON		16
-#define MATRIX			17
 
 #define PROCESSED		-1
 //The different values that info can take are:
@@ -50,6 +49,7 @@
 //content is a float multplied by an unknown and i(used exclusivaly in functions)
 #define PACK			6
 //content is part of a set of 2 values: a and b in a + bi.
+#define MATRIX			7
 
 #define DEFINE_VAR 1
 #define DEFINE_FUNC 2

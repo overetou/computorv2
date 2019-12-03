@@ -64,7 +64,7 @@ t_expr	*compute_func(t_master *m, t_expr *argument, char *func_name)
 	if (cur == NULL || argument == NULL)
 		return (NULL);
 	cur = cur->content.expr;
-	//printf("compute_func: found a function corresponding to the name. First value info = %d\n", cur->info);
+	////printf("compute_func: found a function corresponding to the name. First value info = %d\n", cur->info);
 	add_level(m);
 	while (cur)
 	{

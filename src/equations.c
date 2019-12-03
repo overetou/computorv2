@@ -19,14 +19,14 @@ BOOL try_var_as_unknown(t_master *m, char *name)
 	e->unknown_degree = 1;
 	//TODO: add power handlement.
 	inject_expr(m, e);
-	//printf("Injected: %s as an unkown candidate.\n", name);
+	////printf("Injected: %s as an unkown candidate.\n", name);
 	return (1);
 }
 
 void multiply_unknowns(t_expr *e1, t_expr *e2)
 {
 	e1->unknown_degree += e2->unknown_degree;
-	//printf("multiply_unknowns: %f * x^%zu\n", e1->content.flt, e1->unknown_degree);
+	////printf("multiply_unknowns: %f * x^%zu\n", e1->content.flt, e1->unknown_degree);
 }
 
 char equal_exec(t_buf *b, void *m)
@@ -79,7 +79,7 @@ void	display_equation_solution(t_master *m)
 	degree = 0;
 	while (1)
 	{
-		//printf("display_equation_solution: %f * x^%zu\n", e->content.flt, e->unknown_degree);
+		////printf("display_equation_solution: %f * x^%zu\n", e->content.flt, e->unknown_degree);
 		candidates[e->unknown_degree] = e->content.flt;
 		update_if_superior(&degree, e->unknown_degree);
 		if (e == get_last_last_expr(m) || e->next->info == PROCESSED)

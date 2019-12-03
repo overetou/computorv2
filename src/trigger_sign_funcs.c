@@ -40,7 +40,7 @@ BOOL	get_power(t_buf *b, t_content *c, char *info)
 		power = 1;
 		if (fetch_power_data(b, &power) == 0)
 			return (0);
-		//printf("get_power: power = %d\n", power);
+		////printf("get_power: power = %d\n", power);
 		return (apply_power(c, info, power));
 	}
 	return (1);
@@ -68,7 +68,7 @@ char	num_store(t_buf *b, void *m)
 		handle_line_error(m, "Problem while parsing a power detected.");
 		return (1);
 	}
-	printf("num_store: read number = %f\n", value.flt);
+	//printf("num_store: read number = %f\n", value.flt);
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 	{
 		putendl("////////////\nDirectly adding.\n///////////");

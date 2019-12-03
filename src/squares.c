@@ -36,7 +36,7 @@ char	open_square_exec(t_buf *b, void *m)
 		}
 		else
 		{
-			//printf("prev = %d\n", prev(m));
+			////printf("prev = %d\n", prev(m));
 			handle_line_error(m, "Wrong matrix format.");
 			return (1);
 		}
@@ -58,9 +58,7 @@ char	close_square_exec(t_buf *b, void *m)
 	t_expr	matrix;
 
 	putendl("Closing bracket detected.");
-	if (((t_master*)m)->matrice_depht == 0)
-		handle_line_error(m, "Illegal closing bracket detected.");
-	else
+	if (((t_master*)m)->matrice_depht == 2)
 	{
 		if (get_last_first_expr(m) == NULL)
 			handle_line_error(m, "Void matrix element detected.");
@@ -68,12 +66,18 @@ char	close_square_exec(t_buf *b, void *m)
 		{
 			get_last_last_expr(m)->next = NULL;
 			putendl("Ended a matrix row.");
-			extract_matrix(m, &matrix);
+			extract_matrix_row(m, &matrix);
 			inject_expr(m, &matrix);
 			((t_master*)m)->matrice_depht--;
 			read_smart_inc(b);
 		}
 	}
+	else if (((t_master*)m)->matrice_depht == 1)
+	{
+
+	}
+	else
+		handle_line_error(m, "Illegal closing bracket detected.");
 	return (1);
 }
 

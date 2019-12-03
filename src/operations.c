@@ -35,7 +35,7 @@ BOOL is_simple_value(char info)
 //Mutiply rationnal and ira between themself.
 void simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info)
 {
-	//printf("simple_mult: %f * %f\n", op1->content.flt, op2.flt);
+	////printf("simple_mult: %f * %f\n", op1->content.flt, op2.flt);
 	receiver->content.flt = (op1->content.flt) * (op2.flt);
 	if (op1->info == RATIONNAL)
 	{
@@ -54,7 +54,7 @@ void simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info)
 		else
 			receiver->info = IRATIONNAL;
 	}
-		//printf("result = %f with type: %d\n", receiver->content.flt, receiver->info);
+		////printf("result = %f with type: %d\n", receiver->content.flt, receiver->info);
 }
 
 //We know that value is a pack.
@@ -95,7 +95,7 @@ void dissolve_expr_in_content(t_content *c, t_expr *e)
 			head = head->next;
 		}
 		head->content.flt += e->content.flt;
-		//printf("dissolve_expr_in_content: augmented a value to %f\n", head->content.flt);
+		////printf("dissolve_expr_in_content: augmented a value to %f\n", head->content.flt);
 	}
 }
 
@@ -323,10 +323,36 @@ t_expr *reverse_expr(t_expr *e)
 	return (e);
 }
 
-void display_expr(t_expr *e, t_master *m)
+void display_matrix(t_expr *e, t_master *m)
 {
 	t_expr *x;
 
+	putendl("entered display matrix");
+	e = e->content.expr;
+	putendl("still alive yo");
+	while (e)
+	{
+		printf("first matrix member info:%d\n", x->info);
+		x = e->content.expr;
+		putchr('[');
+		while (x)
+		{
+			printf("matrix member info:%d\n", x->info);
+			display_expr(x, m);
+			if (x->next)
+				putstr(", ");
+			x = x->next;
+		}
+		putchr(']');
+		e = e->next;
+		if (e)
+			putchr('\n');
+	}
+}
+
+void display_expr(t_expr *e, t_master *m)
+{
+	putendl("entered display expr\n");
 	if (e->info == RATIONNAL)
 		quick_put_float(e->content.flt);
 	else if (e->info == IRATIONNAL)
@@ -337,23 +363,7 @@ void display_expr(t_expr *e, t_master *m)
 	}
 	else if (e->info == MATRIX)
 	{
-		e = e->content.expr;
-		while (e)
-		{
-			x = e->content.expr;
-			putchr('[');
-			while (x)
-			{
-				display_expr(x, m);
-				if (x->next)
-					putstr(", ");
-				x = x->next;
-			}
-			putchr(']');
-			e = e->next;
-			if (e)
-				putchr('\n');
-		}
+		display_matrix(e, m);
 	}
 	else if (e->info == UNKNOWN)
 		putstr(m->to_define);

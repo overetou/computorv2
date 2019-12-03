@@ -19,7 +19,7 @@ void	*t_var_init(char *name, t_content content, char info)
 
 	new = malloc(sizeof(t_var));
 	new->name = name;
-	//printf("t_var_init: new->name = %s\n", new->name);
+	////printf("t_var_init: new->name = %s\n", new->name);
 	new->content = content;
 	new->info = info;
 	return (new);
@@ -76,10 +76,10 @@ void	mix_in_expr(t_master *m, t_expr *e)
 		putendl("mix_in_expr: ADD");
 		link_track_add(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)e);
 	}
-	//printf("added an expr of type :%d\n", e->info);
+	////printf("added an expr of type :%d\n", e->info);
 	if (m->exec_tracks.first == m->exec_tracks.last)
 		putendl("mix_in_expr: added on main track.");
-	printf("Mixed info: %d\n", e->info);
+	//printf("Mixed info: %d\n", e->info);
 }
 
 void	inject_value(t_master *m, t_content content, char info)
@@ -204,7 +204,7 @@ BOOL	apply_i(t_master *m)
 	if (prev(m) == VALUE || prev(m) == MULT)
 	{
 		convert_to_irationnal(get_last_last_expr(m));
-		//printf("apply_i: Converted %f to i.\n", get_last_last_expr(m)->content.flt);
+		////printf("apply_i: Converted %f to i.\n", get_last_last_expr(m)->content.flt);
 	}
 	else if (prev(m) == PLUS)
 	{
@@ -230,7 +230,7 @@ char	alpha_exec(t_buf *b, void *m)
 {
 	char	*s;
 
-	//printf("alpha_exec: to_define = %s\n", ((t_master*)m)->to_define == NULL ? "NULL":((t_master*)m)->to_define);
+	////printf("alpha_exec: to_define = %s\n", ((t_master*)m)->to_define == NULL ? "NULL":((t_master*)m)->to_define);
 	s = read_word(b, char_is_valid_var_name_material);
 	if (str_perfect_match(s, "i"))
 		return (apply_i(m));
@@ -259,7 +259,7 @@ char	alpha_exec(t_buf *b, void *m)
 		*(prev_adr(m)) = VALUE;
 		return (1);
 	}
-	//printf("alpha_exec: Preparing to inject a var val. equal_defined = %d\n", ((t_master*)m)->equal_defined);
+	////printf("alpha_exec: Preparing to inject a var val. equal_defined = %d\n", ((t_master*)m)->equal_defined);
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 		mix_var_value(m, s);
 	else
@@ -277,7 +277,7 @@ void	define_variable(t_expr *e, t_master *m)
 	//t_expr *debug = e->content.expr;
 
 	putendl("/////////////\n DEFINE_VARIABLE\n////////////");
-	//printf("define_variable: futur var info = %d. Inside we have: %f ; %f\n", e->info, debug->content.flt, debug->next->content.flt);
+	////printf("define_variable: futur var info = %d. Inside we have: %f ; %f\n", e->info, debug->content.flt, debug->next->content.flt);
 	if (((t_master*)m)->vars.first == NULL)
 		track_init(&(((t_master*)m)->vars), t_var_init(m->to_define, e->content, e->info));
 	else
@@ -313,7 +313,7 @@ void	display_func(t_master *m)
 	t_expr *e;
 
 	e = get_last_first_expr(m);
-	//printf("display_func: last expr info = %d\n", get_last_last_expr(m)->info);
+	////printf("display_func: last expr info = %d\n", get_last_last_expr(m)->info);
 	while (e)
 	{
 		display_expr(e, m);
@@ -335,7 +335,7 @@ char	endline_exec(t_buf *b, void *m)
 {
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 	{
-		//printf("endline_exec: first = %p, info = %d\n", get_last_first_expr(m), get_last_first_expr(m)->info);
+		////printf("endline_exec: first = %p, info = %d\n", get_last_first_expr(m), get_last_first_expr(m)->info);
 		get_last_last_expr(m)->next = NULL;
 		display_func(m);
 		affect_func(m);
