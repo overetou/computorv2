@@ -22,8 +22,10 @@ char	illegal(t_buf *b, void *m)
 
 char	open_square_exec(t_buf *b, void *m)
 {
+	putendl("opening brackets detected");
 	if (((t_master*)m)->matrice_depht == 0)
 	{
+		putendl("stepping up brackets depht to 1.");
 		((t_master*)m)->matrice_depht = 1;
 		add_level(m);
 	}
@@ -31,8 +33,9 @@ char	open_square_exec(t_buf *b, void *m)
 	{
 		if ((prev(m) == SEMILICON || prev(m) == COMA || prev(m) == NOTHING) && ((t_master*)m)->matrice_depht == 1)
 		{
-			add_level(m);
+			putendl("stepping up brackets depht to 2.");
 			((t_master*)m)->matrice_depht++;
+			add_level(m);
 		}
 		else
 		{
@@ -45,17 +48,22 @@ char	open_square_exec(t_buf *b, void *m)
 	return (1);
 }
 
-void	extract_matrix(t_master *m, t_expr *matrix)
+//void	extract_matrix(t_master *m, t_expr *matrix)
+//{
+//	matrix->info = MATRIX;
+//	matrix->content.expr = get_last_first_expr(m);
+//	((t_link_track*)(m->exec_tracks.last))->first = NULL;
+//	remove_level(m);
+//}
+
+t_expr *extract_matrix_row(t_expr *first)
 {
-	matrix->info = MATRIX;
-	matrix->content.expr = get_last_first_expr(m);
-	((t_link_track*)(m->exec_tracks.last))->first = NULL;
-	remove_level(m);
+	return (t_expr_init((t_content)((void*)first), MATRIX_ROW));
 }
 
 char	close_square_exec(t_buf *b, void *m)
 {
-	t_expr	matrix;
+	t_expr	*new_elem;
 
 	putendl("Closing bracket detected.");
 	if (((t_master*)m)->matrice_depht == 2)
@@ -64,43 +72,53 @@ char	close_square_exec(t_buf *b, void *m)
 			handle_line_error(m, "Void matrix element detected.");
 		else
 		{
-			get_last_last_expr(m)->next = NULL;
-			putendl("Ended a matrix row.");
-			extract_matrix_row(m, &matrix);
-			inject_expr(m, &matrix);
-			((t_master*)m)->matrice_depht--;
-			read_smart_inc(b);
+			get_last_last_expr(m)->next = NULL; putendl("Ended a matrix row.");
+			new_elem = extract_matrix_row(get_last_first_expr(m));
+			printf("first element of the row = %f\n", get_last_first_expr(m)->content.flt);
+			((t_link_track*)(((t_master*)m)->exec_tracks.last))->first = NULL;
 		}
 	}
 	else if (((t_master*)m)->matrice_depht == 1)
 	{
-
+		get_last_last_expr(m)->next = NULL; putendl("Ended a matrix.");
+		new_elem = t_expr_init((t_content)((void*)get_last_first_expr(m)), MATRIX);
+		((t_link_track*)(((t_master*)m)->exec_tracks.last))->first = NULL;
 	}
 	else
+	{
 		handle_line_error(m, "Illegal closing bracket detected.");
+		return (1);
+	}
+	remove_level(m);
+	inject_expr(m, new_elem);
+	(((t_master*)m)->matrice_depht)--;
+	printf("brackets depht now equals: %d\n", ((t_master*)m)->matrice_depht);
+	read_smart_inc(b);
 	return (1);
 }
 
-char	coma_exec(t_buf *b, void *m)
+char	virgule_exec(t_buf *b, void *m)
 {
-	if (((t_master*)m)->matrice_depht == 0)
+	putendl("virgule detected.");
+	if (((t_master*)m)->matrice_depht != 2)
+	{
 		handle_line_error(m, "Illegal coma detected");
-	else
-	{
-		*(prev_adr(m)) = COMA;
-		read_smart_inc(b);
+		return (0);
 	}
+	*(prev_adr(m)) = COMA;
+	read_smart_inc(b);
 	return (1);
 }
 
-char	semilicon_exec(t_buf *b, void *m)
+char	pointvirgule_exec(t_buf *b, void *m)
 {
+	putendl("point virgule detected.");
 	if (((t_master*)m)->matrice_depht != 1 || prev(m) != VALUE)
-		handle_line_error(m, "Illegal semilicon detected");
-	else
 	{
-		*(prev_adr(m)) = SEMILICON;
-		read_smart_inc(b);
+		handle_line_error(m, "Illegal semilicon detected");
+		return (0);
 	}
+	*(prev_adr(m)) = SEMILICON;
+	read_smart_inc(b);
 	return (1);
 }

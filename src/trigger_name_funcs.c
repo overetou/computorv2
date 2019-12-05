@@ -69,17 +69,16 @@ void	mix_in_expr(t_master *m, t_expr *e)
 	if (EXEC_TRACK_LAST_AS_LINK_TRACK->first == NULL)
 	{
 		putendl("mix_in_expr: INIT");
-		link_track_init(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)e);
+		link_track_init((t_link_track*)(m->exec_tracks.last), (t_link*)e);
 	}
 	else
 	{
 		putendl("mix_in_expr: ADD");
 		link_track_add(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)e);
 	}
-	////printf("added an expr of type :%d\n", e->info);
+	printf("added an expr of type :%d\n", e->info);
 	if (m->exec_tracks.first == m->exec_tracks.last)
 		putendl("mix_in_expr: added on main track.");
-	//printf("Mixed info: %d\n", e->info);
 }
 
 void	inject_value(t_master *m, t_content content, char info)
@@ -93,9 +92,10 @@ void	inject_expr(t_master *m, t_expr *e)
 {
 	if (m->matrice_depht)
 	{
-		putendl("XXXXXX\nmatrice depht detected.\nXXXXXX");
+		putendl("matrice depht detected.\n");
+		printf("Current matrix depht = %d\n", m->matrice_depht);
 		mix_in_expr(m, e);
-		e = e->content.expr;
+		*(prev_adr(m)) = VALUE;
 	}
 	else
 	{
@@ -110,8 +110,8 @@ void	inject_expr(t_master *m, t_expr *e)
 		{
 			mix_in_expr(m,e);
 		}
+		*(prev_adr(m)) = VALUE;
 	}
-	*(prev_adr(m)) = VALUE;
 }
 
 void	*get_item(t_track *t, const char *name)

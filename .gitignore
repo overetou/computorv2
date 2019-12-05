@@ -10,3 +10,4 @@ obj/trigger_name_funcs.o
 obj/trigger_sign_funcs.o
 obj/equations.o
 obj/display_expr.o
+.vscode/c_cpp_properties.json

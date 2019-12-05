@@ -32,6 +32,7 @@ BOOL	get_power(t_buf *b, t_content *c, char *info)
 {
 	int	power;
 
+	return (1);
 	putendl("get_power: Entered.");
 	read_till_false(b, is_sep);
 	if (b->str[b->pos] == '^')

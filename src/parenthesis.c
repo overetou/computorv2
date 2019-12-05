@@ -21,8 +21,8 @@ BOOL	is_inside_parenthesis(t_master *m)
 void	add_level(t_master *m)
 {
 	putendl("add_level: adding a level.");
-	track_add(&(((t_master*)m)->exec_tracks), (t_link*)link_track_create(NULL));
-	*prev_adr(m) = NOTHING;
+	track_add(&(m->exec_tracks), (t_link*)cust_link_track_create(NULL));
+	(*prev_adr(m)) = NOTHING;
 }
 
 char	open_par_exec(t_buf *b, void *m)

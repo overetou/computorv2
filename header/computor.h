@@ -50,6 +50,7 @@
 #define PACK			6
 //content is part of a set of 2 values: a and b in a + bi.
 #define MATRIX			7
+#define MATRIX_ROW		8
 
 #define DEFINE_VAR 1
 #define DEFINE_FUNC 2
@@ -57,7 +58,7 @@
 
 #define EXEC_TRACK_LAST_AS_LINK_TRACK ((t_link_track*)(m->exec_tracks.last))
 
-#include "../../tools/libft/header/libft.h"
+#include "/home/jxxj/Darkvale_Technologies/config/libft/header/libft.h"
 
 typedef union	u_content
 {
@@ -149,8 +150,8 @@ void	*t_expr_create(void);
 void	*t_expr_init(t_content content, char info);
 char	close_square_exec(t_buf *b, void *m);
 char	open_square_exec(t_buf *b, void *m);
-char	semilicon_exec(t_buf *b, void *m);
-char	coma_exec(t_buf *b, void *m);
+char	pointvirgule_exec(t_buf *b, void *m);
+char	virgule_exec(t_buf *b, void *m);
 void	add_level(t_master *m);
 BOOL	char_is_valid_var_name_material(const char c);
 char	handle_func(t_master *m, t_buf *b, char *s);
@@ -162,4 +163,5 @@ char	interogation_exec(t_buf *b, void *m);
 BOOL try_var_as_unknown(t_master *m, char *name);
 void multiply_unknowns(t_expr *e1, t_expr *e2);
 t_expr *pack_if_needed(t_master *m);
+t_cust_link_track *cust_link_track_create(t_link *l);
 #endif

@@ -14,8 +14,8 @@ void	init_master(t_master *m)
 	trigger_add((t_trigger_set*)m, ")", close_par_exec);
 	trigger_add((t_trigger_set*)m, "[", open_square_exec);
 	trigger_add((t_trigger_set*)m, "]", close_square_exec);
-	trigger_add((t_trigger_set*)m, ";", semilicon_exec);
-	trigger_add((t_trigger_set*)m, ",", coma_exec);
+	trigger_add((t_trigger_set*)m, ";", pointvirgule_exec);
+	trigger_add((t_trigger_set*)m, ",", virgule_exec);
 	trigger_add((t_trigger_set*)m, "=", equal_exec);
 	trigger_add((t_trigger_set*)m, "?", interogation_exec);
 	trigger_add((t_trigger_set*)m, "^", power_exec);
@@ -23,7 +23,7 @@ void	init_master(t_master *m)
 	trigger_add((t_trigger_set*)m, "1234567890", num_store);
 	trigger_add((t_trigger_set*)m, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", alpha_exec);
 	m->to_define = NULL;
-	track_init(&(m->exec_tracks), (t_link*)link_track_create(NULL));
+	track_init(&(m->exec_tracks), (t_link*)cust_link_track_create(NULL));
 	m->vars.first = NULL;
 	m->funcs.first = NULL;
 	m->matrice_depht = 0;

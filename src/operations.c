@@ -251,15 +251,12 @@ char matrix_to_elem(t_expr *m1, t_expr *m2)
 {
 	t_expr *x;
 	t_expr *y;
-	BOOL switched;
 
-	switched = 0;
 	if (m1->info != m2->info)
 	{
 		if (m1->info != MATRIX)
 		{
 			swap_pointer((void **)(&m1), (void *)(&m2));
-			switched = 1;
 		}
 		y = m1->content.expr;
 		while (y)

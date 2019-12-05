@@ -16,7 +16,9 @@
 void	prepare_new_line(t_master *m)
 {
 	destroy_link_track_content((t_link_track*)(m->exec_tracks.first));
+	putendl("\nbefore invalid write size.");
 	*(prev_adr(m)) = NOTHING;
+	putendl("after invalid write size.");
 	m->equal_defined = 0;
 }
 
