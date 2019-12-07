@@ -320,27 +320,27 @@ t_expr *reverse_expr(t_expr *e)
 	return (e);
 }
 
+void	display_sub_matrix(t_expr *sub_mtrx, t_master *m)
+{
+	putchr('[');
+	while (sub_mtrx)
+	{
+		display_expr(sub_mtrx, m);
+		if (sub_mtrx->next)
+			putstr(", ");
+		sub_mtrx = sub_mtrx->next;
+	}
+	putchr(']');
+}
+
 void display_matrix(t_expr *e, t_master *m)
 {
-	t_expr *x;
-
-	putendl("entered display matrix");
-	e = e->content.expr;
-	putendl("still alive yo");
+	//putendl("entered display matrix");
 	while (e)
 	{
-		printf("first matrix member info:%d\n", x->info);
-		x = e->content.expr;
-		putchr('[');
-		while (x)
-		{
-			printf("matrix member info:%d\n", x->info);
-			display_expr(x, m);
-			if (x->next)
-				putstr(", ");
-			x = x->next;
-		}
-		putchr(']');
+		//printf("first matrix member info:%d\n", x->info);
+			//printf("matrix member info:%d\n", x->info);
+		display_sub_matrix(e->content.expr, m);
 		e = e->next;
 		if (e)
 			putchr('\n');
@@ -349,7 +349,7 @@ void display_matrix(t_expr *e, t_master *m)
 
 void display_expr(t_expr *e, t_master *m)
 {
-	putendl("entered display expr\n");
+	//putendl("entered display expr\n");
 	if (e->info == RATIONNAL)
 		quick_put_float(e->content.flt);
 	else if (e->info == IRATIONNAL)
@@ -360,7 +360,7 @@ void display_expr(t_expr *e, t_master *m)
 	}
 	else if (e->info == MATRIX)
 	{
-		display_matrix(e, m);
+		display_matrix(e->content.expr, m);
 	}
 	else if (e->info == UNKNOWN)
 		putstr(m->to_define);
