@@ -72,14 +72,16 @@ void singl_mult_pack(t_expr *e, t_content value)
 	e->info = PACK;
 }
 
+//e is the particul of a pack multiplication that was just calculated. C is a pack content that updates its content with e.
 void dissolve_expr_in_content(t_content *c, t_expr *e)
 {
 	t_expr *head;
 
 	if (c->expr == NULL)
 	{
-		putendl("dissolve_expr_in_content: init pack");
+		putendl("dissolve_expr_in_content: initiating the receiving content.");
 		c->expr = t_expr_init(e->content, e->info);
+		((t_expr*)c->expr)->next = NULL;
 	}
 	else
 	{
@@ -94,7 +96,10 @@ void dissolve_expr_in_content(t_content *c, t_expr *e)
 			}
 			head = head->next;
 		}
+		putendl("Found corresponding info on value to add and one already present in the future result.");
 		head->content.flt += e->content.flt;
+		//TODO: if the result is 0, delete the member?
+		printf("updated value = %f\n", head->content.flt);
 		////printf("dissolve_expr_in_content: augmented a value to %f\n", head->content.flt);
 	}
 }
@@ -108,6 +113,8 @@ void pack_mult_pack(t_expr *target_pack, t_content pack)
 
 	putendl("pack_mult_pack: entered.");
 	head1 = (target_pack->content).expr;
+	//head2 = pack.expr;//TO_DELETE
+	//printf("content: pack1= %f, %f; pack2= %f, %f and adresses are equal is: %d\n", head1->content.flt, head1->next->content.flt, head2->content.flt, head2->next->content.flt, &(head1->content) == &(head2->content));
 	replace.expr = NULL;
 	while (head1)
 	{
@@ -115,14 +122,16 @@ void pack_mult_pack(t_expr *target_pack, t_content pack)
 		while (head2)
 		{
 			simple_mult(&temp, head1, head2->content, head2->info);
+			printf("temp value: %f, info: %d\n", temp.content.flt, temp.info);
 			dissolve_expr_in_content(&replace, &temp);
 			head2 = head2->next;
 		}
 		head1 = head1->next;
 	}
-	//	free_expr(head1);
-	//	free_expr(head2);
+	//TODO:	free_expr(head1);
+	//TODO:	free_expr(head2);
 	target_pack->content = replace;
+	printf("Now target_pack content = %f, %f\n", ((t_expr*)(target_pack->content.expr))->content.flt, ((t_expr*)(target_pack->content.expr))->next->content.flt);
 }
 
 void apply_singl_mult(t_expr *pack, t_content c, char info)
@@ -148,7 +157,7 @@ void do_multiplication(t_master *m, t_expr *e)
 {
 	char m_info;
 
-	putendl("\nWelcome in multiplication land !");
+	//putendl("\nWelcome in multiplication land !");
 	m_info = get_last_last_expr(m)->info;
 	if (m_info == RATIONNAL || m_info == IRATIONNAL)
 	{

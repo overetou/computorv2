@@ -22,10 +22,10 @@ char	illegal(t_buf *b, void *m)
 
 char	open_square_exec(t_buf *b, void *m)
 {
-	putendl("opening brackets detected");
+	//putendl("opening brackets detected");
 	if (((t_master*)m)->matrice_depht == 0)
 	{
-		putendl("stepping up brackets depht to 1.");
+		//putendl("stepping up brackets depht to 1.");
 		((t_master*)m)->matrice_depht = 1;
 		add_level(m);
 	}
@@ -33,7 +33,7 @@ char	open_square_exec(t_buf *b, void *m)
 	{
 		if ((prev(m) == SEMILICON || prev(m) == COMA || prev(m) == NOTHING) && ((t_master*)m)->matrice_depht == 1)
 		{
-			putendl("stepping up brackets depht to 2.");
+			//putendl("stepping up brackets depht to 2.");
 			((t_master*)m)->matrice_depht++;
 			add_level(m);
 		}
@@ -65,14 +65,14 @@ char	close_square_exec(t_buf *b, void *m)
 {
 	t_expr	*new_elem;
 
-	putendl("Closing bracket detected.");
+	//putendl("Closing bracket detected.");
 	if (((t_master*)m)->matrice_depht == 2)
 	{
 		if (get_last_first_expr(m) == NULL)
 			handle_line_error(m, "Void matrix element detected.");
 		else
 		{
-			get_last_last_expr(m)->next = NULL; putendl("Ended a matrix row.");
+			get_last_last_expr(m)->next = NULL; //putendl("Ended a matrix row.");
 			new_elem = extract_matrix_row(get_last_first_expr(m));
 			printf("first element of the row = %f\n", get_last_first_expr(m)->content.flt);
 			((t_link_track*)(((t_master*)m)->exec_tracks.last))->first = NULL;
@@ -92,14 +92,14 @@ char	close_square_exec(t_buf *b, void *m)
 	remove_level(m);
 	inject_expr(m, new_elem);
 	(((t_master*)m)->matrice_depht)--;
-	printf("brackets depht now equals: %d\n", ((t_master*)m)->matrice_depht);
+	//printf("brackets depht now equals: %d\n", ((t_master*)m)->matrice_depht);
 	read_smart_inc(b);
 	return (1);
 }
 
 char	virgule_exec(t_buf *b, void *m)
 {
-	putendl("virgule detected.");
+	//putendl("virgule detected.");
 	if (((t_master*)m)->matrice_depht != 2)
 	{
 		handle_line_error(m, "Illegal coma detected");
@@ -112,7 +112,7 @@ char	virgule_exec(t_buf *b, void *m)
 
 char	pointvirgule_exec(t_buf *b, void *m)
 {
-	putendl("point virgule detected.");
+	//putendl("point virgule detected.");
 	if (((t_master*)m)->matrice_depht != 1 || prev(m) != VALUE)
 	{
 		handle_line_error(m, "Illegal semilicon detected");

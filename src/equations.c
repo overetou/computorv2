@@ -104,7 +104,7 @@ char interogation_exec(t_buf *b, void *m)
 			if (pass_right_to_left(m) == 0)
 				return (1);
 			//We condense the total expression.
-			putendl("interogation_exec: refine_addition_result");
+			//putendl("interogation_exec: refine_addition_result");
 			refine_addition_result((t_link_track *)(((t_master *)m)->exec_tracks.first));
 			//Now the expression is simplified. We send the data to the equation resolving module trough a wrapper that will also display the solution / error.
 			display_equation_solution(m);

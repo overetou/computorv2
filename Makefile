@@ -4,7 +4,7 @@ NAME = computor
 
 objdir = obj
 
-obj = $(addprefix $(objdir)/, main.o exec_tracks.o trigger_name_funcs.o trigger_sign_funcs.o parenthesis.o operations.o squares.o functions.o equations.o display_expr.o)
+obj = $(addprefix $(objdir)/, main.o exec_tracks.o trigger_name_funcs.o trigger_sign_funcs.o parenthesis.o operations.o squares.o functions.o equations.o display_expr.o exorcism.o)
 
 VPATH = src
 
@@ -15,18 +15,15 @@ CFLAGS = -Wextra -Werror -Wall -I header/
 $(objdir)/%.o : %.c header/computor.h
 	@$(COMPILE.c) $(OUTPUT_OPTION) $<
 
-all: libft $(NAME)
+all: $(NAME)
 
 $(NAME): $(obj)
-	@$(CC) $(CFLAGS) -o $@ ../tools/libft/libft.a $^
+	@$(CC) $(CFLAGS) -o $@ $^ /home/jxxj/Darkvale_Technologies/config/libft/libft.a
 
 $(obj): | $(objdir)
 
 $(objdir):
 	mkdir $(objdir)
-
-libft:
-	$(MAKE) -C ../tools/libft
 
 clean:
 	rm -f $(obj)

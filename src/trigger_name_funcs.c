@@ -68,23 +68,32 @@ void	mix_in_expr(t_master *m, t_expr *e)
 {
 	if (EXEC_TRACK_LAST_AS_LINK_TRACK->first == NULL)
 	{
-		putendl("mix_in_expr: INIT");
+		//putendl("mix_in_expr: INIT");
 		link_track_init((t_link_track*)(m->exec_tracks.last), (t_link*)e);
 	}
 	else
 	{
-		putendl("mix_in_expr: ADD");
+		//putendl("mix_in_expr: ADD");
 		link_track_add(EXEC_TRACK_LAST_AS_LINK_TRACK, (t_link*)e);
 	}
-	printf("added an expr of type :%d\n", e->info);
-	if (m->exec_tracks.first == m->exec_tracks.last)
-		putendl("mix_in_expr: added on main track.");
+	//printf("added an expr of type :%d\n", e->info);
+	//if (m->exec_tracks.first == m->exec_tracks.last)
+		//putendl("mix_in_expr: added on main track.");
 }
 
 void	inject_value(t_master *m, t_content content, char info)
 {
-	if (!exec_cell_if_prior((t_master*)m, t_expr_init(content, info)))
-		mix_in_expr(m, t_expr_init(content, info));
+	t_expr *e;
+
+	if (get_power(&(m->buf), &content, &info) == 0)
+	{
+		handle_line_error(m, "problem with a power aplication.");
+		return;
+	}
+	putendl("After power.");
+	e = t_expr_init(content, info);
+	if (!exec_cell_if_prior((t_master*)m, e))
+		mix_in_expr(m, e);
 	*(prev_adr(m)) = VALUE;
 }
 
@@ -99,7 +108,11 @@ void	inject_expr(t_master *m, t_expr *e)
 	}
 	else
 	{
-
+		if (get_power(&(m->buf), &(e->content), &(e->info)) == 0)
+		{
+			handle_line_error(m, "problem with a power aplication.");
+			return;
+		}
 		if (exec_cell_if_prior(m, e))
 		{
 			//putendl("inject_expr:");
@@ -170,9 +183,11 @@ void	inject_var_value(t_master *m, char *name)
 	t_content	value;
 	char		info;
 
+	//putendl("entered inject_var_value");
 	info = get_item_value(&value, m, name);
 	if (info > -1)
 	{
+		//printf("Given name was recognized as a var. info = %d. First row value = %f\n", info, ((t_expr*)((t_expr*)(value.expr))->content.expr)->content.flt);
 		inject_value(m, value, info);
 	}
 	else
@@ -181,6 +196,7 @@ void	inject_var_value(t_master *m, char *name)
 		try_var_as_unknown(m, name);//as a result, if we reach endline before a ?, we check if there are unknown and if there are, error.
 	}
 	free(name);
+	//putendl("exited inject_var_value");
 }
 
 void	convert_to_irationnal(t_expr *e)
@@ -191,7 +207,6 @@ void	convert_to_irationnal(t_expr *e)
 	}
 	else if (e->info == IRATIONNAL)
 	{
-		putendl("Il y a quelqu'un ?");
 		e->content.flt = -(e->content.flt);
 		e->info = RATIONNAL;
 	}
@@ -201,25 +216,28 @@ BOOL	apply_i(t_master *m)
 {
 	t_content	c;
 
-	if (prev(m) == VALUE || prev(m) == MULT)
-	{
-		convert_to_irationnal(get_last_last_expr(m));
-		////printf("apply_i: Converted %f to i.\n", get_last_last_expr(m)->content.flt);
-	}
-	else if (prev(m) == PLUS)
+	if (prev(m) == VALUE)
+		*(prev_adr(m)) = MULT;
+	if (prev(m) == MULT)
 	{
 		c.flt = 1;
-		mix_in_expr(m, t_expr_init(c, IRATIONNAL));
-	}
-	else if (prev(m) == MINUS)
-	{
-		c.flt = -1;
-		mix_in_expr(m, t_expr_init(c, IRATIONNAL));
+		//convert_to_irationnal(get_last_last_expr(m));
+		inject_value(m, c, IRATIONNAL);
+		//printf("apply_i: Converted %f to i.\n", get_last_last_expr(m)->content.flt);
 	}
 	else
 	{
-		handle_line_error(m, "'i' was used in a non supported scenario.");
-		return (1);
+		if (prev(m) == PLUS || prev(m) == NOTHING)
+			c.flt = 1;
+		else if (prev(m) == MINUS)
+			c.flt = -1;
+		else
+		{
+			handle_line_error(m, "'i' was used in a non supported scenario.");
+			return (1);
+		}
+		mix_in_expr(m, t_expr_init(c, IRATIONNAL));
+		get_power(&(m->buf), &(get_last_last_expr(m)->content), &(get_last_last_expr(m)->info));
 	}
 	*(prev_adr(m)) = VALUE;
 	return (1);
@@ -238,7 +256,7 @@ char	alpha_exec(t_buf *b, void *m)
 		return (handle_func(m, b, s));
 	if (((t_master*)m)->equal_defined == 0)
 	{
-		putendl("alpha_exec: '=' is not yet defined.");
+		//putendl("alpha_exec: '=' is not yet defined.");
 		read_till_false(b, is_sep);
 		if (b->str[b->pos] == '=') 
 		{
@@ -265,7 +283,7 @@ char	alpha_exec(t_buf *b, void *m)
 	else
 	{
 		inject_var_value(m, s);
-		putendl("alpha_exec: still alive after inject var val.");
+		//putendl("alpha_exec: still alive after inject var val.");
 	}
 	*(prev_adr(m)) = VALUE;
 	return (1);

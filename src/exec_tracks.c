@@ -74,12 +74,16 @@ void	aglomerate_type(t_expr *e1, t_expr* e2, t_expr *last)
 t_link *copy_expr(t_link *l)
 {
 	//printf("copying an expression. Content = %f, info = %d\n", ((t_expr*)l)->content.flt, ((t_expr*)l)->info);
+	putendl("Inside copy_expr");
+	if (((t_expr*)l)->info == MATRIX)
+		putendl("Sweat mode: we have to copy a matrix !");
 	return	((t_link*)t_expr_init(((t_expr*)l)->content, ((t_expr*)l)->info));
 }
 
 t_expr	*unzip_pack(t_link_track *t, t_expr *curr)
 {
 	////printf("unzip_pack: %f ; %f\n", new_cur->content.flt, new_cur->next->content.flt);
+	putendl("unziping a pack.");
 	return ((t_expr*)link_track_replace_link_with_list_copy(t, (t_link*)curr, (t_link*)(curr->content.expr), copy_expr));
 }
 
@@ -94,27 +98,26 @@ BOOL	refine_addition_result(t_link_track *t)
 		putendl("entered one element in the track case. (in refine addition)");
 		if (((t_expr*)t->first)->info == PACK)
 			unzip_pack(t, (t_expr*)t->first);
-		printf("expression type: %d\n", ((t_expr*)(t->first))->info);
+		//printf("expression type: %d\n", ((t_expr*)(t->first))->info);
 		return (1);
 	}
 	current = (t_expr*)(t->first);
 	while (1)
 	{
-		putendl("Entered multiple elements case in refine track.");
+		//putendl("Entered multiple elements case in refine track.");
 		if (current->info == PACK)
 		{
-		putendl("tatbefore infinite loop.");
 			current = unzip_pack(t, current);
-			putendl("refine_addition_result: still alive after unzip");
+			//putendl("refine_addition_result: still alive after unzip");
 			//printf("args = %f, %f, %f\n", current->content.flt, current->next->content.flt, current->next->next->content.flt);
 		}
 		next = current->next;
-		putendl("Alive before aglomerate by type.");
+		//putendl("Alive before aglomerate by type.");
 		aglomerate_type(current, next, (t_expr*)t->last);
-		putendl("after infinite loop");
+		//putendl("after infinite loop");
 		////printf("aglo result: %f * x^%zu\n", current->content.flt, current->unknown_degree);
 		link_track_push_internal_link((t_link*)current, t);
-		putendl("PUSH DONE");
+		//putendl("PUSH DONE");
 		current = next;
 		////printf("new curr: %f * x^%zu, info = %d\n", current->content.flt, current->unknown_degree, current->info);
 		while (current->info == PROCESSED && current != (t_expr*)(t->last))

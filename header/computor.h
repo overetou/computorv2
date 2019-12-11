@@ -164,4 +164,8 @@ BOOL try_var_as_unknown(t_master *m, char *name);
 void multiply_unknowns(t_expr *e1, t_expr *e2);
 t_expr *pack_if_needed(t_master *m);
 t_cust_link_track *cust_link_track_create(t_link *l);
+BOOL	get_power(t_buf *b, t_content *c, char *info);
+void simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info);
+void pack_mult_pack(t_expr *target_pack, t_content pack);
+t_link *copy_expr(t_link *l);
 #endif

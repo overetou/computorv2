@@ -20,7 +20,7 @@ BOOL	is_inside_parenthesis(t_master *m)
 
 void	add_level(t_master *m)
 {
-	putendl("add_level: adding a level.");
+	//putendl("add_level: adding a level.");
 	track_add(&(m->exec_tracks), (t_link*)cust_link_track_create(NULL));
 	(*prev_adr(m)) = NOTHING;
 }
@@ -42,10 +42,13 @@ t_expr *pack_if_needed(t_master *m)
 	t_expr *curr;
 	t_expr *first;
 
-	putendl("PACK IF NEEDED");
+	//putendl("PACK IF NEEDED");
 	first = get_last_first_expr(m);
-	if (first == get_last_last_expr(m))
+	if (first == get_last_last_expr(m) || first->next->info == PROCESSED)
+	{
+		((t_link_track*)(m->exec_tracks.last))->first = NULL;
 		return (first);
+	}
 	curr = first;
 	while (1)
 	{
@@ -71,7 +74,7 @@ char	close_par_exec(t_buf *b, void *m)
 {
 	t_expr	*value;
 
-	putendl("!!!!!!!!!!!!!!!!!!!!!!Close par");
+	//putendl("!!!!!!!!!!!!!!!!!!!!!!Close par");
 	if (((t_master*)m)->exec_tracks.first == ((t_master*)m)->exec_tracks.last)
 		handle_line_error(m, "Closing parenthesis without match detected.");
 	if (condense_last_track(m) == 0)
@@ -81,14 +84,17 @@ char	close_par_exec(t_buf *b, void *m)
 	}
 	////printf("close_par_exec: condensing succeded\n");
 	value = pack_if_needed(m);
+	//printf("inside parenthesis: value info = %d\n", value->info);
 	////printf("close_par_exec: refinement succeded\n");
-	track_remove_last(&(((t_master*)m)->exec_tracks), destroy_link_track);
+	//track_remove_last(&(((t_master*)m)->exec_tracks), destroy_link_track);
+	remove_level(m);
+	//printf("inside parenthesis: value info = %d\n", value->info);
 	////printf("close_par_exec: Lowered by a level. Previous is now: %d\n", prev(m));
 	if (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO))
 		reverse_expr(value);
 	////printf("close_par_exec: trying to inject an expr of type: %d\n", value->info);
-	inject_expr(m, value);
 	read_smart_inc(b);
+	inject_expr(m, value);
 	return (1);
 }
 
@@ -106,6 +112,6 @@ int		condense_last_track(t_master *m)
 {
 	if (((t_link_track*)(m->exec_tracks.last))->first == NULL)
 		return (0);
-	putendl("condense_last_track: refine_addition_result");
+	//putendl("condense_last_track: refine_addition_result");
 	return (refine_addition_result((t_link_track*)(m->exec_tracks.last)));
 }

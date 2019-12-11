@@ -21,10 +21,59 @@ BOOL	fetch_power_data(t_buf *b, int *power)
 	return (0);
 }
 
+BOOL	power_ira(t_content *c, char *info, int power)
+{
+	t_expr	temp;
+
+	if (power == 0)
+	{
+		(*c).flt = 1;
+		*info = RATIONNAL;
+		return (1);
+	}
+	temp.content = *c;
+	temp.info = *info;
+	while (--power)
+		simple_mult(&temp, &temp, *c, *info);
+	*c = temp.content;
+	*info = temp.info;
+	return (1);
+}
+
+BOOL	power_pack(t_content *c, char *info, int power)
+{
+	t_content temp;
+	t_expr	actual_expr;
+
+	if (power == 0)
+	{
+		//TODO: free the content before changing it.
+		(*c).flt = 1;
+		*info = RATIONNAL;
+		return (1);
+	}
+	temp.expr = create_list_copy(c->expr, copy_expr);
+	actual_expr.content = *c;
+	actual_expr.info = *info;
+	while (--power)
+		pack_mult_pack(&actual_expr, temp);
+	//Todo: free the copy of the pack created for the occasion.
+	*c = actual_expr.content;
+	return (1);
+}
+
 BOOL	apply_power(t_content *c, char *info, int power)
 {
 	if (*info == RATIONNAL)
 		return (float_simple_power(&(c->flt), power));
+	else if (*info == IRATIONNAL)
+		return(power_ira(c, info, power));
+	else if (*info == PACK)
+	{
+		putendl("inside power pack.");
+		return (power_pack(c, info, power));
+	}
+	
 	return (0);
 }
 
@@ -32,8 +81,8 @@ BOOL	get_power(t_buf *b, t_content *c, char *info)
 {
 	int	power;
 
-	return (1);
-	putendl("get_power: Entered.");
+//	putendl("get_power: Entered.");
+	//printf("preparing to read a potential power. Current char = %c\n", b->str[b->pos]);
 	read_till_false(b, is_sep);
 	if (b->str[b->pos] == '^')
 	{
@@ -64,11 +113,11 @@ char	num_store(t_buf *b, void *m)
 		handle_line_error(m, "Problem while parsing a number.");
 		return (1);
 	}
-	if (get_power(b, &value, &info) == 0)
-	{
-		handle_line_error(m, "Problem while parsing a power detected.");
-		return (1);
-	}
+//	if (get_power(b, &value, &info) == 0)
+//	{
+//		handle_line_error(m, "Problem while parsing a power detected.");
+//		return (1);
+//	}
 	//printf("num_store: read number = %f\n", value.flt);
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 	{
@@ -132,8 +181,8 @@ char	power_exec(t_buf *b, void *m)
 {
 	(void)b;
 	handle_line_error(m, "A '^' was found in a strange place.");
-	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
-		mix_in_expr(m, t_expr_init((t_content)NULL, POWER));
+//	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+//		mix_in_expr(m, t_expr_init((t_content)NULL, POWER));
 	return (1);
 }
 

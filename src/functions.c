@@ -33,14 +33,14 @@ void	remove_level(t_master *m)
 {
 	//printf("Trying to obliterate what stands at adress: %p\n", m->exec_tracks.last);
 	track_remove_last(&(m->exec_tracks), destroy_link_track);
-	putendl("level successfully removed.");
+	//putendl("level successfully removed.");
 }
 
 t_expr	*extract_last_track_expr(t_master *m)
 {
 	t_expr	*e;
 
-	putendl("??????????????EXTRACT");
+	//putendl("??????????????EXTRACT");
 	e = get_last_first_expr(m);
 	((t_link_track*)(m->exec_tracks.last))->first = NULL;
 	remove_level(m);
@@ -129,12 +129,12 @@ void	track_insert(t_track *t, t_link *l)
 {
 	if (t->first == NULL)
 	{
-		putendl("track_insert: init");
+		//putendl("track_insert: init");
 		track_init(t, l);
 	}
 	else
 	{
-		putendl("track_insert: add");
+		//putendl("track_insert: add");
 		track_add(t, l);
 	}
 }
