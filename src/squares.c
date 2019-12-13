@@ -90,10 +90,11 @@ char	close_square_exec(t_buf *b, void *m)
 		return (1);
 	}
 	remove_level(m);
-	inject_expr(m, new_elem);
+	printf("preparing a matrix injection.");
 	(((t_master*)m)->matrice_depht)--;
+	inject_expr(m, new_elem);
 	//printf("brackets depht now equals: %d\n", ((t_master*)m)->matrice_depht);
-	read_smart_inc(b);
+	read_smart_inc(b);//TODO: add error management.
 	return (1);
 }
 

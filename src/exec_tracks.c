@@ -40,7 +40,7 @@ char	exec_cell_if_prior(t_master *m, t_expr *e)
 {
 	////printf("exec_cell_if_prior: prev = %d\n", prev(m));
 	if (int_is_comprised(prev(m), MINUS_MULT, MINUS_MODULO))
-		*(prev_adr(m)) -= 5;
+		*(prev_adr(m)) -= 5;//TODO: test if a multiplication with a negative works correctly.
 	if (prev(m) == MULT)
 	{
 		putendl("/!\\ mult detected");

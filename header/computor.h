@@ -172,4 +172,6 @@ t_link *copy_expr(t_link *l);
 BOOL	next_sign_is_power(t_buf *b);
 BOOL	apply_power(t_content *c, char *info, int power);
 BOOL	fetch_power_data(t_buf *b, int *power);
+char matrix_to_elem(t_expr *m1, t_expr *m2);
+t_expr	*simple_mult_matrix(t_expr *simple, t_expr *matrix);
 #endif

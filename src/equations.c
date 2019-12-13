@@ -17,6 +17,15 @@ BOOL try_var_as_unknown(t_master *m, char *name)
 	content.flt = 1;
 	e = t_expr_init(content, UNKNOWN);
 	e->unknown_degree = 1;
+	if (next_sign_is_power(&(m->buf)))
+	{
+		read_smart_inc(&(m->buf));
+		if (fetch_power_data(&(m->buf), (int*)(&(e->unknown_degree))) == 0)
+		{
+			putendl("Failed reading of power value.");
+			return (0);
+		}
+	}
 	//TODO: add power handlement.
 	inject_expr(m, e);
 	////printf("Injected: %s as an unkown candidate.\n", name);

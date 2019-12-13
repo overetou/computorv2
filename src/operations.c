@@ -152,12 +152,20 @@ void multiply_pack_by(t_expr *pack, t_content c, char info)
 		pack_mult_pack(pack, c);
 }
 
+void	link_track_insert(t_link_track *t, void *link)
+{
+	if (t->first)
+		link_track_add(t, link);
+	else
+		link_track_init(t, link);
+}
+
 //WARNING: complex numbers are not supported yet.
 void do_multiplication(t_master *m, t_expr *e)
 {
 	char m_info;
 
-	//putendl("\nWelcome in multiplication land !");
+	putendl("\nWelcome in multiplication land !");
 	m_info = get_last_last_expr(m)->info;
 	if (m_info == RATIONNAL || m_info == IRATIONNAL)
 	{
@@ -166,6 +174,16 @@ void do_multiplication(t_master *m, t_expr *e)
 			simple_mult(get_last_last_expr(m), get_last_last_expr(m), e->content, e->info);
 		else if (e->info == PACK)
 			singl_mult_pack(get_last_last_expr(m), e->content);
+		else if (e->info == MATRIX)//TODO: handle the other way around.
+		{
+			t_expr *save;
+
+			save = simple_mult_matrix(get_last_last_expr(m), e);
+			link_track_remove_link((t_link_track*)(m->exec_tracks.last), (t_link*)get_last_last_expr(m));
+			link_track_insert((t_link_track*)(m->exec_tracks.last), save);
+		}
+		else
+			putendl("Unkown operation case");//TODO: add proper error management.
 	}
 	else if (m_info == PACK)
 		multiply_pack_by(get_last_last_expr(m), e->content, e->info);
@@ -174,7 +192,8 @@ void do_multiplication(t_master *m, t_expr *e)
 		putendl("unkown operation case");
 		return;
 	}
-	free(e);
+	if (e->info != MATRIX)
+		free(e);
 }
 
 void do_division(t_master *m, t_content value, char info)
@@ -287,6 +306,7 @@ BOOL matrix_addition(t_expr *m1, t_expr *m2)
 	t_expr *x1;
 	t_expr *x2;
 
+	putendl("entered matrix addition");
 	m1 = m1->content.expr;
 	m2 = m2->content.expr;
 	while (m1)
@@ -383,4 +403,27 @@ t_expr *get_last_first_expr(t_master *m)
 t_expr *get_last_last_expr(t_master *m)
 {
 	return ((t_expr *)(((t_link_track *)(m->exec_tracks.last))->last));
+}
+
+//This func will send back the fusion of the two. Use track_replace to make the most out of it.
+t_expr	*simple_mult_matrix(t_expr *simple, t_expr *matrix)
+{
+	t_expr *head;
+	t_expr *wire;
+
+	wire = matrix->content.expr;
+	printf("first arg info: %d, info2: %d\n", simple->info, matrix->info);
+	while (wire)
+	{
+		head = wire->content.expr;
+		while (head)
+		{
+			simple_mult(head, head, simple->content, simple->info);
+			printf("inner mult result: %f\n", head->content.flt);
+			head = head->next;
+		}
+		wire = wire->next;
+	}
+	putendl("At the end of simple_mult_matrix");
+	return (matrix);
 }

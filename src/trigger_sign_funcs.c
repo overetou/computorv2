@@ -137,7 +137,8 @@ char	num_store(t_buf *b, void *m)
 
 char	star_exec(t_buf *b, void *m)
 {
-	read_smart_inc(b);
+	putendl("Entered star exec.");
+	read_smart_inc(b);//TODO: add error management if the increase fails.
 	if (b->str[b->pos] == '*')
 		handle_line_error(m, "Forbidden instruction '**'.");
 	if (prev(m) != VALUE)
