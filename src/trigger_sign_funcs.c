@@ -77,14 +77,19 @@ BOOL	apply_power(t_content *c, char *info, int power)
 	return (0);
 }
 
+BOOL	next_sign_is_power(t_buf *b)
+{
+	read_till_false(b, is_sep);
+	return (b->str[b->pos] == '^');
+}
+
 BOOL	get_power(t_buf *b, t_content *c, char *info)
 {
 	int	power;
 
 //	putendl("get_power: Entered.");
 	//printf("preparing to read a potential power. Current char = %c\n", b->str[b->pos]);
-	read_till_false(b, is_sep);
-	if (b->str[b->pos] == '^')
+	if (next_sign_is_power(b))
 	{
 		read_smart_inc(b);
 		power = 1;

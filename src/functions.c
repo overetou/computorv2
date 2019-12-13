@@ -59,19 +59,25 @@ t_expr	*compute_func(t_master *m, t_expr *argument, char *func_name)
 {
 	t_expr	*cur;
 	t_expr	*next;
+	t_expr	powered_arg;
 
 	putendl("ENTERED compute_func");
 	cur = get_func(m, func_name);
 	if (cur == NULL || argument == NULL)
 		return (NULL);
 	cur = cur->content.expr;
-	////printf("compute_func: found a function corresponding to the name. First value info = %d\n", cur->info);
+	//printf("compute_func: found a function corresponding to the name. First value info = %d\n", cur->info);
 	add_level(m);
 	while (cur)
 	{
 		next = cur->next;
 		if (cur->info == UNKNOWN)
-			inject_expr(m, argument);
+		{
+			powered_arg.content = argument->content;
+			powered_arg.info = argument->info;
+			apply_power(&(powered_arg.content), &(powered_arg.info), cur->content.integer);
+			inject_value(m, powered_arg.content, powered_arg.info);
+		}
 		else
 			inject_expr(m, cur);
 		cur = next;
@@ -177,13 +183,15 @@ BOOL	handle_func(t_master *m, t_buf *b, char *s)
 	t_expr	*e;
 	char	*parent_content;
 
+	//here parents stands for parenthesis.
 	if (process_parent_and_handle_if_def_requested(m, b, &e, &parent_content))
 	{
-		putendl("handle_func: definition found.");
+		putendl("handle_func: definition request found.");
 		prepare_func_definition(m, b, s, parent_content);
+		read_smart_inc(b);
 	}
 	else if (e == NULL)
-		return (0);
+		return (0);//If e == NULL and the previous conditions equals 0, it means that no function def is requested but that what was found inside the parenthesis makes no sens as argument for a func.
 	else
 	{
 		e = compute_func(m, e, s);

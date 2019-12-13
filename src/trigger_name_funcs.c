@@ -243,6 +243,29 @@ BOOL	apply_i(t_master *m)
 	return (1);
 }
 
+BOOL	handle_func_unknown(t_master* m, t_buf *b)
+{
+	int	power;
+
+	putendl("entered handle_func_unknown");
+	if (prev(m) == VALUE)
+		mix_in_expr(m, t_expr_init((t_content)NULL, MULT));
+	power = 1;
+	if (next_sign_is_power(b))
+	{
+		read_smart_inc(b);
+		if (fetch_power_data(b, &power) == 0)
+		{
+			putendl("power fetching failed.");
+			return (0);
+		}
+	}
+	//In func execution context, content (in float) is the power of the unknown.
+	mix_in_expr(m, t_expr_init((t_content)power, UNKNOWN));
+	*(prev_adr(m)) = VALUE;
+	return (1);
+}
+
 //We already check at each equal if there is no double.
 char	alpha_exec(t_buf *b, void *m)
 {
@@ -271,12 +294,7 @@ char	alpha_exec(t_buf *b, void *m)
 		}
 	}
 	else if (((t_master*)m)->equal_defined == DEFINE_FUNC && str_perfect_match(s, ((t_master*)m)->to_define))
-	{
-		putendl("added an unknown in function definition.");
-		mix_in_expr(m, t_expr_init((t_content)NULL, UNKNOWN));
-		*(prev_adr(m)) = VALUE;
-		return (1);
-	}
+		return (handle_func_unknown(m, b));
 	////printf("alpha_exec: Preparing to inject a var val. equal_defined = %d\n", ((t_master*)m)->equal_defined);
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 		mix_var_value(m, s);

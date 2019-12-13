@@ -64,6 +64,7 @@ typedef union	u_content
 {
 	float		flt;
 	void		*expr;
+	int			integer;
 	//t_matrice	*matr;
 	//t_func	*func;
 }				t_content;
@@ -168,4 +169,7 @@ BOOL	get_power(t_buf *b, t_content *c, char *info);
 void simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info);
 void pack_mult_pack(t_expr *target_pack, t_content pack);
 t_link *copy_expr(t_link *l);
+BOOL	next_sign_is_power(t_buf *b);
+BOOL	apply_power(t_content *c, char *info, int power);
+BOOL	fetch_power_data(t_buf *b, int *power);
 #endif
