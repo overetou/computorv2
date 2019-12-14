@@ -174,4 +174,6 @@ BOOL	apply_power(t_content *c, char *info, int power);
 BOOL	fetch_power_data(t_buf *b, int *power);
 char matrix_to_elem(t_expr *m1, t_expr *m2);
 t_expr	*simple_mult_matrix(t_expr *simple, t_expr *matrix);
+void	term_by_term_matrix_mult(t_expr *receiver, t_expr *multiplier);
+void	prepare_diviser(t_expr *e);
 #endif

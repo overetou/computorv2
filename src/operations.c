@@ -187,21 +187,29 @@ void do_multiplication(t_master *m, t_expr *e)
 	}
 	else if (m_info == PACK)
 		multiply_pack_by(get_last_last_expr(m), e->content, e->info);
+	else if (m_info == MATRIX)
+	{
+		if (e->info == MATRIX)
+			term_by_term_matrix_mult(get_last_last_expr(m), e);
+		else if (e->info != PACK)//TODO: add pack management.
+			simple_mult_matrix(e, get_last_last_expr(m));
+	}
 	else
 	{
 		putendl("unkown operation case");
 		return;
 	}
-	if (e->info != MATRIX)
+	if (m_info == MATRIX || e->info != MATRIX)
 		free(e);
 }
 
-void do_division(t_master *m, t_content value, char info)
+void do_division(t_master *m, t_content value, char info)//todo: directly pass an expr to have unknowns on ra and ira too.
 {
-	if (info == RATIONNAL)
-		get_last_last_expr(m)->content.flt /= value.flt;
-	else
-		putendl("unkown operation case");
+	t_expr *temp;
+
+	temp = t_expr_init(value, info);
+	prepare_diviser(temp);
+	do_multiplication(m, temp);
 }
 
 void do_modulation(t_master *m, t_content value, char info)
@@ -426,4 +434,48 @@ t_expr	*simple_mult_matrix(t_expr *simple, t_expr *matrix)
 	}
 	putendl("At the end of simple_mult_matrix");
 	return (matrix);
+}
+
+void	term_by_term_matrix_mult(t_expr *receiver, t_expr *multiplier)
+{
+	t_expr	*head1;
+	t_expr	*head2;
+
+	receiver = receiver->content.expr;
+	multiplier = multiplier->content.expr;
+	while (receiver)
+	{
+		head1 = receiver->content.expr;
+		head2 = multiplier->content.expr;
+		while (head1)
+		{
+			simple_mult(head1, head1, head2->content, head2->info);
+			head1 = head1->next;
+			head2 = head2->next;
+		}
+		receiver = receiver->next;
+		multiplier = multiplier->next;
+	}
+}
+
+void	invert_expr(t_expr *e)
+{
+	e->content.flt = 1 / e->content.flt;
+	e->unknown_degree = -(e->unknown_degree);
+}
+
+//This func invert all invertable values and indictors of a content.
+void	prepare_diviser(t_expr *e)
+{
+	t_expr	*head;
+
+	if (e->info == PACK)
+	{
+		head = e->content.expr;
+		invert_expr(head);
+		head = head->next;
+		invert_expr(head);
+	}
+	else
+		invert_expr(e);
 }
