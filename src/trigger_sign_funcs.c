@@ -135,14 +135,26 @@ char	num_store(t_buf *b, void *m)
 	return (1);
 }
 
+void	double_star_exec(t_buf *b, void *m)
+{
+	putendl("!!!!!!Entered double star exec.");
+	read_smart_inc(b);//TODO: add error management if the increase fails.
+	*(prev_adr(m)) = DOUBLE_MULT;
+	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+	{
+		putendl("mult added in the function definition.");
+		mix_in_expr(m, t_expr_init((t_content)NULL, DOUBLE_MULT));
+	}
+}
+
 char	star_exec(t_buf *b, void *m)
 {
 	putendl("Entered star exec.");
-	read_smart_inc(b);//TODO: add error management if the increase fails.
-	if (b->str[b->pos] == '*')
-		handle_line_error(m, "Forbidden instruction '**'.");
 	if (prev(m) != VALUE)
 		handle_line_error(m, "Expected a value before a '*'.");
+	read_smart_inc(b);//TODO: add error management if the increase fails.
+	if (b->str[b->pos] == '*')
+		double_star_exec(b, m);
 	else
 	{
 		*(prev_adr(m)) = MULT;

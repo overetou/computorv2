@@ -46,6 +46,8 @@ char	exec_cell_if_prior(t_master *m, t_expr *e)
 		putendl("/!\\ mult detected");
 		do_multiplication(m, e);
 	}
+	else if (prev(m) == DOUBLE_MULT)
+		matrix_multiplication(m, e);
 	else if (prev(m) == DIV)
 		do_division(m, e->content, e->info);
 	else if (prev(m) == MODULO)

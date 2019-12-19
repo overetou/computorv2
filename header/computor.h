@@ -19,19 +19,20 @@
 #define MINUS			1
 #define PLUS			2
 #define MULT			3
-#define DIV				4
-#define MODULO			5
-#define MINUS_MINUS		6
-#define MINUS_PLUS		7
-#define MINUS_MULT		8
-#define MINUS_DIV		9
-#define MINUS_MODULO	10
-#define EQUAL			11
-#define INTEROGATION	12
-#define VALUE			13
-#define POWER			14
-#define COMA			15
-#define SEMILICON		16
+#define	DOUBLE_MULT		4	
+#define DIV				5
+#define MODULO			6
+#define MINUS_MINUS		7
+#define MINUS_PLUS		8
+#define MINUS_MULT		9
+#define MINUS_DIV		10
+#define MINUS_MODULO	11
+#define EQUAL			12
+#define INTEROGATION	13
+#define VALUE			14
+#define POWER			15
+#define COMA			16
+#define SEMILICON		17
 
 #define PROCESSED		-1
 //The different values that info can take are:
@@ -176,4 +177,5 @@ char matrix_to_elem(t_expr *m1, t_expr *m2);
 t_expr	*simple_mult_matrix(t_expr *simple, t_expr *matrix);
 void	term_by_term_matrix_mult(t_expr *receiver, t_expr *multiplier);
 void	prepare_diviser(t_expr *e);
+BOOL	matrix_multiplication(t_master *m, t_expr *multiplier);
 #endif

@@ -254,7 +254,7 @@ void operate_matrix_point(t_expr *m1, t_expr *m2, int coord[2])
 		x1 = x1->next;
 	x1->content.flt = value;
 }
-
+/*
 char matrix_multiplication(t_expr *m1, t_expr *m2)
 {
 	t_expr *x1;
@@ -281,7 +281,7 @@ char matrix_multiplication(t_expr *m1, t_expr *m2)
 	(coord[0])++;
 	(coord[1])++;
 	return (1);
-}
+}*/
 
 char matrix_to_elem(t_expr *m1, t_expr *m2)
 {
@@ -456,6 +456,133 @@ void	term_by_term_matrix_mult(t_expr *receiver, t_expr *multiplier)
 		receiver = receiver->next;
 		multiplier = multiplier->next;
 	}
+}
+
+t_expr	*create_result_matrix(size_t len)
+{
+	size_t	line;
+	size_t	column;
+	t_expr	*liner;
+	t_expr	*columner;
+	t_expr	*result;
+
+	printf("create_result_matrix: len = %zu\n", len);
+	result = t_expr_init((t_content)NULL, MATRIX);
+	result->content.expr = t_expr_init((t_content)NULL, MATRIX);
+	liner = result->content.expr;
+	line = 1;
+	while (1)
+	{
+		liner->content.expr = t_expr_init((t_content)0, RATIONNAL);
+		putendl("\ncreated a matrix link");
+		columner = liner->content.expr;
+		column = 1;
+		while (column != len)
+		{
+			columner->next = t_expr_init((t_content)0, RATIONNAL);
+			putendl("created a matrix link");
+			columner = columner->next;
+			column++;
+		}
+		columner->next = NULL;
+		putendl("Before break trial.");
+		if (line == len)
+		{
+			putendl("break requested.\n");
+			break;
+		}
+		liner->next = t_expr_init((t_content)NULL, MATRIX);
+		liner = liner->next;
+		line++;
+	}
+	liner->next = NULL;
+	return (result);
+}
+
+void	cross_point_operation(t_expr **target, int column, t_expr *line_cell, t_expr *top_right_meta, t_master *m)
+{
+	t_expr	*columner;
+	int		current_column;
+	t_expr	*adder;
+	t_expr	*to_delete;
+
+	putendl("Entered cross_point_operation");
+
+	add_level(m);
+	while (top_right_meta)
+	{
+		current_column = 0;
+		columner = top_right_meta->content.expr;
+		while (current_column != column)
+		{
+			columner = columner->next;
+			current_column++;
+		}
+		printf("mult value 1: %f, mult value 2: %f\n", line_cell->content.flt, columner->content.flt);
+		adder = t_expr_init((t_content)NULL, RATIONNAL);
+		simple_mult(adder, line_cell, columner->content, columner->info);
+		mix_in_expr(m, adder);
+		top_right_meta = top_right_meta->next;
+		line_cell = line_cell->next;
+	}
+	refine_addition_result((t_link_track*)m->exec_tracks.last);
+	//*target = (t_expr*)copy_expr((t_link*)get_last_first_expr(m));
+	(*target)->content = get_last_first_expr(m)->content;
+	(*target)->info = get_last_first_expr(m)->info;
+	(*target)->unknown_degree = get_last_first_expr(m)->unknown_degree;
+	if (((t_link_track*)(m->exec_tracks.last))->first == ((t_link_track*)(m->exec_tracks.last))->last)
+	{
+		((t_link_track*)(m->exec_tracks.last))->first = NULL;
+		putendl("one element in the surcouche case.");
+	}
+	else
+	{
+		to_delete = get_last_first_expr(m);	
+		((t_link_track*)(m->exec_tracks.last))->first = (t_link*)(to_delete->next);
+		free(to_delete);
+	}
+	remove_level(m);
+	//printf("result = %f\n", *target->content.flt);
+}
+
+//problem: il faut stocker les resultats hors de la matrice cible sinon le resultat sera de plus en plus faux.
+BOOL	matrix_multiplication(t_master *m, t_expr *multiplier)
+{
+	if (get_last_last_expr(m)->info != MATRIX || multiplier->info != MATRIX)
+	{putendl("Error, could be cared for before in double_star_exec. In part.");return (0);}
+
+	t_expr	*receiver;
+	t_expr	*head2;
+	int		column;
+	t_expr	*result_matrix;
+	t_expr	*target;
+
+	putendl("MATRIX MULTIPLICATION");
+	receiver = get_last_last_expr(m)->content.expr;
+	multiplier = multiplier->content.expr;
+	result_matrix = create_result_matrix(get_list_len((t_link*)receiver));
+	//printf("info1: %d, info2: %d, info3: %d\n", result_matrix->info, ((t_expr*)(result_matrix->content.expr))->info, ((t_expr*)(((t_expr*)(result_matrix->content.expr))->content.expr))->info);
+	//display_matrix(result_matrix->content.expr, m);
+	target = result_matrix->content.expr;
+	while (target)
+	{
+		column = 0;
+		head2 = target->content.expr;
+		while (head2)
+		{
+			cross_point_operation(&head2, column, receiver->content.expr, multiplier, m);
+			printf("value: %f, %d, %p\n", head2->content.flt, head2->info, head2->next);
+			head2 = head2->next;
+			column++;
+		}
+		receiver = receiver->next;
+		target = target->next;
+		putendl("receiver: loop end.");
+	}
+	//display_matrix(result_matrix->content.expr, m);
+	link_track_remove_link((t_link_track*)(m->exec_tracks.last), (t_link*)get_last_last_expr(m));
+	mix_in_expr(m, result_matrix);
+	return (1);
 }
 
 void	invert_expr(t_expr *e)
