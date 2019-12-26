@@ -400,7 +400,14 @@ void display_expr(t_expr *e, t_master *m)
 		display_matrix(e->content.expr, m);
 	}
 	else if (e->info == UNKNOWN)
+	{
 		putstr(m->to_define);
+		if (e->content.integer > 1)
+		{
+			putchr('^');
+			quick_putnb(e->content.integer);
+		}
+	}
 }
 
 t_expr *get_last_first_expr(t_master *m)

@@ -79,7 +79,7 @@ t_expr	*compute_func(t_master *m, t_expr *argument, char *func_name)
 			inject_value(m, powered_arg.content, powered_arg.info);
 		}
 		else
-			inject_expr(m, cur);
+			inject_expr(m, (t_expr*)copy_expr((t_link*)cur));
 		cur = next;
 		if (cur)
 		{
