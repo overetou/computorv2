@@ -362,7 +362,7 @@ void	display_sub_matrix(t_expr *sub_mtrx, t_master *m)
 	putchr('[');
 	while (sub_mtrx)
 	{
-		display_expr(sub_mtrx, m);
+		display_expr(sub_mtrx, m, 0);
 		if (sub_mtrx->next)
 			putstr(", ");
 		sub_mtrx = sub_mtrx->next;
@@ -384,15 +384,15 @@ void display_matrix(t_expr *e, t_master *m)
 	}
 }
 
-void display_expr(t_expr *e, t_master *m)
+void display_expr(t_expr *e, t_master *m, BOOL display_minus)
 {
 	//putendl("entered display expr\n");
 	if (e->info == RATIONNAL)
-		quick_put_float(e->content.flt);
+		quick_put_float(e->content.flt, display_minus);
 	else if (e->info == IRATIONNAL)
 	{
 		if (e->content.flt > 1.00001 || e->content.flt < 0.9999)
-			quick_put_float(e->content.flt);
+			quick_put_float(e->content.flt, display_minus);
 		putchr('i');
 	}
 	else if (e->info == MATRIX)
@@ -405,7 +405,7 @@ void display_expr(t_expr *e, t_master *m)
 		if (e->content.integer > 1)
 		{
 			putchr('^');
-			quick_putnb(e->content.integer);
+			quick_putnb(e->content.integer, display_minus);
 		}
 	}
 }

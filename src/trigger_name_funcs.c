@@ -352,7 +352,7 @@ void	display_func(t_master *m)
 	////printf("display_func: last expr info = %d\n", get_last_last_expr(m)->info);
 	while (e)
 	{
-		display_expr(e, m);
+		display_expr(e, m, 0);
 		if (e->next == NULL)
 			return ;
 		e = e->next;

@@ -66,6 +66,7 @@ char	close_square_exec(t_buf *b, void *m)
 	t_expr	*new_elem;
 
 	//putendl("Closing bracket detected.");
+	new_elem = NULL;
 	if (((t_master*)m)->matrice_depht == 2)
 	{
 		if (get_last_first_expr(m) == NULL)
@@ -92,7 +93,8 @@ char	close_square_exec(t_buf *b, void *m)
 	remove_level(m);
 	printf("preparing a matrix injection.");
 	(((t_master*)m)->matrice_depht)--;
-	inject_expr(m, new_elem);
+	if (new_elem)
+		inject_expr(m, new_elem);
 	//printf("brackets depht now equals: %d\n", ((t_master*)m)->matrice_depht);
 	read_smart_inc(b);//TODO: add error management.
 	return (1);

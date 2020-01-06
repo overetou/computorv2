@@ -59,7 +59,7 @@
 
 #define EXEC_TRACK_LAST_AS_LINK_TRACK ((t_link_track*)(m->exec_tracks.last))
 
-#include "/home/jxxj/Darkvale_Technologies/config/libft/header/libft.h"
+#include "/Users/overetou/Documents/tools/libft/header/libft.h"
 
 typedef union	u_content
 {
@@ -159,7 +159,7 @@ BOOL	char_is_valid_var_name_material(const char c);
 char	handle_func(t_master *m, t_buf *b, char *s);
 void	remove_level(t_master *m);
 void	*get_item(t_track *t, const char *name);
-void	display_expr(t_expr *e, t_master *m);
+void	display_expr(t_expr *e, t_master *m, BOOL display_minus);
 t_var	*get_var(t_master *m, const char *name);
 char	interogation_exec(t_buf *b, void *m);
 BOOL try_var_as_unknown(t_master *m, char *name);

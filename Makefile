@@ -18,7 +18,7 @@ $(objdir)/%.o : %.c header/computor.h
 all: $(NAME)
 
 $(NAME): $(obj)
-	@$(CC) $(CFLAGS) -o $@ $^ /home/jxxj/Darkvale_Technologies/config/libft/libft.a
+	@$(CC) $(CFLAGS) -o $@ $^ /Users/overetou/Documents/tools/libft/libft.a
 
 $(obj): | $(objdir)
 
