@@ -42,8 +42,12 @@ t_expr	*extract_last_track_expr(t_master *m)
 
 	//putendl("??????????????EXTRACT");
 	e = get_last_first_expr(m);
-	((t_link_track*)(m->exec_tracks.last))->first = NULL;
+	//if (((t_link_track*)(m->exec_tracks.last))->first == ((t_link_track*)(m->exec_tracks.last))->last)
+		((t_link_track*)(m->exec_tracks.last))->first = NULL;
+	//else
+	//	((t_link_track*)(m->exec_tracks.last))->first = (t_link*)e->next;
 	remove_level(m);
+	printf("returned from func info: %d\n", e->info);
 	return (e);
 }
 
@@ -51,14 +55,25 @@ t_expr	*extract_func_result(t_master *m)
 {
 	putendl("extract_func_result: refine_addition_result");
 	if (refine_addition_result((t_link_track*)(m->exec_tracks.last)) == 0)
+	{
+		putendl("refine_addition_result failed");
 		return (NULL);
+	}
+	printf("last first expr info = %d, value = %f\n", get_last_first_expr(m)->info, get_last_first_expr(m)->content.flt);
 	return (extract_last_track_expr(m));
+}
+
+void	exec_symbol(t_master *m, char info)
+{
+	if (info == PARENT_OPEN)
+		add_level(m);
+	else if (info == PARENT_CLOSE)
+		do_close_par_manipulation(m);
 }
 
 t_expr	*compute_func(t_master *m, t_expr *argument, char *func_name)
 {
 	t_expr	*cur;
-	t_expr	*next;
 	t_expr	powered_arg;
 
 	putendl("ENTERED compute_func");
@@ -70,24 +85,24 @@ t_expr	*compute_func(t_master *m, t_expr *argument, char *func_name)
 	add_level(m);
 	while (cur)
 	{
-		next = cur->next;
 		if (cur->info == UNKNOWN)
 		{
+			putendl("unknown detected.");
 			powered_arg.content = argument->content;
 			powered_arg.info = argument->info;
 			apply_power(&(powered_arg.content), &(powered_arg.info), cur->content.integer);
 			inject_value(m, powered_arg.content, powered_arg.info);
 		}
-		else
-			inject_expr(m, (t_expr*)copy_expr((t_link*)cur));
-		cur = next;
-		if (cur)
+		else if (cur->info >= RATIONNAL)
 		{
-			(*prev_adr(m)) = cur->info;
-			next = cur->next;
-			//free_expr(cur);
-			cur = next;
+			putendl("value detected");
+			inject_expr(m, (t_expr*)copy_expr((t_link*)cur));
 		}
+		if (int_is_comprised(cur->info, 1, 6))
+			(*prev_adr(m)) = cur->info;
+		else
+			exec_symbol(m, cur->info);
+		cur = cur->next;
 	}
 	return (extract_func_result(m));
 }
@@ -196,9 +211,13 @@ BOOL	handle_func(t_master *m, t_buf *b, char *s)
 	{
 		e = compute_func(m, e, s);
 		if (e)
+		{
+			//printf("handle_func: e still exists. info: %d, value: %f\n", e->info, e->content.flt);
 			inject_expr(m, e);
+		}
 		else
 			handle_line_error(m, "Problem detected while computing a function.");
+		//printf("Before advancing, current buffer char = %c\n", m->buf.str[m->buf.pos]);
 		read_smart_inc(b);
 	}
 	return (1);

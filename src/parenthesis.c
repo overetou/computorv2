@@ -27,7 +27,10 @@ void	add_level(t_master *m)
 
 char	open_par_exec(t_buf *b, void *m)
 {
-	add_level(m);
+	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+		mix_in_expr(m, t_expr_init((t_content)NULL, PARENT_OPEN));
+	else
+		add_level(m);
 	read_smart_inc(b);
 	return (1);
 }
@@ -70,31 +73,36 @@ t_expr *pack_if_needed(t_master *m)
 	return (pack_init(first));
 }
 
-char	close_par_exec(t_buf *b, void *m)
+void	do_close_par_manipulation(t_master *m)
 {
 	t_expr	*value;
 
-	//putendl("!!!!!!!!!!!!!!!!!!!!!!Close par");
+	//putendl("entering do_close_par_manipulation");
 	if (((t_master*)m)->exec_tracks.first == ((t_master*)m)->exec_tracks.last)
+	{
 		handle_line_error(m, "Closing parenthesis without match detected.");
+		return;
+	}
 	if (condense_last_track(m) == 0)
 	{
 		handle_line_error(m, "The final addition of a track's components failed");
-		return (1);
+		return;
 	}
-	////printf("close_par_exec: condensing succeded\n");
 	value = pack_if_needed(m);
-	//printf("inside parenthesis: value info = %d\n", value->info);
-	////printf("close_par_exec: refinement succeded\n");
-	//track_remove_last(&(((t_master*)m)->exec_tracks), destroy_link_track);
 	remove_level(m);
-	//printf("inside parenthesis: value info = %d\n", value->info);
-	////printf("close_par_exec: Lowered by a level. Previous is now: %d\n", prev(m));
 	if (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO))
 		reverse_expr(value);
-	////printf("close_par_exec: trying to inject an expr of type: %d\n", value->info);
-	read_smart_inc(b);
+	//printf("value info that got out of the parent: %d. value = %f\n", value->info, value->content.flt);
 	inject_expr(m, value);
+}
+
+char	close_par_exec(t_buf *b, void *m)
+{
+	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
+		mix_in_expr(m, t_expr_init((t_content)NULL, PARENT_CLOSE));
+	else
+		do_close_par_manipulation(m);
+	read_smart_inc(b);
 	return (1);
 }
 

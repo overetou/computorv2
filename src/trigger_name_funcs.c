@@ -330,18 +330,32 @@ void	define_variable(t_expr *e, t_master *m)
 	m->to_define = NULL;
 }
 
-void	display_sign(t_expr *e)
+void	display_sign(const char info)
 {
-	if (e->info == MULT)
-		putstr(" * ");
-	else if (e->info == MINUS)
-		putstr(" - ");
-	else if (e->info == PLUS)
-		putstr(" + ");
-	else if (e->info == DIV)
-		putstr(" / ");
-	else if (e->info == MODULO)
-		putstr(" % ");
+	if (info == MULT)
+		putchr('*');
+	else if (info == DOUBLE_MULT)
+		putstr("**");
+	else if (info == MINUS)
+		putchr('-');
+	else if (info == PLUS)
+		putchr('+');
+	else if (info == DIV)
+		putchr('/');
+	else if (info == MODULO)
+		putchr('%');
+}
+
+void	display_symbol(const char info)
+{
+	if (info == PARENT_OPEN)
+		putchr('(');
+	else if (info == PARENT_CLOSE)
+		putchr(')');
+	else if (info == SQUARE_OPEN)
+		putchr('[');
+	else if (info == SQUARE_CLOSE)
+		putchr(']');
 }
 
 void	display_func(t_master *m)
@@ -349,14 +363,24 @@ void	display_func(t_master *m)
 	t_expr *e;
 
 	e = get_last_first_expr(m);
+	//putendl("entederd display_func");
 	////printf("display_func: last expr info = %d\n", get_last_last_expr(m)->info);
 	while (e)
 	{
-		display_expr(e, m, 0);
-		if (e->next == NULL)
-			return ;
-		e = e->next;
-		display_sign(e);
+		if (e->info >= RATIONNAL)
+		{
+			display_expr(e, m, 0);
+		}
+		else
+		{
+			putchr(' ');
+			if (int_is_comprised(e->info, 1, 6))
+				display_sign(e->info);
+			else if(int_is_comprised(e->info, 15, 21))
+				display_symbol(e->info);
+			if (e->next)
+				putchr(' ');
+		}
 		e = e->next;
 	}
 }

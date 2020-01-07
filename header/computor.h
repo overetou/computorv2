@@ -33,25 +33,29 @@
 #define POWER			15
 #define COMA			16
 #define SEMILICON		17
+#define PARENT_OPEN		18
+#define PARENT_CLOSE	19
+#define SQUARE_OPEN		20
+#define SQUARE_CLOSE	21
 
-#define PROCESSED		-1
+#define PROCESSED		23
 //The different values that info can take are:
-#define RATIONNAL		0
+#define RATIONNAL		24
 //content is a simple float.
-#define IRATIONNAL		1
+#define IRATIONNAL		25
 //content is a float and we consider that it is multiplied by i.
-#define MATRICE			2
+#define MATRICE			26
 //Content points on the first link matrice.
-#define FUNCTION		3
+#define FUNCTION		27
 //Content points on the first link of an expr list
-#define UNKNOWN			4
+#define UNKNOWN			28
 //content is a float multplied by an unknown (used exclusivaly in functions)
-#define IRA_UNKNOWN		5
+#define IRA_UNKNOWN		29
 //content is a float multplied by an unknown and i(used exclusivaly in functions)
-#define PACK			6
+#define PACK			30
 //content is part of a set of 2 values: a and b in a + bi.
-#define MATRIX			7
-#define MATRIX_ROW		8
+#define MATRIX			31
+#define MATRIX_ROW		32
 
 #define DEFINE_VAR 1
 #define DEFINE_FUNC 2
@@ -178,4 +182,5 @@ t_expr	*simple_mult_matrix(t_expr *simple, t_expr *matrix);
 void	term_by_term_matrix_mult(t_expr *receiver, t_expr *multiplier);
 void	prepare_diviser(t_expr *e);
 BOOL	matrix_multiplication(t_master *m, t_expr *multiplier);
+void	do_close_par_manipulation(t_master *m);
 #endif
