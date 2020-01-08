@@ -85,13 +85,18 @@ void	inject_value(t_master *m, t_content content, char info)
 {
 	t_expr *e;
 
+	putendl("inject value");
 	if (get_power(&(m->buf), &content, &info) == 0)
 	{
 		handle_line_error(m, "problem with a power aplication.");
 		return;
 	}
-	putendl("After power.");
+	//putendl("After power.");
 	e = t_expr_init(content, info);
+	//if (prev(m) == MINUS)
+	//	reverse_expr(e);
+	if (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO))
+		reverse_expr(e);
 	if (!exec_cell_if_prior((t_master*)m, e))
 		mix_in_expr(m, e);
 	*(prev_adr(m)) = VALUE;
@@ -99,6 +104,9 @@ void	inject_value(t_master *m, t_content content, char info)
 
 void	inject_expr(t_master *m, t_expr *e)
 {
+	putendl("inject expr");
+	if (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO))
+		reverse_expr(e);
 	if (m->matrice_depht)
 	{
 		putendl("matrice depht detected.\n");
@@ -408,6 +416,7 @@ char	endline_exec(t_buf *b, void *m)
 			handle_line_error(m, "A problem happened while doing additions.");
 			return (1);
 		}
+		//printf("endline exec: last = %f\n", get_last_last_expr(m)->content.flt);
 		display_last_expr(m);
 		if (((t_master*)m)->to_define)
 		{

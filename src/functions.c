@@ -59,7 +59,7 @@ t_expr	*extract_func_result(t_master *m)
 		putendl("refine_addition_result failed");
 		return (NULL);
 	}
-	printf("last first expr info = %d, value = %f\n", get_last_first_expr(m)->info, get_last_first_expr(m)->content.flt);
+	//printf("last first expr info = %d, value = %f\n", get_last_first_expr(m)->info, get_last_first_expr(m)->content.flt);
 	return (extract_last_track_expr(m));
 }
 

@@ -75,7 +75,7 @@ char	close_square_exec(t_buf *b, void *m)
 		{
 			get_last_last_expr(m)->next = NULL; //putendl("Ended a matrix row.");
 			new_elem = extract_matrix_row(get_last_first_expr(m));
-			printf("first element of the row = %f\n", get_last_first_expr(m)->content.flt);
+			//printf("first element of the row = %f\n", get_last_first_expr(m)->content.flt);
 			((t_link_track*)(((t_master*)m)->exec_tracks.last))->first = NULL;
 		}
 	}
@@ -91,7 +91,7 @@ char	close_square_exec(t_buf *b, void *m)
 		return (1);
 	}
 	remove_level(m);
-	printf("preparing a matrix injection.");
+	//printf("preparing a matrix injection.");
 	(((t_master*)m)->matrice_depht)--;
 	if (new_elem)
 		inject_expr(m, new_elem);

@@ -35,7 +35,7 @@ BOOL is_simple_value(char info)
 //Mutiply rationnal and ira between themself.
 void simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info)
 {
-	////printf("simple_mult: %f * %f\n", op1->content.flt, op2.flt);
+	//printf("simple_mult: %f * %f\n", op1->content.flt, op2.flt);
 	receiver->content.flt = (op1->content.flt) * (op2.flt);
 	if (op1->info == RATIONNAL)
 	{
@@ -54,7 +54,7 @@ void simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info)
 		else
 			receiver->info = IRATIONNAL;
 	}
-		////printf("result = %f with type: %d\n", receiver->content.flt, receiver->info);
+	printf("result = %f with type: %d\n", receiver->content.flt, receiver->info);
 }
 
 //We know that value is a pack.
@@ -165,7 +165,7 @@ void do_multiplication(t_master *m, t_expr *e)
 {
 	char m_info;
 
-	putendl("\nWelcome in multiplication land !");
+	//putendl("\nWelcome in multiplication land !");
 	m_info = get_last_last_expr(m)->info;
 	if (m_info == RATIONNAL || m_info == IRATIONNAL)
 	{
@@ -354,6 +354,8 @@ t_expr *reverse_expr(t_expr *e)
 {
 	if (e->info == RATIONNAL || e->info == IRATIONNAL)
 		e->content.flt = -(e->content.flt);
+	else
+		putendl("!!! Could not find suitable operation to reverse an expression.");
 	return (e);
 }
 

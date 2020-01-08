@@ -43,7 +43,7 @@ char	exec_cell_if_prior(t_master *m, t_expr *e)
 		*(prev_adr(m)) -= 5;//TODO: test if a multiplication with a negative works correctly.
 	if (prev(m) == MULT)
 	{
-		putendl("/!\\ mult detected");
+		//putendl("/!\\ mult detected");
 		do_multiplication(m, e);
 	}
 	else if (prev(m) == DOUBLE_MULT)
@@ -54,6 +54,7 @@ char	exec_cell_if_prior(t_master *m, t_expr *e)
 		do_modulation(m, e->content, e->info);
 	else
 		return (0);
+	//printf("after prior exec: last on track = %f\n", get_last_last_expr(m)->content.flt);
 	return (1);
 }
 

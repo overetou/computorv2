@@ -90,8 +90,6 @@ void	do_close_par_manipulation(t_master *m)
 	}
 	value = pack_if_needed(m);
 	remove_level(m);
-	if (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO))
-		reverse_expr(value);
 	//printf("value info that got out of the parent: %d. value = %f\n", value->info, value->content.flt);
 	inject_expr(m, value);
 }

@@ -112,7 +112,7 @@ char	num_store(t_buf *b, void *m)
 		return (1);
 	}
 	info = RATIONNAL;
-	value.flt = (prev(m) == MINUS || int_is_comprised(prev(m), MINUS_PLUS, MINUS_MODULO) ? -1 : 1);
+	value.flt = 1;
 	if (!read_float(b, &(value.flt)))
 	{
 		handle_line_error(m, "Problem while parsing a number.");
@@ -132,6 +132,7 @@ char	num_store(t_buf *b, void *m)
 	}
 	else
 		inject_value(m, value, info);
+	printf("numstore: last = %f\n", get_last_last_expr(m)->content.flt);
 	return (1);
 }
 
@@ -149,7 +150,7 @@ void	double_star_exec(t_buf *b, void *m)
 
 char	star_exec(t_buf *b, void *m)
 {
-	putendl("Entered star exec.");
+	//putendl("Entered star exec.");
 	if (prev(m) != VALUE)
 		handle_line_error(m, "Expected a value before a '*'.");
 	read_smart_inc(b);//TODO: add error management if the increase fails.
@@ -160,7 +161,7 @@ char	star_exec(t_buf *b, void *m)
 		*(prev_adr(m)) = MULT;
 		if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 		{
-			putendl("mult added in the function definition.");
+			//putendl("mult added in the function definition.");
 			mix_in_expr(m, t_expr_init((t_content)NULL, MULT));
 		}
 	}
