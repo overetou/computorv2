@@ -121,6 +121,14 @@ char interogation_exec(t_buf *b, void *m)
 			prepare_new_line(m);
 			read_smart_inc(b);
 		}
+		else if (((t_master *)m)->equal_defined == DEFINE_VAR)
+		{
+			inject_var_value(m, ((t_master *)m)->to_define);
+			((t_master *)m)->equal_defined = 0;
+			//free(((t_master *)m)->to_define);
+			((t_master *)m)->to_define = NULL;
+			return (1);
+		}
 		else
 			handle_line_error(m, "Interogation point placed in an incoherent context.");
 	}

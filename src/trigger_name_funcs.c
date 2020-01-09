@@ -33,6 +33,7 @@ void	t_var_update(t_var *v, t_content c, char info)
 
 void	prepare_var_def(t_master *m, char *s)
 {
+	//putendl("prepare var def");
 	m->to_define = s;
 	m->equal_defined = DEFINE_VAR;
 }

@@ -60,6 +60,7 @@
 #define DEFINE_VAR 1
 #define DEFINE_FUNC 2
 #define SIMPLE_EQUAL 3
+#define OBJECT_DISPLAY 4
 
 #define EXEC_TRACK_LAST_AS_LINK_TRACK ((t_link_track*)(m->exec_tracks.last))
 
@@ -183,4 +184,5 @@ void	term_by_term_matrix_mult(t_expr *receiver, t_expr *multiplier);
 void	prepare_diviser(t_expr *e);
 BOOL	matrix_multiplication(t_master *m, t_expr *multiplier);
 void	do_close_par_manipulation(t_master *m);
+void	inject_var_value(t_master *m, char *name);
 #endif
