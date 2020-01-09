@@ -148,11 +148,11 @@ void	*get_item(t_track *t, const char *name)
 		return (NULL);
 	while (p != (t_var*)(t->last))
 	{
-		if (str_perfect_match(name, p->name))
+		if (str_perfect_match_case_tolerant(name, p->name))
 			return ((void*)p);
 		p = p->next;
 	}
-	if (str_perfect_match(name, p->name))
+	if (str_perfect_match_case_tolerant(name, p->name))
 		return ((void*)p);
 	return (NULL);
 }
