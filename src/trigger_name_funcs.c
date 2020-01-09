@@ -81,15 +81,18 @@ void	mix_in_expr(t_master *m, t_expr *e)
 		//putendl("mix_in_expr: added on main track.");
 }
 
-void	inject_value(t_master *m, t_content content, char info)
+void	inject_value(t_master *m, t_content content, char info, BOOL search_power_in_buf)
 {
 	t_expr *e;
 
 	putendl("inject value");
-	if (get_power(&(m->buf), &content, &info) == 0)
+	if (search_power_in_buf)
 	{
-		handle_line_error(m, "problem with a power aplication.");
-		return;
+		if (get_power(&(m->buf), &content, &info) == 0)
+		{
+			handle_line_error(m, "problem with a power aplication.");
+			return;
+		}
 	}
 	//putendl("After power.");
 	e = t_expr_init(content, info);
@@ -100,6 +103,7 @@ void	inject_value(t_master *m, t_content content, char info)
 	if (!exec_cell_if_prior((t_master*)m, e))
 		mix_in_expr(m, e);
 	*(prev_adr(m)) = VALUE;
+	printf("Just injected this value: %f\n", e->content.flt);
 }
 
 void	inject_expr(t_master *m, t_expr *e)
@@ -196,7 +200,7 @@ void	inject_var_value(t_master *m, char *name)
 	if (info > -1)
 	{
 		//printf("Given name was recognized as a var. info = %d. First row value = %f\n", info, ((t_expr*)((t_expr*)(value.expr))->content.expr)->content.flt);
-		inject_value(m, value, info);
+		inject_value(m, value, info, 1);
 	}
 	else
 	{
@@ -230,7 +234,7 @@ BOOL	apply_i(t_master *m)
 	{
 		c.flt = 1;
 		//convert_to_irationnal(get_last_last_expr(m));
-		inject_value(m, c, IRATIONNAL);
+		inject_value(m, c, IRATIONNAL, 1);
 		//printf("apply_i: Converted %f to i.\n", get_last_last_expr(m)->content.flt);
 	}
 	else
@@ -401,6 +405,7 @@ void	affect_func(t_master *m)
 
 char	endline_exec(t_buf *b, void *m)
 {
+	putendl("enline exec");
 	if (((t_master*)m)->equal_defined == DEFINE_FUNC)
 	{
 		////printf("endline_exec: first = %p, info = %d\n", get_last_first_expr(m), get_last_first_expr(m)->info);

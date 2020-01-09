@@ -63,7 +63,7 @@
 
 #define EXEC_TRACK_LAST_AS_LINK_TRACK ((t_link_track*)(m->exec_tracks.last))
 
-#include "/Users/overetou/Documents/tools/libft/header/libft.h"
+#include "/home/jxxj/Darkvale_Technologies/config/libft/header/libft.h"
 
 typedef union	u_content
 {
@@ -126,7 +126,7 @@ void	store_expr(t_track *track, void *value);
 void	prepare_new_line(t_master *m);
 char	exec_cell_if_prior(t_master *m, t_expr *e);
 BOOL	refine_addition_result(t_link_track *t);
-void	inject_value(t_master *m, t_content content, char info);
+void	inject_value(t_master *m, t_content content, char info, BOOL search_power_in_buf);
 void	inject_expr(t_master *m, t_expr *e);
 void	mix_in_expr(t_master *m, t_expr *e);
 BOOL	handle_line_error(t_master *m, const char *s);

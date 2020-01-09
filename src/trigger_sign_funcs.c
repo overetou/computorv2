@@ -131,7 +131,7 @@ char	num_store(t_buf *b, void *m)
 		*(prev_adr(m)) = VALUE;
 	}
 	else
-		inject_value(m, value, info);
+		inject_value(m, value, info, 1);
 	printf("numstore: last = %f\n", get_last_last_expr(m)->content.flt);
 	return (1);
 }

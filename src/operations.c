@@ -54,7 +54,7 @@ void simple_mult(t_expr *receiver, t_expr *op1, t_content op2, char op2info)
 		else
 			receiver->info = IRATIONNAL;
 	}
-	printf("result = %f with type: %d\n", receiver->content.flt, receiver->info);
+	//printf("result = %f with type: %d\n", receiver->content.flt, receiver->info);
 }
 
 //We know that value is a pack.

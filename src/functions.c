@@ -77,6 +77,7 @@ t_expr	*compute_func(t_master *m, t_expr *argument, char *func_name)
 	t_expr	powered_arg;
 
 	putendl("ENTERED compute_func");
+	printf("Current buf char: %c\n", m->buf.str[m->buf.pos]);
 	cur = get_func(m, func_name);
 	if (cur == NULL || argument == NULL)
 		return (NULL);
@@ -88,10 +89,13 @@ t_expr	*compute_func(t_master *m, t_expr *argument, char *func_name)
 		if (cur->info == UNKNOWN)
 		{
 			putendl("unknown detected.");
+			printf("power of the unknown: %d\n", cur->content.integer);
 			powered_arg.content = argument->content;
 			powered_arg.info = argument->info;
 			apply_power(&(powered_arg.content), &(powered_arg.info), cur->content.integer);
-			inject_value(m, powered_arg.content, powered_arg.info);
+			printf("value injected after pwer: %f\n", powered_arg.content.flt);
+			printf("Current buf char: %c\n", m->buf.str[m->buf.pos]);
+			inject_value(m, powered_arg.content, powered_arg.info, 0);
 		}
 		else if (cur->info >= RATIONNAL)
 		{
@@ -115,7 +119,7 @@ char	*get_parenthesis_content(t_buf *b)
 	size = 1;
 	if (b->str[b->pos] == ')')
 		return (NULL);
-	str = malloc(sizeof(char));
+	str = malloc(1 * sizeof(char));
 	str[0] = b->str[b->pos];
 	if (read_smart_inc(b) == 0)
 		return (NULL);
@@ -176,17 +180,24 @@ BOOL	process_parent_and_handle_if_def_requested(t_master *m, t_buf *b, t_expr **
 		return (0);
 	if (is_alpha(b->str[b->pos]))
 	{
+		//putendl("alpha detected inside parenthesis.");
 		*parent_content = get_parenthesis_content(b);
 		if (*parent_content == NULL)
 			return (0);
 		if (is_definition(m, b))
+		{
+			//putendl("is definition was triggered. inside process_parent_and_handle_if_def_requested\n");
 			return (1);
+		}
 		*e = (t_expr*)get_var(m, *parent_content);//TODO: understand what is going on here. This instruction seems to never be useful.
 		return (0);
 	}
 	add_level(m);
 	if (is_digit(b->str[b->pos]))
+	{
 		num_store(b, m);
+		read_smart_inc(b);
+	}
 	else
 		return (0);
 	*e = extract_last_track_expr(m);
@@ -209,6 +220,7 @@ BOOL	handle_func(t_master *m, t_buf *b, char *s)
 		return (0);//If e == NULL and the previous conditions equals 0, it means that no function def is requested but that what was found inside the parenthesis makes no sens as argument for a func.
 	else
 	{
+		printf("about to compute the func. Param = %f, info = %d\n", e->content.flt, e->info);
 		e = compute_func(m, e, s);
 		if (e)
 		{
@@ -218,7 +230,6 @@ BOOL	handle_func(t_master *m, t_buf *b, char *s)
 		else
 			handle_line_error(m, "Problem detected while computing a function.");
 		//printf("Before advancing, current buffer char = %c\n", m->buf.str[m->buf.pos]);
-		read_smart_inc(b);
 	}
 	return (1);
 }
