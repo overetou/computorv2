@@ -146,7 +146,10 @@ void	*get_item(t_track *t, const char *name)
 
 	p = (t_var*)(t->first);
 	if (p == NULL)
+	{
+		putendl("get_item: searched on a NULL track");
 		return (NULL);
+	}
 	while (p != (t_var*)(t->last))
 	{
 		if (str_perfect_match_case_tolerant(name, p->name))
@@ -371,13 +374,8 @@ void	display_symbol(const char info)
 		putchr(']');
 }
 
-void	display_func(t_master *m)
+void	display_function_body(t_master *m, t_expr *e)
 {
-	t_expr *e;
-
-	e = get_last_first_expr(m);
-	//putendl("entederd display_func");
-	////printf("display_func: last expr info = %d\n", get_last_last_expr(m)->info);
 	while (e)
 	{
 		if (e->info >= RATIONNAL)
@@ -398,6 +396,18 @@ void	display_func(t_master *m)
 	}
 }
 
+void	display_given_func(t_master *m, t_expr *func)
+{
+	display_function_body(m, func->content.expr);
+}
+
+void	display_func(t_master *m)
+{
+	//putendl("entederd display_func");
+	////printf("display_func: last expr info = %d\n", get_last_last_expr(m)->info);
+	display_function_body(m, get_last_first_expr(m));
+}
+
 void	affect_func(t_master *m)
 {
 	((t_expr*)(m->funcs.last))->content.expr = get_last_first_expr(m);
@@ -415,7 +425,7 @@ char	endline_exec(t_buf *b, void *m)
 		affect_func(m);
 		((t_master*)m)->to_define = NULL;
 	}
-	else
+	else if (((t_master*)m)->equal_defined != OBJECT_DISPLAY)
 	{
 		if (condense_last_track(m) == 0)
 		{

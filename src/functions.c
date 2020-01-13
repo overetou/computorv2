@@ -80,7 +80,10 @@ t_expr	*compute_func(t_master *m, t_expr *argument, char *func_name)
 	printf("Current buf char: %c\n", m->buf.str[m->buf.pos]);
 	cur = get_func(m, func_name);
 	if (cur == NULL || argument == NULL)
+	{
+		putendl("failed to retreive the func");
 		return (NULL);
+	}
 	cur = cur->content.expr;
 	//printf("compute_func: found a function corresponding to the name. First value info = %d\n", cur->info);
 	add_level(m);
@@ -166,10 +169,43 @@ void	track_insert(t_track *t, t_link *l)
 
 void	prepare_func_definition(t_master *m, t_buf *b, char *s, char *parent_content)
 {
+	t_expr	*func;
+
+	printf("ENtered prepare_func_definition. s = %s\n", s);
+	func = get_item(&(m->funcs), s);
+	if (func)
+	{
+		putendl("a func was found with that name.");
+		printf("current buf = %c\n", m->buf.str[m->buf.pos]);
+		if (read_smart_inc(b) == 0)
+		{
+			handle_line_error(m, "could not find a proper char after a func(x)=...");
+			return;
+		}
+		read_till_false(b, is_sep);
+		printf("current buf = %c\n", m->buf.str[m->buf.pos]);
+		if (b->str[b->pos] == '?')
+		{
+			m->to_define = parent_content;
+			display_given_func(m, func);
+			m->equal_defined = OBJECT_DISPLAY;
+		}
+		else
+		{
+			/* Préparer ce qui pourra servir à redéfinir la foncion ou à résoudre une équation avec.*/
+			extract_link_from_track(&(m->funcs), (t_link*)func);
+			track_insert(&(m->funcs), (t_link*)func);
+			m->equal_defined = DEFINE_FUNC;
+			m->to_define = parent_content;
+		}
+		return;
+	}
 	read_till_false(b, is_sep);
 	m->to_define = parent_content;
 	track_insert(&(m->funcs), (t_link*)t_var_simple_init(s));
 	m->equal_defined = DEFINE_FUNC;
+	printf("first definition: current buf = %c\n", b->str[b->pos]);
+	read_smart_inc(b);
 }
 
 BOOL	process_parent_and_handle_if_def_requested(t_master *m, t_buf *b, t_expr **e, char **parent_content)
@@ -214,7 +250,6 @@ BOOL	handle_func(t_master *m, t_buf *b, char *s)
 	{
 		putendl("handle_func: definition request found.");
 		prepare_func_definition(m, b, s, parent_content);
-		read_smart_inc(b);
 	}
 	else if (e == NULL)
 		return (0);//If e == NULL and the previous conditions equals 0, it means that no function def is requested but that what was found inside the parenthesis makes no sens as argument for a func.

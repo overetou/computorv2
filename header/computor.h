@@ -185,4 +185,7 @@ void	prepare_diviser(t_expr *e);
 BOOL	matrix_multiplication(t_master *m, t_expr *multiplier);
 void	do_close_par_manipulation(t_master *m);
 void	inject_var_value(t_master *m, char *name);
+void	*get_item(t_track *t, const char *name);
+void	display_func(t_master *m);
+void	display_given_func(t_master *m, t_expr *func);
 #endif

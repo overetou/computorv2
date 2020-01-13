@@ -106,8 +106,9 @@ char interogation_exec(t_buf *b, void *m)
 	putendl("\nInterrogation exec!");
 	if (read_smart_inc(b) == 0 || b->str[b->pos] == '\n')
 	{
-		if (((t_master *)m)->equal_defined == SIMPLE_EQUAL)
+		if (((t_master *)m)->equal_defined == SIMPLE_EQUAL && prev(m) != EQUAL)
 		{
+			putendl("Trying to resolve an equation.");
 			//We want to inject every expression of the right side (current level) to the right side and revert them when doing so. If a matrix is encountered, line error.
 			//Note: this function lower the level by a floor.
 			if (pass_right_to_left(m) == 0)
